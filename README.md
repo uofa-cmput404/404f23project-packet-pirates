@@ -13,7 +13,7 @@ Authors:
 * Gabriel Giang
 * Jake Hennig
 * Kai Jie Lee
-* Firstname Lastname
+* Jack Geiger
 * Firstname Lastnmae
 
 Generally everything is LICENSE'D under the ______________.
