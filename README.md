@@ -11,7 +11,7 @@ Contributors / Licensing
 Authors:
     
 * Gabriel Giang
-* Firstname Lastname
+* Jake Hennig
 * Firstname Lastname
 * Firstname Lastname
 * Firstname Lastnmae
