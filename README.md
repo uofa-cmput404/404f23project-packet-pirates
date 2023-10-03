@@ -10,7 +10,7 @@ Contributors / Licensing
 
 Authors:
     
-* Firstname Lastname
+* Gabriel Giang
 * Firstname Lastname
 * Firstname Lastname
 * Firstname Lastname
