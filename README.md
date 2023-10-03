@@ -12,7 +12,7 @@ Authors:
     
 * Gabriel Giang
 * Jake Hennig
-* Firstname Lastname
+* Kai Jie Lee
 * Firstname Lastname
 * Firstname Lastnmae
 
