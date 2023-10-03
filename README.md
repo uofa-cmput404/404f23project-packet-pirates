@@ -14,6 +14,6 @@ Authors:
 * Jake Hennig
 * Kai Jie Lee
 * Jack Geiger
-* Firstname Lastnmae
+* Caleb Lonson
 
 Generally everything is LICENSE'D under the ______________.
