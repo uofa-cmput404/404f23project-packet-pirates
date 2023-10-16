@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from login.views import AuthorView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('login.urls')),
 ]
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('', AuthorView.as_view(), name="temp")
+# ]
