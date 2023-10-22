@@ -45,6 +45,8 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
 
+    is_staff = True
+
     USERNAME_FIELD = 'username'
     # REQUIRED_FIELDS = ["username"]
 
