@@ -13,7 +13,7 @@ function App() {
     <>
       {/* <Landing /> */}
       {/* <MainPage /> */}
-      <div className="w-[500px]">
+      <div className="w-[500px] m-32">
         <CreatePost />
       </div>
     </>
