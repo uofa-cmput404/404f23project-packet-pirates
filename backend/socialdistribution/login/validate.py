@@ -25,14 +25,14 @@ def validate_password(data):
         raise ValidationError('a password is needed')
     return True
 
-def validate_first_name(data):
-    first_name = data['first_name'].strip()
-    if not first_name:
-        raise ValidationError('a first name is needed')
-    return True
+# def validate_first_name(data):
+#     first_name = data['first_name'].strip()
+#     if not first_name:
+#         raise ValidationError('a first name is needed')
+#     return True
 
-def validate_last_name(data):
-    last_name = data['last_name'].strip()
-    if not last_name:
-        raise ValidationError('a last name is needed')
-    return True
+# def validate_last_name(data):
+#     last_name = data['last_name'].strip()
+#     if not last_name:
+#         raise ValidationError('a last name is needed')
+#     return True

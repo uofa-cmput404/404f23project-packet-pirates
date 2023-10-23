@@ -31,9 +31,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'login.apps.LoginConfig',
+    'post.apps.PostConfig',
     'rest_framework',
     'corsheaders',
-    'markdownfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
