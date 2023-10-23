@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'post.apps.PostConfig',
+    'feed.apps.FeedConfig',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
