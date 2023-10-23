@@ -17,7 +17,7 @@ class Friends(models.Model):
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors") # Overwrites query_set name. so query by using AppAuthor.objects.get(uuid).authors.all()
     friend = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors_friends")
 
-class Feed(models.Model):
+class notifications(models.Model):
     # Need two authors
     # Also need FollowRequests
     # Posts, Likes, Comments
