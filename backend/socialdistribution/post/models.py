@@ -27,7 +27,7 @@ class Post(models.Model):
 
     date_time = models.DateTimeField(auto_now_add=True, null = True, blank = True)
 
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     unlisted = models.BooleanField(default=False)
 
