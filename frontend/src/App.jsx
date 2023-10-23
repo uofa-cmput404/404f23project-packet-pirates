@@ -2,8 +2,9 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-// import Landing from "./components/login/Landing";
+import Landing from "./components/login/Landing";
 import MainPage from "./components/site/MainPage";
+import CreatePost from "./components/main-feed/CreatePost";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -11,7 +12,10 @@ function App() {
   return (
     <>
       {/* <Landing /> */}
-      <MainPage />
+      {/* <MainPage /> */}
+      <div className="w-[500px]">
+        <CreatePost />
+      </div>
     </>
   );
 }
