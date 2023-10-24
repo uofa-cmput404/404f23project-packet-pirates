@@ -40,7 +40,7 @@ class AuthorRegistration(APIView):
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
             if author:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, {'message': 'account has been created'}, status=status.HTTP_201_CREATED)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
