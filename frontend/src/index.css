@@ -10,3 +10,74 @@
   margin: 0px;
   padding: 0px;
 }
+
+
+
+/* Basic body styles */
+body {
+  background-color: #f0f0f0; /* Adjust to your preferred background color */
+  font-family: Arial, sans-serif; /* Choose your preferred font family */
+}
+
+/* Style main sections */
+section {
+  padding: 20px;
+}
+
+/* Style the site title */
+h1 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Style the text area for making a post */
+.make-post textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Style post button */
+.make-post button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff; /* Adjust to your preferred button color */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Style posts */
+.post {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Style user info in posts */
+.post-user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Style usernames */
+.post-user-info span {
+  font-weight: bold;
+}
+
+/* Style post content */
+.post p {
+  margin-top: 10px;
+}
