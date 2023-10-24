@@ -4,7 +4,7 @@ import axios from "axios";
 export default function Login() {
 
 const content = {
-  'username':'giang1',
+  'username':'packetpirates',
   'password':'cmput404'
 }
 
