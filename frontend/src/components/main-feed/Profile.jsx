@@ -1,4 +1,4 @@
-export default function Profile() {
+export default function Profile({ friends }) {
   return (
     <>
       <div
@@ -24,20 +24,26 @@ export default function Profile() {
         </div>
         <div className="connections">
           <ul>
-            <li className="flex flex-row list-image-none justify-center items-center">
-              <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                <img
-                  src="https://picsum.photos/200"
-                  alt="profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="username ml-5">
-                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                  USERNAME
-                </span>
-              </div>
-            </li>
+            {/* max of 6 friends on display? */}
+            {friends.slice(0, 6).map((friend, index) => (
+              <li
+                className="flex flex-row list-image-none justify-center items-center mt-3"
+                key={index}
+              >
+                <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                  <img
+                    src="https://picsum.photos/200"
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="username ml-5">
+                  <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                    {friend.username}
+                  </span>
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
