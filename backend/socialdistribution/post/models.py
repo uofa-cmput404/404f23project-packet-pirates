@@ -6,7 +6,7 @@ import uuid
 # Create your models here.
 class Post(models.Model):
 
-    post_id = models.UUIDField(default = uuid.uuid4, primary_key = True)
+    post_id = models.UUIDField(default = uuid.uuid4, primary_key = True, unique= True)
 
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
 
@@ -38,7 +38,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
 
-    comment_id = models.UUIDField(default = uuid.uuid4, primary_key=True)
+    comment_id = models.UUIDField(default = uuid.uuid4, primary_key=True, unique = True)
 
     post = models.ForeignKey(Post, on_delete = models.CASCADE)
 

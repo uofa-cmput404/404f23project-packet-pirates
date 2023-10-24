@@ -30,7 +30,7 @@ class AppAuthorManager(BaseUserManager):
 
 
 class AppAuthor(AbstractBaseUser, PermissionsMixin):
-    user_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False)
+    user_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True)
     username = models.CharField(max_length=40, unique=True, blank=False)
     display_name = models.CharField(max_length=40, blank=True, null=True)
 
