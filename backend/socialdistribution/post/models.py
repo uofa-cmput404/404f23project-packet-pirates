@@ -18,8 +18,10 @@ class Post(models.Model):
 
     #Typing needed (image, md, text)
     content_types = [('text/plain', 'plaintext'), ('text/markdown', 'markdown'), ('image/png;base64', 'png'), ('image/jpeg;base64', 'jpeg')]
+    
+    content_type = models.CharField(max_length=200,choices=content_types, default=content_types[0])
 
-    content = models.CharField(max_length=200, default=content_types[0])
+    content = models.CharField(max_length=200, blank=True)
 
     source = models.CharField(max_length=200) # ?
 
