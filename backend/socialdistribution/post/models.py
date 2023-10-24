@@ -16,6 +16,8 @@ class Post(models.Model):
 
     url = models.CharField(max_length=200)
 
+    likes_count = models.IntegerField(default=0)
+
     #Typing needed (image, md, text)
     content_types = [('text/plain', 'plaintext'), ('text/markdown', 'markdown'), ('image/png;base64', 'png'), ('image/jpeg;base64', 'jpeg')]
     
