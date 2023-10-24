@@ -24,24 +24,32 @@ export default function CreatePost() {
             {/* Post Body Input */}
             <textarea
               placeholder="Anything you want to discuss?"
-              className="border border-black rounded-lg p-2 h-24 mb-4"
+              className="border border-black rounded-lg p-2 h- mb-4"
             ></textarea>
           </div>
         </div>
         <div className="menu">
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row justify-between">
-            <li className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700">
-              Upload Photo
+            <li>
+              <button className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700">
+                Upload Photo
+              </button>
             </li>
-            <li className="mr-4 border-gray-700 border rounded-full p-2">
-              Public
+            <li>
+              <button className="mr-4 border-gray-700 border rounded-full p-2">
+                Public
+              </button>
             </li>
-            <li className="mr-4 border-gray-700 border rounded-full p-2">
-              Plaintext
+            <li>
+              <button className="mr-4 border-gray-700 border rounded-full p-2">
+                Plaintext
+              </button>
             </li>
-            <li className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700">
-              Post
+            <li>
+              <button className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700">
+                Post
+              </button>
             </li>
           </ul>
         </div>
