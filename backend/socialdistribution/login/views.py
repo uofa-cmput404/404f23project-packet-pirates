@@ -58,15 +58,16 @@ class AuthorLogin(APIView):
             login(request, author)
             # session = request.session
             # print(session.cookie)
-            headers = {
-                "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
-                "Access-Control-Allow-Methods ": "POST",
-                "Access-Control-Allow-Headers ": "Authorization",
-                "Access-Control-Allow-Credentials": "true",
-                # "Set-Cookie:" : f"{cookie}",
-                "Content-Type": "application/json"
-            }
-            return Response(data = serializer.data,headers=headers, status=status.HTTP_200_OK)
+            # headers = {
+            #     # "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+            #     "Access-Control-Allow-Methods ": "POST",
+            #     "Access-Control-Allow-Headers ": "Authorization",
+            #     "Access-Control-Allow-Credentials": "true",
+            #     # "Set-Cookie:" : f"{cookie}",
+            #     "Content-Type": "application/json"
+            # }
+            # return Response(data = serializer.data, headers = headers, status=status.HTTP_200_OK)
+            return Response(data = serializer.data, status=status.HTTP_200_OK)
 
 class AuthorLogout(APIView):
     def post(self, request):
