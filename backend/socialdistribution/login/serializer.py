@@ -16,9 +16,9 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
                                                      password = validated_data['password'])
         
         # Add more fields that you want to be required in the POST request.
-        # author_obj.first_name = validated_data['first_name']
-        # author_obj.last_name = validated_data['last_name']
-        # author_obj.date_of_birth = validated_data['date_of_birth']
+        author_obj.first_name = validated_data['first_name']
+        author_obj.last_name = validated_data['last_name']
+        # author_obj.date_of_birth = validated_data['date_of_birth' ]
         # author_obj.github = validated_data['github']
         # author_obj.display_name = validated_data['display_name']
 
