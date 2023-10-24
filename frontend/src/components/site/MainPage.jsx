@@ -2,6 +2,7 @@ import CreatePost from "../main-feed/CreatePost";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Site from "./Site";
+import Notifications from "../main-feed/Notifications";
 
 export default function MainPage() {
   return (
@@ -18,8 +19,8 @@ export default function MainPage() {
             <Post />
           </div>
         </div>
-        <div className="profile h-fit mx-auto ml-5">
-          <Profile />
+        <div className="notifications h-fit mx-auto ml-5">
+          <Notifications />
         </div>
       </div>
     </>
