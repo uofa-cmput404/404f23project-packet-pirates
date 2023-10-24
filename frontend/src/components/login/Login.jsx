@@ -2,9 +2,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 export default function Login() {
+
+const content = {
+  'username':'giang1',
+  'password':'cmput404'
+}
+
   const getAuthor = async () => {
-    const res = await axios.get("http://localhost:8000/api/authors/");
-    console.log(res.data);
+    // const res = await axios.get("http://localhost:8000/api/authors/");
+    const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
+      
+    }).then(res => res.data)
+    .then(function(data) {  
+      console.log(data)
+    }).catch(console.log)
+    console.log(res)  
+    // const res = await axios.post("http://localhost:8000/api/
+    // console.log(res.data);
   };
 
   return (
