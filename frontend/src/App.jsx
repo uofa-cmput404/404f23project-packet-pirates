@@ -5,6 +5,7 @@ import "./App.css";
 import Landing from "./components/login/Landing";
 import MainPage from "./components/site/MainPage";
 import CreatePost from "./components/main-feed/CreatePost";
+import Post from "./components/main-feed/Posts";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -15,6 +16,9 @@ function App() {
       {/* <MainPage /> */}
       <div className="w-[500px] m-32">
         <CreatePost />
+      </div>
+      <div className="m-32 w-[1000px]">
+        <Post />
       </div>
     </>
   );
