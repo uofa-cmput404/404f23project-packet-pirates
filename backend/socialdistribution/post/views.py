@@ -9,7 +9,10 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import permissions, status
 
+
 from .serializer import *
 # Create your views here.
-
+class CreatePost(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
