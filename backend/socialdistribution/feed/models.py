@@ -22,7 +22,6 @@ class Notifications(models.Model):
     # Also need FollowRequests
     # Posts, Likes, Comments
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE) # Main user
-    friend = models.ForeignKey(Friends, on_delete=models.CASCADE) # Author's friends
 
     # Set symmetrical to false since we don't want it to work both ways. 
     posts_liked = models.ManyToManyField(Post, symmetrical=False, blank = True)
