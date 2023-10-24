@@ -2,6 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 export default function Login() {
+
+const content = {
+  'username':'packetpirates',
+  'password':'cmput404'
+}
+
   const getAuthor = async () => {
     const res = await axios.get("http://localhost:8000/api/authors/");
     console.log(res.data);

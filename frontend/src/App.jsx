@@ -10,6 +10,21 @@ function App() {
   return (
     <>
       <Landing />
+      <div className="flex justify-center items-center w-screen">
+        {/* <MainPage /> */}
+      </div>
+
+      {/* <Post /> */}
+
+      {/* <div className="w-[500px] m-32">
+        <CreatePost />
+      </div>
+      <div className="m-32 w-[1000px]">
+        <Post />
+        <div className="m-32">
+          <Profile />
+        </div>
+      </div> */}
     </>
   );
 }
