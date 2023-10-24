@@ -9,7 +9,6 @@ const content = {
 }
 
   const getAuthor = async () => {
-    // const res = await axios.get("http://localhost:8000/api/authors/");
     const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
       
     }).then(res => res.data)
@@ -19,6 +18,10 @@ const content = {
     console.log(res)  
     // const res = await axios.post("http://localhost:8000/api/
     // console.log(res.data);
+
+    const res2 = await axios.get("http://127.0.0.1:8000/api/author")
+    .then(res => res.data)
+    .then(data => console.log(data));
   };
 
   return (
