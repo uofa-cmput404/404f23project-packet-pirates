@@ -14,8 +14,13 @@ function App() {
   return (
     <>
       {/* <Landing /> */}
-      {/* <MainPage /> */}
-      <div className="w-[500px] m-32">
+      <div className="flex justify-center items-center">
+        <MainPage />
+      </div>
+
+      {/* <Post /> */}
+
+      {/* <div className="w-[500px] m-32">
         <CreatePost />
       </div>
       <div className="m-32 w-[1000px]">
@@ -23,7 +28,7 @@ function App() {
         <div className="m-32">
           <Profile />
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

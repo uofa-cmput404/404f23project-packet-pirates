@@ -1,7 +1,7 @@
 export default function Post() {
   return (
     <>
-      <li>
+      <li className="list-none">
         <div
           className="post-container flex flex-col w-full h-full bg-white border border-gray-300 p-4 rounded-lg"
           style={{ boxShadow: "8px 8px 0px 0px rgba(0, 0, 0, 0.2)" }}
