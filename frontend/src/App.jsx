@@ -3,6 +3,10 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Landing from "./components/login/Landing";
+import MainPage from "./components/site/MainPage";
+import CreatePost from "./components/main-feed/CreatePost";
+import Post from "./components/main-feed/Posts";
+import Profile from "./components/main-feed/Profile";
 
 import axios from 'axios';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -27,9 +31,9 @@ function App() {
 
   return (
     <>
-      <Landing />
-      <div className="flex justify-center items-center">
-        {/* <MainPage /> */}
+      {/* <Landing /> */}
+      <div className="flex justify-center items-center w-screen">
+        <MainPage />
       </div>
 
       {/* <Post /> */}
