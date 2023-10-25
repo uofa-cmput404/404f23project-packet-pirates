@@ -38,6 +38,8 @@ function App() {
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [authorInfo, setAuthorInfo] = useState({});
+
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,6 +49,7 @@ function App() {
       .then((response) => {
         console.log("Response from /api/author:", response);
         setIsLoggedIn(true);
+        setAuthorInfo(response.data);
         if (response.data.session_id) {
           // User is logged in
           setIsLoggedIn(true);
@@ -61,7 +64,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isLoggedIn ? <MainPage /> : <Landing />} />
+        <Route
+          path="/"
+          element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
+        />
         {/* <Route path="/main" element={<MainPage />} /> */}
       </Routes>
     </Router>

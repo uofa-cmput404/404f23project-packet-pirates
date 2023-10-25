@@ -1,4 +1,4 @@
-export default function Profile({ friends }) {
+export default function Profile({ friends, username }) {
   return (
     <>
       <div
@@ -13,7 +13,9 @@ export default function Profile({ friends }) {
               className="w-full h-full object-cover"
             />
           </div>
-
+          <div className="username mt-5">
+            <span className="text-2xl font-bold">{username}</span>
+          </div>
           <button className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10">
             Edit Profile
           </button>

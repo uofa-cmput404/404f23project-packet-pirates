@@ -5,12 +5,14 @@ import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 
-export default function MainPage() {
+export default function MainPage({ user }) {
   // should be fetched from backend
 
   axios.get("http://localhost:5000/api/posts").then((res) => {
     console.log(res.data);
   });
+
+  console.log(user.user.username);
 
   const posts = [
     {
@@ -87,7 +89,7 @@ export default function MainPage() {
           className="profile h-fit mx-auto"
           style={{ position: "sticky", top: "20px" }}
         >
-          <Profile friends={friends} />
+          <Profile friends={friends} username={user.user.username} />
         </div>
         <div className="feed flex flex-col ml-5 w-full mx-auto">
           <div className="">
