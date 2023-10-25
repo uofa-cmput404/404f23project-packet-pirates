@@ -1,13 +1,33 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   axios
+  //     .get("http://127.0.0.1:8000/api/author")
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       console.log("test");
+  //       if (res.data) {
+  //         navigate("/main");
+  //       } else {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error checking login status1111:", error);
+  //       navigate("/");
+  //     });
+  // }, []);
+
+  const [sessionid, setSessionid] = useState("");
 
   // const history = useHistory();
 
@@ -28,25 +48,28 @@ export default function Login() {
 
   const getAuthor = async (event) => {
     event.preventDefault();
+
+    // check if user is logged in
+
     const res = await axios
       .post("http://127.0.0.1:8000/api/login", content, {})
       .then((res) => res.data)
       .then(function (data) {
         console.log(data);
-        // history.push("/main");
-        navigate("/main");
-
         console.log("pushed");
+        window.location.reload(false);
         console.log(res);
       })
       .catch(console.log);
-    // console.log(res)
-    // console.log(res.data);
 
     const res2 = await axios
       .get("http://127.0.0.1:8000/api/author")
       .then((res) => res.data)
-      .then((data) => console.log(data));
+      .then((data) => console.log(data))
+      .then(function (data) {
+        console.log(data);
+        console.log("test2");
+      });
   };
 
   return (
