@@ -3,6 +3,7 @@ from .serializer import AuthorSerializer
 
 from django.shortcuts import render
 from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -69,11 +70,13 @@ class AuthorLogin(APIView):
             # return Response(data = serializer.data, headers = headers, status=status.HTTP_200_OK)
             return Response(data = serializer.data, status=status.HTTP_200_OK)
 
+# @login_required(login_url="http://127.0.0.1:3000/",)
 class AuthorLogout(APIView):
     def post(self, request):
         logout(request)
         return Response(status = status.HTTP_200_OK)
 
+# @login_required(login_url="http://127.0.0.1:3000/",)
 class AuthorView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)

@@ -31,9 +31,9 @@ function App() {
 
   return (
     <>
-      <Landing />
+      {/* <Landing /> */}
       <div className="flex justify-center items-center w-screen">
-        {/* <MainPage /> */}
+        <MainPage />
       </div>
 
       {/* <Post /> */}
