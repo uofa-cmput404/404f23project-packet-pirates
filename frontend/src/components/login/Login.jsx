@@ -22,17 +22,15 @@ const content = {
   'password':pass
 }
 
-  const getAuthor = async () => {
-
+  const getAuthor = async (event) => {
+    event.preventDefault()
     const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
       
     }).then(res => res.data)
     .then(function(data) {  
       console.log(data)
     }).catch(console.log)
-    console.log(res)  
-    // const res = await axios.post("http://localhost:8000/api/
-    // console.log(res.data);
+    // console.log(res)  
 
     const res2 = await axios.get("http://127.0.0.1:8000/api/author")
     .then(res => res.data)

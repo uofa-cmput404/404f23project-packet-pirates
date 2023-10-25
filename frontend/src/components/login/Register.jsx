@@ -49,8 +49,8 @@ export default function Register() {
         'password' : pass
     }
 
-    const SignUp = async () => {
-
+    const SignUp = async (event) => {
+        event.preventDefault()
         console.log(info)
 
         const res = await axios.post("http://127.0.0.1:8000/api/register", info)
