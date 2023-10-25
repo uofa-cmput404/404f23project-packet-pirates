@@ -32,7 +32,7 @@ export default function Register() {
     };
 
     const handleDisplayNameChange = event => {
-        setProfPic(event.target.value);
+        setdispName(event.target.value);
         console.log('user value is:', event.target.value);
     };
 
@@ -40,7 +40,7 @@ export default function Register() {
         'username' : user,
         'password' : pass,
         'github' : git,
-        'profile_picture' : profPic,
+        // 'profile_picture' : profPic,
         'display_name' : dispName
     }
 
