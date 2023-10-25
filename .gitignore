@@ -1,3 +1,8 @@
 venv
-__pycache__/
-*.pyc
+__pycache__
+*.pyc[cod]
+backend/socialdistribution/feed/__pycache__/
+backend/socialdistribution/login/__pycache__/
+backend/socialdistribution/post/__pycache__/
+backend/socialdistribution/socialdistribution/__pycache__/
+
