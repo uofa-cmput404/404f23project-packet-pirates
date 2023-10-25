@@ -3,7 +3,6 @@ from .serializer import AuthorSerializer
 
 from django.shortcuts import render
 from django.contrib.auth import get_user_model, login, logout
-from django.contrib.auth.decorators import login_required
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -41,7 +40,7 @@ class AuthorRegistration(APIView):
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
             if author:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.data, {'message': 'account has been created'}, status=status.HTTP_201_CREATED)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
@@ -57,26 +56,13 @@ class AuthorLogin(APIView):
         if serializer.is_valid(raise_exception=True):
             author = serializer.validate_user(data)
             login(request, author)
-            # session = request.session
-            # print(session.cookie)
-            # headers = {
-            #     # "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
-            #     "Access-Control-Allow-Methods ": "POST",
-            #     "Access-Control-Allow-Headers ": "Authorization",
-            #     "Access-Control-Allow-Credentials": "true",
-            #     # "Set-Cookie:" : f"{cookie}",
-            #     "Content-Type": "application/json"
-            # }
-            # return Response(data = serializer.data, headers = headers, status=status.HTTP_200_OK)
-            return Response(data = serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-# @login_required(login_url="http://127.0.0.1:3000/",)
 class AuthorLogout(APIView):
     def post(self, request):
         logout(request)
         return Response(status = status.HTTP_200_OK)
 
-# @login_required(login_url="http://127.0.0.1:3000/",)
 class AuthorView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)

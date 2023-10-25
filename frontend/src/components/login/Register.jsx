@@ -1,4 +1,66 @@
+import axios from "axios";
+import {useState} from 'react';
+
+
 export default function Register() {
+
+
+    const [user, setUser] = useState('');
+    const [pass, setPass] = useState('');
+    const [git, setGit] = useState('');
+    const [profPic, setProfPic] = useState('');
+    const [dispName, setdispName] = useState('');
+
+    const handleUserChange = event => {
+        setUser(event.target.value);
+        console.log('user value is:', event.target.value);
+    };
+    
+    const handlePassChange = event => {
+        setPass(event.target.value);
+        console.log('user value is:', event.target.value);
+    };
+
+    const handleGitChange = event => {
+        setGit(event.target.value);
+        console.log('user value is:', event.target.value);
+    };
+
+    const handleProfPicChange = event => {
+        setProfPic(event.target.value);
+        console.log('user value is:', event.target.value);
+    };
+
+    const handleDisplayNameChange = event => {
+        setProfPic(event.target.value);
+        console.log('user value is:', event.target.value);
+    };
+
+    const info = {
+        'username' : user,
+        'password' : pass,
+        'github' : git,
+        'profile_picture' : profPic,
+        'display_name' : dispName
+    }
+
+    const loginTest = {
+        'username' : user,
+        'password' : pass
+    }
+
+    const SignUp = async () => {
+
+        console.log(info)
+
+        const res = await axios.post("http://127.0.0.1:8000/api/register", info)
+        console.log(res.data)
+    
+        const res2 = await axios.post("http://127.0.0.1:8000/api/login", loginTest)
+        console.log(res2.data)
+
+      };
+
 
   return (
     <section className="bg-gradient-to-b from-primary-dark to-lm-light-bg dark:bg-gradient-to-b from-dm-dark-bg to-primary-colour">
@@ -22,6 +84,7 @@ export default function Register() {
                         id="username"
                         className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Username..."
+                        onChange={handleUserChange}
                         required
                     />
                     </div>
@@ -38,6 +101,7 @@ export default function Register() {
                         id="password"
                         placeholder="************"
                         className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={handlePassChange}
                         required
                     />
                     </div>
@@ -54,6 +118,7 @@ export default function Register() {
                         id="github"
                         placeholder="Enter a GitHub URL..."
                         className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={handleGitChange}
                     />
                     </div>
                     <div>
@@ -69,6 +134,7 @@ export default function Register() {
                         id="picture"
                         placeholder="Enter a Picture URL..."
                         className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={handleProfPicChange}
                     />
                     </div>
                     <div>
@@ -84,10 +150,13 @@ export default function Register() {
                         id="displayname"
                         placeholder="Enter a Display Name..."
                         className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={handleDisplayNameChange}
                     />
                     </div>
 
-                    <button className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+                    <button 
+                        onClick={SignUp}
+                        className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
                     Sign Up
                     </button>
                     

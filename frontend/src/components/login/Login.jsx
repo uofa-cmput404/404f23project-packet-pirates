@@ -1,14 +1,29 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
+import {useState} from 'react';
 export default function Login() {
 
+const [user, setUser] = useState('');
+const [pass, setPass] = useState('');
+
+const handleUserChange = event => {
+  setUser(event.target.value);
+  console.log('user value is:', event.target.value);
+};
+
+const handlePassChange = event => {
+  setPass(event.target.value);
+  console.log('pass value is:', event.target.value);
+};
+
 const content = {
-  'username':'packetpirates',
-  'password':'cmput404'
+  'username':user,
+  'password':pass
 }
 
   const getAuthor = async () => {
+
     const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
       
     }).then(res => res.data)
@@ -58,6 +73,7 @@ const content = {
                     name="email"
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={handleUserChange}
                     placeholder=""
                     required
                   />
@@ -75,6 +91,7 @@ const content = {
                     id="password"
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={handlePassChange}
                     required
                   />
                 </div>
