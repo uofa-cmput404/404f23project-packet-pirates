@@ -1,40 +1,52 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
-import {useState} from 'react';
+import { useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 export default function Login() {
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const navigate = useNavigate();
 
-const [user, setUser] = useState('');
-const [pass, setPass] = useState('');
+  // const history = useHistory();
 
-const handleUserChange = event => {
-  setUser(event.target.value);
-  console.log('user value is:', event.target.value);
-};
+  const handleUserChange = (event) => {
+    setUser(event.target.value);
+    console.log("user value is:", event.target.value);
+  };
 
-const handlePassChange = event => {
-  setPass(event.target.value);
-  console.log('pass value is:', event.target.value);
-};
+  const handlePassChange = (event) => {
+    setPass(event.target.value);
+    console.log("pass value is:", event.target.value);
+  };
 
-const content = {
-  'username':user,
-  'password':pass
-}
+  const content = {
+    username: user,
+    password: pass,
+  };
 
   const getAuthor = async (event) => {
-    event.preventDefault()
-    const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
-      
-    }).then(res => res.data)
-    .then(function(data) {  
-      console.log(data)
-    }).catch(console.log)
-    // console.log(res)  
+    event.preventDefault();
+    const res = await axios
+      .post("http://127.0.0.1:8000/api/login", content, {})
+      .then((res) => res.data)
+      .then(function (data) {
+        console.log(data);
+        // history.push("/main");
+        navigate("/main");
 
-    const res2 = await axios.get("http://127.0.0.1:8000/api/author")
-    .then(res => res.data)
-    .then(data => console.log(data));
+        console.log("pushed");
+        console.log(res);
+      })
+      .catch(console.log);
+    // console.log(res)
+    // console.log(res.data);
+
+    const res2 = await axios
+      .get("http://127.0.0.1:8000/api/author")
+      .then((res) => res.data)
+      .then((data) => console.log(data));
   };
 
   return (

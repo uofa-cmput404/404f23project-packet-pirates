@@ -15,7 +15,7 @@ export default function MainPage() {
   const posts = [
     {
       user: {
-        username: "USERNAME",
+        username: "obama",
         pfp: "https://picsum.photos/200",
       },
       title: "TITLE OF POST",
@@ -59,23 +59,23 @@ export default function MainPage() {
 
   const friends = [
     {
-      username: "USERNAME",
+      username: "USERNAME1",
       pfp: "https://picsum.photos/200",
     },
     {
-      username: "USERNAME",
+      username: "USERNAME2",
       pfp: "https://picsum.photos/200",
     },
     {
-      username: "USERNAME",
+      username: "USERNAME3",
       pfp: "https://picsum.photos/200",
     },
     {
-      username: "USERNAME",
+      username: "USERNAME4",
       pfp: "https://picsum.photos/200",
     },
     {
-      username: "USERNAME",
+      username: "USERNAME5",
       pfp: "https://picsum.photos/200",
     },
   ];
