@@ -4,21 +4,74 @@ import Profile from "../main-feed/Profile";
 import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function MainPage({ user }) {
-  // should be fetched from backend
-  axios
-    .get("http://localhost:8000/api/posts")
-    .then((res) => {
-      console.log(res.data);
-    })
-    .catch((error) => {
-      console.error("Error getting posts:", error);
-    });
 
-  console.log(user.user.username);
+  //const [posts, setPosts] = useState([])
+  //const [friends, setFriends] = useState()
+  //const [notifications, getNotifications] = useState()
 
-  // example of posts json
+
+  // useEffect(() => {
+    //Get data on homepage load
+
+    // const getPosts = async () => {
+
+    //   const postsRes = await axios
+    //   .get("http://localhost:8000/api/posts")
+    //   .then((postsRes) => {
+    //     console.log(postsRes.data);
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting posts:", error);
+    //   });
+
+    //   console.log(postsRes.data)
+    //   setPosts(postsRes.data)
+
+    // };
+
+    // const getFriends = async () => {
+
+    //   const friendsRes = await axios
+    //   .get("http://localhost:8000/api/friends")
+    //   .then((friendsRes) => {
+    //     console.log(friendsRes.data);
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting posts:", error);
+    //   });
+
+    //   setFriends(friendsRes.data)
+
+    // };
+
+    // const getNotifications = async () => {
+
+    //   const notifsRes = await axios
+    //   .get("http://localhost:8000/api/notifications")
+    //   .then((notifsRes) => {
+    //     console.log(notifsRes.data);
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting posts:", error);
+    //   });
+
+    //   setFriends(notifsRes.data)
+
+    // };
+
+    // getPosts();
+    //getFriends();
+    //getNotifications();
+
+  // }, []);
+
+  //example of posts json
   const posts = [
     {
       user: {
@@ -64,7 +117,7 @@ export default function MainPage({ user }) {
     },
   ];
 
-  // example of friends json
+  //example of friends json
   const friends = [
     {
       username: "USERNAME1",
