@@ -43,7 +43,7 @@ function App() {
   // const navigate = useNavigate();
 
   useEffect(() => {
-    // Use Axios to check if the user has the session ID and is logged in
+    // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
       .get("/api/author")
       .then((response) => {
@@ -72,29 +72,6 @@ function App() {
       </Routes>
     </Router>
   );
-
-  // return (
-  //   <>
-  //     <Router>
-  //       <Routes>
-  //         <Route path="/" element={<Landing />} />
-  //         <Route path="/main" element={<MainPage />} />
-  //       </Routes>
-  //     </Router>
-
-  //     {/* <Post /> */}
-
-  //     {/* <div className="w-[500px] m-32">
-  //       <CreatePost />
-  //     </div>
-  //     <div className="m-32 w-[1000px]">
-  //       <Post />
-  //       <div className="m-32">
-  //         <Profile />
-  //       </div>
-  //     </div> */}
-  //   </>
-  // );
 }
 
 <script>const cors = require('cors'); app.use(cors(corsOptions));</script>;
