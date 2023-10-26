@@ -19,6 +19,7 @@ import {
 } from "react-router-dom";
 
 import axios from "axios";
+import Register from "./components/login/Register";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
@@ -68,7 +69,7 @@ function App() {
           path="/"
           element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
         />
-        {/* <Route path="/main" element={<MainPage />} /> */}
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
