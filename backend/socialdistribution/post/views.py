@@ -23,6 +23,7 @@ from login.serializer import *
 
 from post.validate import *
 
+import uuid
 # Create your views here.
 
 
@@ -45,7 +46,7 @@ class CreatePost(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        # print(request)
+        # print(request.data['post_id'])
         # author = AppAuthor.objects.get(user_id = request.user.user_id)
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
@@ -53,6 +54,23 @@ class CreatePost(APIView):
     
         # validated_data = custom_validation(request.data)
         serializer = PostSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+    
+
+class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        post_id = uuid.UUID(request.data['post_id'])
+
+        # validated_data = custom_validation(request.data)
+        post = Post.objects.get(post_id = post_id)
+        serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_200_OK)
