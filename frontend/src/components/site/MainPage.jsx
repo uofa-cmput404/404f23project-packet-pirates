@@ -7,13 +7,18 @@ import axios from "axios";
 
 export default function MainPage({ user }) {
   // should be fetched from backend
-
-  axios.get("http://localhost:5000/api/posts").then((res) => {
-    console.log(res.data);
-  });
+  axios
+    .get("http://localhost:8000/api/posts")
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((error) => {
+      console.error("Error getting posts:", error);
+    });
 
   console.log(user.user.username);
 
+  // example of posts json
   const posts = [
     {
       user: {
@@ -59,6 +64,7 @@ export default function MainPage({ user }) {
     },
   ];
 
+  // example of friends json
   const friends = [
     {
       username: "USERNAME1",
@@ -79,6 +85,25 @@ export default function MainPage({ user }) {
     {
       username: "USERNAME5",
       pfp: "https://picsum.photos/200",
+    },
+  ];
+
+  // example of notifications json
+  const notifications = [
+    {
+      username: "USERNAME1",
+      imageSrc: "https://source.unsplash.com/200x200",
+      type: "Requested to follow",
+    },
+    {
+      username: "USERNAME2",
+      imageSrc: "https://source.unsplash.com/200x201",
+      type: "Liked your post",
+    },
+    {
+      username: "USERNAME3",
+      imageSrc: "https://source.unsplash.com/200x202",
+      type: "Commented on your post",
     },
   ];
 
@@ -115,7 +140,7 @@ export default function MainPage({ user }) {
           className="notifications h-fit mx-auto ml-5"
           style={{ position: "sticky", top: "20px" }}
         >
-          <Notifications />
+          <Notifications notifications={notifications} />
         </div>
       </div>
     </>
