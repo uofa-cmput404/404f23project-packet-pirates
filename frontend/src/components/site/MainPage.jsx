@@ -109,38 +109,40 @@ export default function MainPage({ user }) {
 
   return (
     <>
-      <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
-        <div
-          className="profile h-fit mx-auto"
-          style={{ position: "sticky", top: "20px" }}
-        >
-          <Profile friends={friends} username={user.user.username} />
-        </div>
-        <div className="feed flex flex-col ml-5 w-full mx-auto">
-          <div className="">
-            <CreatePost />
+      <div className="flex justify-center items-center w-screen">
+        <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
+          <div
+            className="profile h-fit mx-auto"
+            style={{ position: "sticky", top: "20px" }}
+          >
+            <Profile friends={friends} username={user.user.username} />
           </div>
-          <div className="feed_content mt-5">
-            <ul>
-              {posts.map((post) => (
-                <Post
-                  user={post.user}
-                  title={post.title}
-                  description={post.description}
-                  img={post.img}
-                  likes={post.likes}
-                  comments={post.comments}
-                  key={post.id}
-                />
-              ))}
-            </ul>
+          <div className="feed flex flex-col ml-5 w-full mx-auto">
+            <div className="">
+              <CreatePost />
+            </div>
+            <div className="feed_content mt-5">
+              <ul>
+                {posts.map((post) => (
+                  <Post
+                    user={post.user}
+                    title={post.title}
+                    description={post.description}
+                    img={post.img}
+                    likes={post.likes}
+                    comments={post.comments}
+                    key={post.id}
+                  />
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-        <div
-          className="notifications h-fit mx-auto ml-5"
-          style={{ position: "sticky", top: "20px" }}
-        >
-          <Notifications notifications={notifications} />
+          <div
+            className="notifications h-fit mx-auto ml-5"
+            style={{ position: "sticky", top: "20px" }}
+          >
+            <Notifications notifications={notifications} />
+          </div>
         </div>
       </div>
     </>
