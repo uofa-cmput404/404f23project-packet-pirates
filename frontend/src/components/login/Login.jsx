@@ -1,40 +1,43 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
-import {useState} from 'react';
+import { useEffect, useState } from "react";
+
 export default function Login() {
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
 
-const [user, setUser] = useState('');
-const [pass, setPass] = useState('');
+  const [sessionid, setSessionid] = useState("");
 
-const handleUserChange = event => {
-  setUser(event.target.value);
-  console.log('user value is:', event.target.value);
-};
+  const handleUserChange = (event) => {
+    setUser(event.target.value);
+    console.log("user value is:", event.target.value);
+  };
 
-const handlePassChange = event => {
-  setPass(event.target.value);
-  console.log('pass value is:', event.target.value);
-};
+  const handlePassChange = (event) => {
+    setPass(event.target.value);
+    console.log("pass value is:", event.target.value);
+  };
 
-const content = {
-  'username':user,
-  'password':pass
-}
+  const content = {
+    username: user,
+    password: pass,
+  };
 
   const getAuthor = async (event) => {
-    event.preventDefault()
-    const res = await axios.post("http://127.0.0.1:8000/api/login", content, {
-      
-    }).then(res => res.data)
-    .then(function(data) {  
-      console.log(data)
-    }).catch(console.log)
-    // console.log(res)  
+    event.preventDefault();
 
-    const res2 = await axios.get("http://127.0.0.1:8000/api/author")
-    .then(res => res.data)
-    .then(data => console.log(data));
+    // check if login was sucessful, then reloads the window
+    const res = await axios
+      .post("http://127.0.0.1:8000/api/login", content, {})
+      .then((res) => res.data)
+      .then(function (data) {
+        console.log(data);
+        console.log("pushed");
+        window.location.reload(false);
+        console.log(res);
+      })
+      .catch(console.log);
   };
 
   return (
@@ -130,7 +133,7 @@ const content = {
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don't have an account yet?{" "}
                   <a
-                    href="#"
+                    href="/register"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Sign up
