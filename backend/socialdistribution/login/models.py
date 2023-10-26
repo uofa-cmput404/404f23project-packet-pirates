@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+import uuid
+
 
 
 class AppAuthorManager(BaseUserManager):
@@ -28,20 +30,20 @@ class AppAuthorManager(BaseUserManager):
 
 
 class AppAuthor(AbstractBaseUser, PermissionsMixin):
-    user_id = models.AutoField(primary_key =True)
-    username = models.CharField(max_length=40, unique=True, default="Temporary")
-    display_name = models.CharField(max_length=40)
+    user_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True)
+    username = models.CharField(max_length=40, unique=True, blank=False)
+    display_name = models.CharField(max_length=40, blank=True, null=True)
 
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
+    first_name = models.CharField(max_length=20, blank=True, null=True)
+    last_name = models.CharField(max_length=20, blank=True, null=True)
 
     date_of_birth = models.DateField(blank=True, null=True)
 
-    github = models.CharField(max_length=50, blank=True)
+    profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
 
-    profile_picture = models.CharField(max_length=50, blank=True)
+    github = models.URLField(max_length=50, blank=True)
 
-    url = models.CharField(max_length=50, blank=True)
+    url = models.URLField(max_length=50, blank=True)
 
     is_active = models.BooleanField(default=True)
 

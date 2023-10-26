@@ -1,22 +1,4 @@
-export default function Notifications() {
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
-
+export default function Notifications({ notifications }) {
   return (
     <button
       className="notifications-container flex flex-col justify-start items-start w-fit h-full bg-white border border-gray-300 p-4 rounded-lg divide-y"

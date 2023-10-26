@@ -6,7 +6,7 @@ export default function Landing() {
     <>
       <div className="login h-screen w-screen">
         <Login />
-        <Register/>
+        {/* <Register/> */}
       </div>
     </>
   );
