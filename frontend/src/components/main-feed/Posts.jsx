@@ -7,19 +7,21 @@ export default function Post({
   description,
   img,
   likes,
-  key,
+  id
 }) {
+
+  console.log(user, title, description, img, likes, id)
 
   const [comments, setComments] = useState(null)
 
   useEffect(() => {
-    //Get data on homepage load
+    //Get data on post load
 
     const getComments = async () => {
 
-      console.log(user)
+      console.log("COMMENTS:", id)
 
-      let commentsUrl = "http://127.0.0.1:8000/api/author/" + key + "/feedposts"
+      let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
 
       const commentsRes = await axios
       .get(commentsUrl)
@@ -60,7 +62,7 @@ export default function Post({
 
       })
       .catch((error) => {
-        console.error("Error getting posts:", error);
+        console.error("Error getting comments:", error);
       });
 
     };
@@ -71,7 +73,7 @@ export default function Post({
 
 
 
-
+  try {
   return (
     <>
       <li className="list-none mb-5">
@@ -127,4 +129,8 @@ export default function Post({
       </li>
     </>
   );
+
+  } catch {
+    return(<></>)
+  }
 }

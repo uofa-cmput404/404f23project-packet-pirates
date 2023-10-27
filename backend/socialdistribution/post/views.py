@@ -8,17 +8,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import permissions, status
-from rest_framework import generics
-
 
 from django.http import HttpResponseRedirect, HttpResponse
 
 from post.models import Post, PostLike
 from feed.models import Friends
-from login.models import AppAuthor
+
+from rest_framework import generics
 from .models import PostLike
 
 from .serializer import *
+from login.models import AppAuthor
 
 from login.serializer import *
 
@@ -104,7 +104,7 @@ class GetPostComments(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
-        post_id = uuid.UUID(request.data['post_id'])
+        post_id = uuid.UUID(pk)
         comments = Comment.objects.filter(post_id = post_id)
         serializer = CommentSerializer(comments, many = True)
         

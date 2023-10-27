@@ -21,15 +21,15 @@ export default function MainPage({ user }) {
 
     const getPosts = async () => {
 
-      console.log(user)
+      console.log("USER", user)
 
       let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
 
       const postsRes = await axios
       .get(postsUrl)
       .then((postsRes) => {
-        console.log(postsRes.data.Posts)
-        
+        console.log("POSTSRES", postsRes.data.Posts[0])
+
         setPosts(postsRes.data.Posts.map((post) => (
           <Post
             user={user}
@@ -37,13 +37,13 @@ export default function MainPage({ user }) {
             description={post.content}
             img={post.img_url}
             likes={post.likes_count}
-            key={post.post_id}
+            id={post.post_id}
           />
         )))
 
-        setIsLoading(false)
+          console.log("POSTS", posts)
 
-      })
+      }).then(() => { setIsLoading(false) })
       .catch((error) => {
         console.error("Error getting posts:", error);
       });
