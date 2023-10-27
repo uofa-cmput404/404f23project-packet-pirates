@@ -10,16 +10,13 @@ export default function Post({
   id
 }) {
 
-  console.log(user, title, description, img, likes, id)
-
   const [comments, setComments] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     //Get data on post load
 
     const getComments = async () => {
-
-      console.log("COMMENTS:", id)
 
       let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
 
@@ -27,7 +24,8 @@ export default function Post({
       .get(commentsUrl)
       .then((commentsRes) => {
 
-        console.log("COMMENTSRES", commentsRes.data.Comments)
+        //Result of comments query
+        //console.log("COMMENTSRES", commentsRes.data.Comments)
         
         setComments(commentsRes.data.Comments.map((comment, index) => (
           <li className="mt-4" key={index}>
@@ -43,7 +41,7 @@ export default function Post({
                 <div className="engagement flex flex-col ml-4">
                   <div className="username">
                     <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                      {comment.user.username}
+                      {comment.author_username}
                     </span>
                   </div>
                   <div className="">
@@ -52,7 +50,7 @@ export default function Post({
                   </div>
                 </div>
                 <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
-                  <div className="comment">{comment.comment}</div>
+                  <div className="comment">{comment.text}</div>
                 </div>
               </div>
             </div>
@@ -74,7 +72,7 @@ export default function Post({
 
 
 
-  try {
+
   return (
     <>
       <li className="list-none mb-5">
@@ -85,7 +83,7 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={user.pfp}
+                src={user.profile_picture}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -131,7 +129,4 @@ export default function Post({
     </>
   );
 
-  } catch {
-    return(<></>)
-  }
 }

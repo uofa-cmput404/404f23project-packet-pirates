@@ -21,37 +21,35 @@ export default function MainPage({ user }) {
 
     const getPosts = async () => {
 
-      console.log("USER", user)
-
       let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
 
       const postsRes = await axios
       .get(postsUrl)
       .then((postsRes) => {
-        console.log("POSTSRES", postsRes.data.Posts[0])
+        
+        //Result of post query
+        //console.log("POSTSRES", postsRes.data.Posts[0])
 
-        setPosts(postsRes.data.Posts.map((post) => (
+        setPosts(postsRes.data.Posts.map((post, index) => (
           <Post
+            key={index}
             user={user}
             title={post.title}
             description={post.content}
-            img={post.img_url}
+            img={post.image_url}
             likes={post.likes_count}
             id={post.post_id}
           />
         )))
-
-          console.log("POSTS", posts)
 
       }).then(() => { setIsLoading(false) })
       .catch((error) => {
         console.error("Error getting posts:", error);
       });
 
-      //console.log(postsRes.data)
-      //setPosts(postsRes.data)
-
     };
+
+    /////////// This stuff will probably have to be implemented in the respective components //////////////////////
 
     // const getFriends = async () => {
 
@@ -180,7 +178,7 @@ export default function MainPage({ user }) {
     },
   ];
 
-  try{
+
   return (
     <>
       <div className="flex justify-center items-center w-screen">
@@ -211,8 +209,4 @@ export default function MainPage({ user }) {
       </div>
     </>
   );
-  } catch {
-    return(<></>)
-  }
-
 }
