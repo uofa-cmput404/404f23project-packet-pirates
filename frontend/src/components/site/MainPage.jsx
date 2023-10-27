@@ -8,30 +8,36 @@ import { useEffect, useState } from "react";
 
 export default function MainPage({ user }) {
 
-  //const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState(null)
   //const [friends, setFriends] = useState()
   //const [notifications, getNotifications] = useState()
 
 
-  // useEffect(() => {
+  useEffect(() => {
     //Get data on homepage load
 
-    // const getPosts = async () => {
+    const getPosts = async () => {
 
-    //   const postsRes = await axios
-    //   .get("http://localhost:8000/api/posts")
-    //   .then((postsRes) => {
-    //     console.log(postsRes.data);
+      console.log(user)
 
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting posts:", error);
-    //   });
+      let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
 
-    //   console.log(postsRes.data)
-    //   setPosts(postsRes.data)
+      const postsRes = await axios
+      .get(postsUrl)
+      .then((postsRes) => {
+        console.log("POSTSRES", postsRes.data.Posts);
+        setPosts(postsRes.data.Posts)
+        console.log("POSTS", posts)
+      })
+      .catch((error) => {
+        console.error("Error getting posts:", error);
+      });
 
-    // };
+
+      //console.log(postsRes.data)
+      //setPosts(postsRes.data)
+
+    };
 
     // const getFriends = async () => {
 
@@ -42,7 +48,7 @@ export default function MainPage({ user }) {
 
     //   })
     //   .catch((error) => {
-    //     console.error("Error getting posts:", error);
+    //     console.error("Error getting friends:", error);
     //   });
 
     //   setFriends(friendsRes.data)
@@ -58,64 +64,64 @@ export default function MainPage({ user }) {
 
     //   })
     //   .catch((error) => {
-    //     console.error("Error getting posts:", error);
+    //     console.error("Error getting notifications:", error);
     //   });
 
     //   setFriends(notifsRes.data)
 
     // };
 
-    // getPosts();
+    getPosts();
     //getFriends();
     //getNotifications();
 
-  // }, []);
+  }, []);
 
   //example of posts json
-  const posts = [
-    {
-      user: {
-        username: "obama",
-        pfp: "https://picsum.photos/200",
-      },
-      title: "TITLE OF POST",
-      description: "THIS IS A POST",
-      img: "https://picsum.photos/200",
-      likes: 4,
-      id: crypto.randomUUID(),
-      comments: [
-        {
-          user: {
-            username: "USERNAME",
-            pfp: "https://picsum.photos/200",
-          },
-          likes: 4,
-          comment: "sfdsfsdfsdfdsfsd",
-        },
-      ],
-    },
-    {
-      user: {
-        username: "Joe",
-        pfp: "https://picsum.photos/200",
-      },
-      title: "Joe's Post",
-      description: "This is Joe's post",
-      img: "https://picsum.photos/200",
-      likes: 4,
-      id: crypto.randomUUID(),
-      comments: [
-        {
-          user: {
-            username: "USERNAME",
-            pfp: "https://picsum.photos/200",
-          },
-          likes: 4,
-          comment: "sfdsfsdfsdfdsfsd",
-        },
-      ],
-    },
-  ];
+  // const posts = [
+  //   {
+  //     user: {
+  //       username: "obama",
+  //       pfp: "https://picsum.photos/200",
+  //     },
+  //     title: "TITLE OF POST",
+  //     description: "THIS IS A POST",
+  //     img: "https://picsum.photos/200",
+  //     likes: 4,
+  //     id: crypto.randomUUID(),
+  //     comments: [
+  //       {
+  //         user: {
+  //           username: "USERNAME",
+  //           pfp: "https://picsum.photos/200",
+  //         },
+  //         likes: 4,
+  //         comment: "sfdsfsdfsdfdsfsd",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     user: {
+  //       username: "Joe",
+  //       pfp: "https://picsum.photos/200",
+  //     },
+  //     title: "Joe's Post",
+  //     description: "This is Joe's post",
+  //     img: "https://picsum.photos/200",
+  //     likes: 4,
+  //     id: crypto.randomUUID(),
+  //     comments: [
+  //       {
+  //         user: {
+  //           username: "USERNAME",
+  //           pfp: "https://picsum.photos/200",
+  //         },
+  //         likes: 4,
+  //         comment: "sfdsfsdfsdfdsfsd",
+  //       },
+  //     ],
+  //   },
+  // ];
 
   //example of friends json
   const friends = [
@@ -159,6 +165,9 @@ export default function MainPage({ user }) {
       type: "Commented on your post",
     },
   ];
+
+
+  if (!posts) return (<></>)
 
   return (
     <>

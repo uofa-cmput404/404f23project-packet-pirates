@@ -12,6 +12,7 @@ from rest_framework import permissions, status
 from django.http import HttpResponseRedirect, HttpResponse
 
 from post.models import Post, PostLike
+from feed.models import Friends
 
 from rest_framework import generics
 from .models import PostLike
@@ -27,7 +28,7 @@ import uuid
 # Create your views here.
 
 
-class GetPost(APIView):
+class GetAuthorsPosts(APIView):
     '''
     Get posts that the specific author has posted in the database
     '''
@@ -37,6 +38,26 @@ class GetPost(APIView):
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
         # posts = Post.objects.all()
+        serializer = PostSerializer(posts, many = True)
+        return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
+    
+
+class GetFeedPosts(APIView):
+    '''
+    Get posts that should show up in a author's feed
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, pk):
+        posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
+
+        friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
+
+        for friend in friends:
+
+            posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
+
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 

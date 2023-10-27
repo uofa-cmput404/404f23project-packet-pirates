@@ -11,6 +11,7 @@ from rest_framework import permissions, status
 
 from .validate import *
 from .serializer import *
+from .models import *
 
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
