@@ -46,6 +46,10 @@ class Comment(models.Model):
 
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
 
+    author_picture = models.URLField(max_length=200, null=True, blank=True)
+
+    author_username = models.CharField(max_length=200, null=True, blank=True)
+
     text = models.TextField(max_length=256)
 
     date_time = models.DateTimeField(auto_now_add=True, null = True, blank = True)
