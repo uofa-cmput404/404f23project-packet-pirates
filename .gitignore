@@ -1,4 +1,5 @@
 venv
+.venv
 __pycache__/
 *.pyc[cod]
 backend/socialdistribution/feed/__pycache__/
