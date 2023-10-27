@@ -3,12 +3,10 @@ import {useState} from 'react';
 
 
 export default function Register() {
-
-
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
-    const [profPic, setProfPic] = useState('');
+    const [profPic, setProfPic] = useState({ preview: "", raw: "" });
     const [dispName, setdispName] = useState('');
 
     const handleUserChange = event => {
@@ -27,8 +25,12 @@ export default function Register() {
     };
 
     const handleProfPicChange = event => {
-        setProfPic(event.target.value);
-        console.log('user value is:', event.target.value);
+        if (e.target.files.length) {
+            setProfPic({
+              preview: URL.createObjectURL(e.target.files[0]),
+              raw: e.target.files[0]
+            });
+          }
     };
 
     const handleDisplayNameChange = event => {
@@ -58,7 +60,6 @@ export default function Register() {
     
         const res2 = await axios.post("http://127.0.0.1:8000/api/login", loginTest)
         console.log(res2.data)
-
       };
 
 
@@ -121,22 +122,7 @@ export default function Register() {
                         onChange={handleGitChange}
                     />
                     </div>
-                    <div>
-                    <label
-                        htmlFor="picture"
-                        className="block mb-2 text-sm font-medium text-lm-custom-black dark:text-white"
-                    >
-                        Enter a Profile Picture Url (Optional)
-                    </label>
-                    <input
-                        type="picture"
-                        name="picture"
-                        id="picture"
-                        placeholder="Enter a Picture URL..."
-                        className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        onChange={handleProfPicChange}
-                    />
-                    </div>
+
                     <div>
                     <label
                         htmlFor="displayname"
@@ -154,10 +140,27 @@ export default function Register() {
                     />
                     </div>
 
+                    <div>
+                    <label htmlFor="upload-button">
+                        {profPic.preview ? (
+                        <img src={profPic.preview} alt="dummy" width="300" height="300" />
+                        ) : (<h5 className="text-center">Upload your photo</h5>)}
+                    </label>
+                    <input
+                        type="file"
+                        
+                        id="select-image"
+                        style={{ display: "none" }}
+                        onChange={handleProfPicChange}
+                    />
+                    <br />
+                    <button onClick={handleProfPicChange}>Upload</button>
+                    </div>
+
                     <button 
                         onClick={SignUp}
                         className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
-                    Sign Up
+                        Sign Up
                     </button>
                     
                 </form>

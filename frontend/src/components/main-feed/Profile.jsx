@@ -1,4 +1,8 @@
+import { Navigate, useNavigate } from "react-router-dom";
+
 export default function Profile({ friends, username }) {
+  const navigate = useNavigate();
+  
   return (
     <>
       <div
@@ -16,7 +20,9 @@ export default function Profile({ friends, username }) {
           <div className="username mt-5">
             <span className="text-2xl font-bold">{username}</span>
           </div>
-          <button className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10">
+          <button 
+            onClick={() => navigate('/profilepage')}
+            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10">
             Edit Profile
           </button>
           <div className="flex flex-col items-center">

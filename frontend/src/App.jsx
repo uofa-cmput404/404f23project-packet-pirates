@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import Landing from "./components/login/Landing";
 import MainPage from "./components/site/MainPage";
@@ -20,6 +18,8 @@ import {
 
 import axios from "axios";
 import Register from "./components/login/Register";
+import ProfilePage from "./components/profilepage/ProfilePage";
+
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
@@ -70,6 +70,7 @@ function App() {
           element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/profilepage" element={<ProfilePage user={authorInfo}/>} />
       </Routes>
     </Router>
   );
