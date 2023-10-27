@@ -8,13 +8,16 @@ import { useEffect, useState } from "react";
 
 export default function MainPage({ user }) {
 
+  const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
   //const [friends, setFriends] = useState()
   //const [notifications, getNotifications] = useState()
 
 
+
   useEffect(() => {
     //Get data on homepage load
+    setIsLoading(true)
 
     const getPosts = async () => {
 
@@ -25,14 +28,25 @@ export default function MainPage({ user }) {
       const postsRes = await axios
       .get(postsUrl)
       .then((postsRes) => {
-        console.log("POSTSRES", postsRes.data.Posts);
-        setPosts(postsRes.data.Posts)
-        console.log("POSTS", posts)
+        console.log(postsRes.data.Posts)
+        
+        setPosts(postsRes.data.Posts.map((post) => (
+          <Post
+            user={user}
+            title={post.title}
+            description={post.content}
+            img={post.img_url}
+            likes={post.likes_count}
+            key={post.post_id}
+          />
+        )))
+
+        setIsLoading(false)
+
       })
       .catch((error) => {
         console.error("Error getting posts:", error);
       });
-
 
       //console.log(postsRes.data)
       //setPosts(postsRes.data)
@@ -166,9 +180,7 @@ export default function MainPage({ user }) {
     },
   ];
 
-
-  if (!posts) return (<></>)
-
+  try{
   return (
     <>
       <div className="flex justify-center items-center w-screen">
@@ -185,17 +197,7 @@ export default function MainPage({ user }) {
             </div>
             <div className="feed_content mt-5">
               <ul>
-                {posts.map((post) => (
-                  <Post
-                    user={post.user}
-                    title={post.title}
-                    description={post.description}
-                    img={post.img}
-                    likes={post.likes}
-                    comments={post.comments}
-                    key={post.id}
-                  />
-                ))}
+                {posts}
               </ul>
             </div>
           </div>
@@ -209,4 +211,8 @@ export default function MainPage({ user }) {
       </div>
     </>
   );
+  } catch {
+    return(<></>)
+  }
+
 }
