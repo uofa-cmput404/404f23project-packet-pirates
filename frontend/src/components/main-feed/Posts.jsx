@@ -26,6 +26,11 @@ export default function Post({
       const commentsRes = await axios
       .get(commentsUrl)
       .then((commentsRes) => {
+
+        let autherUrl = "http://127.0.0.1:8000/api/author/" 
+
+      })
+      .then((commentsRes, authorRes) => {
         console.log(commentsRes.data.Comments)
         
         setComments(commentsRes.data.Comments.map((comment, index) => (
