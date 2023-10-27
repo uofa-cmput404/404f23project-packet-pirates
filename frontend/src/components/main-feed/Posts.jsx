@@ -27,11 +27,7 @@ export default function Post({
       .get(commentsUrl)
       .then((commentsRes) => {
 
-        let autherUrl = "http://127.0.0.1:8000/api/author/" 
-
-      })
-      .then((commentsRes, authorRes) => {
-        console.log(commentsRes.data.Comments)
+        console.log("COMMENTSRES", commentsRes.data.Comments)
         
         setComments(commentsRes.data.Comments.map((comment, index) => (
           <li className="mt-4" key={index}>
@@ -39,7 +35,7 @@ export default function Post({
               <div className="comment flex flex-row">
                 <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                   <img
-                    src={comment.user.pfp}
+                    src={comment.author_picture}
                     alt="profile"
                     className="w-full h-full object-cover"
                   />
