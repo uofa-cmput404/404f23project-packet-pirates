@@ -20,6 +20,7 @@ import {
 
 import axios from "axios";
 import Register from "./components/login/Register";
+import ViewProfile from "./components/view-profile/ViewProfile";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
@@ -70,6 +71,7 @@ function App() {
           element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/user/:id" element={<ViewProfile />} />
       </Routes>
     </Router>
   );
