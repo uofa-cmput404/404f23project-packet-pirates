@@ -1,11 +1,78 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 export default function Post({
   user,
   title,
   description,
   img,
   likes,
-  comments,
+  id
 }) {
+
+  const [comments, setComments] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    //Get data on post load
+
+    const getComments = async () => {
+
+      let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
+
+      const commentsRes = await axios
+      .get(commentsUrl)
+      .then((commentsRes) => {
+
+        //Result of comments query
+        //console.log("COMMENTSRES", commentsRes.data.Comments)
+        
+        setComments(commentsRes.data.Comments.map((comment, index) => (
+          <li className="mt-4" key={index}>
+            <div className="comments">
+              <div className="comment flex flex-row">
+                <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                  <img
+                    src={comment.author_picture}
+                    alt="profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="engagement flex flex-col ml-4">
+                  <div className="username">
+                    <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                      {comment.author_username}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span>Likes</span>
+                    <span className="ml-3">{comment.likes}</span>
+                  </div>
+                </div>
+                <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
+                  <div className="comment">{comment.text}</div>
+                </div>
+              </div>
+            </div>
+          </li>
+        )))
+
+        setIsLoading(false)
+
+      })
+      .catch((error) => {
+        console.error("Error getting comments:", error);
+      });
+
+    };
+
+    getComments();
+
+  }, []);
+
+
+
+
   return (
     <>
       <li className="list-none mb-5">
@@ -16,7 +83,7 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={user.pfp}
+                src={user.profile_picture}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -54,39 +121,12 @@ export default function Post({
           <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>
             <ul>
-              {comments.map((comment, index) => (
-                <li className="mt-4" key={index}>
-                  <div className="comments">
-                    <div className="comment flex flex-row">
-                      <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                        <img
-                          src={comment.user.pfp}
-                          alt="profile"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="engagement flex flex-col ml-4">
-                        <div className="username">
-                          <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                            {comment.user.username}
-                          </span>
-                        </div>
-                        <div className="">
-                          <span>Likes</span>
-                          <span className="ml-3">{comment.likes}</span>
-                        </div>
-                      </div>
-                      <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
-                        <div className="comment">{comment.comment}</div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
+              {comments}
             </ul>
           </div>
         </div>
       </li>
     </>
   );
+
 }

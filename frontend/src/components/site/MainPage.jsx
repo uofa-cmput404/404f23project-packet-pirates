@@ -4,67 +4,138 @@ import Profile from "../main-feed/Profile";
 import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function MainPage({ user }) {
-  // should be fetched from backend
-  axios
-    .get("http://localhost:8000/api/posts")
-    .then((res) => {
-      console.log(res.data);
-    })
-    .catch((error) => {
-      console.error("Error getting posts:", error);
-    });
 
-  console.log(user.user.username);
+  const [isLoading, setIsLoading] = useState(false)
+  const [posts, setPosts] = useState(null)
+  //const [friends, setFriends] = useState()
+  //const [notifications, getNotifications] = useState()
 
-  // example of posts json
-  const posts = [
-    {
-      user: {
-        username: "obama",
-        pfp: "https://picsum.photos/200",
-      },
-      title: "TITLE OF POST",
-      description: "THIS IS A POST",
-      img: "https://picsum.photos/200",
-      likes: 4,
-      id: crypto.randomUUID(),
-      comments: [
-        {
-          user: {
-            username: "USERNAME",
-            pfp: "https://picsum.photos/200",
-          },
-          likes: 4,
-          comment: "sfdsfsdfsdfdsfsd",
-        },
-      ],
-    },
-    {
-      user: {
-        username: "Joe",
-        pfp: "https://picsum.photos/200",
-      },
-      title: "Joe's Post",
-      description: "This is Joe's post",
-      img: "https://picsum.photos/200",
-      likes: 4,
-      id: crypto.randomUUID(),
-      comments: [
-        {
-          user: {
-            username: "USERNAME",
-            pfp: "https://picsum.photos/200",
-          },
-          likes: 4,
-          comment: "sfdsfsdfsdfdsfsd",
-        },
-      ],
-    },
-  ];
 
-  // example of friends json
+
+  useEffect(() => {
+    //Get data on homepage load
+    setIsLoading(true)
+
+    const getPosts = async () => {
+
+      let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
+
+      const postsRes = await axios
+      .get(postsUrl)
+      .then((postsRes) => {
+        
+        //Result of post query
+        //console.log("POSTSRES", postsRes.data.Posts[0])
+
+        setPosts(postsRes.data.Posts.map((post, index) => (
+          <Post
+            key={index}
+            user={user}
+            title={post.title}
+            description={post.content}
+            img={post.image_url}
+            likes={post.likes_count}
+            id={post.post_id}
+          />
+        )))
+
+      }).then(() => { setIsLoading(false) })
+      .catch((error) => {
+        console.error("Error getting posts:", error);
+      });
+
+    };
+
+    /////////// This stuff will probably have to be implemented in the respective components //////////////////////
+
+    // const getFriends = async () => {
+
+    //   const friendsRes = await axios
+    //   .get("http://localhost:8000/api/friends")
+    //   .then((friendsRes) => {
+    //     console.log(friendsRes.data);
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting friends:", error);
+    //   });
+
+    //   setFriends(friendsRes.data)
+
+    // };
+
+    // const getNotifications = async () => {
+
+    //   const notifsRes = await axios
+    //   .get("http://localhost:8000/api/notifications")
+    //   .then((notifsRes) => {
+    //     console.log(notifsRes.data);
+
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting notifications:", error);
+    //   });
+
+    //   setFriends(notifsRes.data)
+
+    // };
+
+    getPosts();
+    //getFriends();
+    //getNotifications();
+
+  }, []);
+
+  //example of posts json
+  // const posts = [
+  //   {
+  //     user: {
+  //       username: "obama",
+  //       pfp: "https://picsum.photos/200",
+  //     },
+  //     title: "TITLE OF POST",
+  //     description: "THIS IS A POST",
+  //     img: "https://picsum.photos/200",
+  //     likes: 4,
+  //     id: crypto.randomUUID(),
+  //     comments: [
+  //       {
+  //         user: {
+  //           username: "USERNAME",
+  //           pfp: "https://picsum.photos/200",
+  //         },
+  //         likes: 4,
+  //         comment: "sfdsfsdfsdfdsfsd",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     user: {
+  //       username: "Joe",
+  //       pfp: "https://picsum.photos/200",
+  //     },
+  //     title: "Joe's Post",
+  //     description: "This is Joe's post",
+  //     img: "https://picsum.photos/200",
+  //     likes: 4,
+  //     id: crypto.randomUUID(),
+  //     comments: [
+  //       {
+  //         user: {
+  //           username: "USERNAME",
+  //           pfp: "https://picsum.photos/200",
+  //         },
+  //         likes: 4,
+  //         comment: "sfdsfsdfsdfdsfsd",
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  //example of friends json
   const friends = [
     {
       username: "USERNAME1",
@@ -107,6 +178,7 @@ export default function MainPage({ user }) {
     },
   ];
 
+
   return (
     <>
       <div className="flex justify-center items-center w-screen">
@@ -123,17 +195,7 @@ export default function MainPage({ user }) {
             </div>
             <div className="feed_content mt-5">
               <ul>
-                {posts.map((post) => (
-                  <Post
-                    user={post.user}
-                    title={post.title}
-                    description={post.description}
-                    img={post.img}
-                    likes={post.likes}
-                    comments={post.comments}
-                    key={post.id}
-                  />
-                ))}
+                {posts}
               </ul>
             </div>
           </div>
