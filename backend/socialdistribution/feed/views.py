@@ -48,9 +48,9 @@ class GetAuthorFriends(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
-        friends = Friends.objects.filter(author = request.user.user_id)
-        # friends = author.friend_set.all()
-        serializer = NotificationsSerializer(friends, many=True)
+          
+        friends = Friends.objects.filter(author_id = request.user.user_id)
+        serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         

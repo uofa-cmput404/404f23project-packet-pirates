@@ -86,8 +86,8 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def post(self, request):
-        post_id = uuid.UUID(request.data['post_id'])
+    def post(self, request, pk):
+        post_id = uuid.UUID(pk)
 
         # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
@@ -100,6 +100,11 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     
 
 class GetPostComments(APIView):
+    '''
+    All comments of a post
+    '''
+    # permission_classes = (permissions.AllowAny,)
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
@@ -111,24 +116,18 @@ class GetPostComments(APIView):
         return Response({"Comments": serializer.data}, status=status.HTTP_200_OK)
   
 
-        
+class getPostLike(APIView):
+    '''
+    All likes of a post
+    '''
+    # permission_classes = (permissions.AllowAny,)
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
-# class LikePost(APIView):
-#     permission_classes = (permissions.IsAuthenticated,)
-#     serializer_class = PostLikeSerializer
+    def get(self, request, pk):
+        post_id = uuid.UUID(pk)
+        likes = PostLike.objects.filter(post_object = post_id)
+        serializer = LikeSerializer(likes, many = True)
 
-#     def perform_create(self, serializer):
-#         post_id = serializer.validated_data.get('post_id')
-#         author = self.request.user
-#         # Check if the user hasn't already liked the post
-#         if not PostLike.objects.filter(post_id=post_id, author=author).exists():
-#             serializer.save(author=author)
-            
-
-
-# class EditPost(APIView):
-#     permission_classes = (permissions.IsAuthenticated,)
-
-#     def get_queryset(self):
-#         # Filter posts based on the author and post_id
-#         return Post.objects.filter(author=self.request.user, id=self.kwargs['pk'])
+        return Response ({"Post Likes": serializer.data}, status=status.HTTP_200_OK)
