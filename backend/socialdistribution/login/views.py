@@ -44,11 +44,16 @@ class AuthorLogout(APIView):
         logout(request)
         return Response(status = status.HTTP_200_OK)
 
-class AuthorView(APIView):
+class GetSingleAuthor(APIView):
+    '''
+    Get one single author
+    '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def get(self, request):
-        serializer = AuthorSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(author_id = pk) # Find posts that the specific author has posted
+        # posts = Post.objects.all()
+        serializer = AuthorSerializer(author)
+        return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
 
