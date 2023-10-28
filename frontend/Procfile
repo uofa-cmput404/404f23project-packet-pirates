@@ -1,1 +1,1 @@
-web: vite preview --port $PORT
+web: npm run dev
