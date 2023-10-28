@@ -30,6 +30,11 @@ export default function Post({
     // Handle share functionality
   };
 
+  const handleComment = () => {
+    // Handle comment functionality
+  };
+
+
   useEffect(() => {
     //Get data on post load
 
@@ -89,7 +94,6 @@ export default function Post({
 
 
 
-
   return (
     <>
       <li className="list-none mb-5">
@@ -105,19 +109,23 @@ export default function Post({
                 className="w-full h-full object-cover"
               />
             </div>
+
             <div className="info flex flex-col w-full ml-5">
               <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
                 {user.username}
               </span>
               <div className="post-title flex flex-row w-full justify-between items-center">
+                
                 <span className="text-center">
                   <h1>{title}</h1>
                 </span>
+
                 <button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
                   Edit
                 </button>
               </div>
             </div>
+            
           </div>
           <div className="description-section flex justify-center items-center">
             <p>{description}</p>
@@ -125,14 +133,20 @@ export default function Post({
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
             <img src={img} alt="" className="w-full h-full object-cover" />
           </div>
+
+          <div className="likes">
+            <span>Likes: {likeCount}</span>
+          </div>
+
           <div className="engagement-section flex flex-row justify-between m-5">
-            {/* likes share? */}
-            <div className="likes">
-              <button onClick={handleLike} disabled={hasLiked}>
-                Likes: 
-              </button>
-              <span className="mr-4">{likeCount}</span>
-            </div>
+            <button onClick={handleLike} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full" disabled={hasLiked}>
+              Like 
+            </button>
+
+            <button onClick={handleComment} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+              Comment
+            </button>
+
             <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
               Share
             </button>
