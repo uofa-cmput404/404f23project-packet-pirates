@@ -17,7 +17,6 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
         author_obj = AuthorModel.objects.create_user(username = validated_data['username'],
                                                      password = validated_data['password'])
         
-        
         # Add more fields that you want to be required in the POST request.
         # author_obj.first_name = validated_data['first_name']
         # author_obj.last_name = validated_data['last_name']
