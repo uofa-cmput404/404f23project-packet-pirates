@@ -6,10 +6,13 @@
   "proxy": "http://127.0.0.1:8000",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
+    "postinstall":"npm run build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "serve-heroku": "vite --host 0.0.0.0 --post 3000 preview"
+    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",

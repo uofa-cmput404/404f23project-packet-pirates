@@ -1,1 +1,1 @@
-web: vite npm run
+web: npm run serve-heroku
