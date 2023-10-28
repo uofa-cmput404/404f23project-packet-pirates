@@ -27,7 +27,7 @@ export default function Register() {
     };
 
     const handleProfPicChange = event => {
-        setProfPic(URL.createObjectURL(event.target.files[0]))
+        setProfPic(event.target.files[0])
         console.log('user value is:', event.target.files);
     };
 
@@ -63,10 +63,11 @@ export default function Register() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append('id', user);
+        formData.append('username', user);
         formData.append('password', pass);
         formData.append('github', git);
         formData.append('display_name', dispName);
+        formData.append('profile_picture', profPic)
 
         console.log("FORM DATA: ", formData);
         axios
