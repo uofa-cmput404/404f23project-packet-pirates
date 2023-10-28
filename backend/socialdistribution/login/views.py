@@ -43,6 +43,7 @@ from .serializer import *
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request):
+        print(request.data)
         validated_data = custom_validation(request.data)
         serializer = AuthorRegisterSerializer(data=validated_data)
         if serializer.is_valid(raise_exception=True):
