@@ -139,8 +139,12 @@ export default function Post({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
-            <button onClick={handleLike} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full" disabled={hasLiked}>
-              Like 
+            <button
+              onClick={handleLike}
+              className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
+              disabled={hasLiked}
+            >
+              Like
             </button>
 
             <button onClick={handleComment} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
