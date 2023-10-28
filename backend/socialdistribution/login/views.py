@@ -103,7 +103,7 @@ class GetSingleAuthor(APIView):
     Get one single author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         author = AppAuthor.objects.get(author_id = pk) # Find posts that the specific author has posted
