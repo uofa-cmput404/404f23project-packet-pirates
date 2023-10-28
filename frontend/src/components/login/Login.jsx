@@ -39,7 +39,7 @@ export default function Login() {
         console.log(data.token);
         cookies.set('access_token', data.token, {path: '/'});
         console.log("pushed");
-        // window.location.reload(false);
+        window.location.reload(false);
         console.log(res);
       })
       .catch(console.log);
