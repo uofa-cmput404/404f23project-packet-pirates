@@ -91,6 +91,14 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
 
         # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
+        
+        # Update like count
+        new_like_count = request.data.get('like_count', None)
+        if new_like_count is not None:
+            post.likes = new_like_count
+            # post.save() 
+            return Response(status=status.HTTP_200_OK)
+        
         serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

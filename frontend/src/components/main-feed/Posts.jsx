@@ -13,7 +13,7 @@ export default function Post({
   const [comments, setComments] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [likeCount, setLikeCount] = useState(likes);
-  const [hasLiked, setHasLiked] = useState(false); // Step 1: Add state for whether the user has liked
+  const [hasLiked, setHasLiked] = useState(false);
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -21,8 +21,20 @@ export default function Post({
 
   const handleLike = () => {
     if (!hasLiked) {
-      setLikeCount(likeCount + 1);
-      setHasLiked(true);
+        // Increment the like count and send a POST request to update it
+        const newLikeCount = likeCount + 1;
+        axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+            withCredentials: true,
+        })
+        .then((response) => {
+            // Handle success
+            setLikeCount(newLikeCount);
+            setHasLiked(true);
+        })
+        .catch((error) => {
+            // Handle errors
+            console.error("Error updating like count:", error);
+        });
     }
   };
 
