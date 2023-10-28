@@ -11,7 +11,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "npm run dev",
-    "serve-heroku": "vite --host 0.0.0.0 --post 3000 preview"
+    "serve-heroku": "vite --host 0.0.0.0 --port 3000 preview"
     
   },
   "dependencies": {
