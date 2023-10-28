@@ -53,10 +53,10 @@ export default function Register() {
         event.preventDefault()
         console.log(info)
 
-        const res = await axios.post("http://127.0.0.1:8000/api/register", info)
+        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/register", info)
         console.log(res.data)
     
-        const res2 = await axios.post("http://127.0.0.1:8000/api/login", loginTest)
+        const res2 = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/login", loginTest)
         console.log(res2.data)
 
       };

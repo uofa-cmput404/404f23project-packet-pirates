@@ -30,7 +30,7 @@ export default function Post({
 
     const getComments = async () => {
 
-      let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
+      let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postcomments"
 
       const commentsRes = await axios
       .get(commentsUrl, config)

@@ -26,13 +26,13 @@ export default function MainPage({ user }) {
       headers: {Authorization: 'token ' + token}
     };
     console.log(config)
-    
+
     //Get data on homepage load
     setIsLoading(true)
 
     const getPosts = async () => {
 
-      let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
+      let postsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/feedposts"
 
       const postsRes = await axios
       .get(postsUrl,config)
