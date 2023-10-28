@@ -2,128 +2,101 @@ from .serializer import AuthorSerializer
 # from .models import Author
 
 from django.shortcuts import render
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework import permissions, status
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import authentication_classes, permission_classes
 
 from .validate import *
 from .serializer import *
-from .models import *
-import jwt, datetime
-from json import JSONDecoder
 
+
+
+
+# class AuthorView(APIView):
+#     def get(self, request):
+#         output = [{"username": output.username, 
+#                    "first_name": output.first_name,
+#                    "last_name": output.last_name,
+#                    "date_of_birth": output.date_of_birth,
+#                    "github": output.github,
+#                    "profile_picture": output.profile_picture,
+#                    "url": output.url,
+#                    "is_active": output.is_active}
+#                    for output in Author.objects.all()]
+#         return Response(output)
+
+#     def post(self, request):
+#         serializer = AuthorSerializer(data = request.data)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response(serializer.data)
 
 class AuthorRegistration(APIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.AllowAny,)
-
     def post(self, request):
         validated_data = custom_validation(request.data)
-        
         serializer = AuthorRegisterSerializer(data=validated_data)
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
-
             if author:
-                user_id = AppAuthor.objects.get(username = request.data['username']).user_id
-                
-                payload = {
-                    'id': str(user_id),
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes = 60),
-                    'iat': datetime.datetime.utcnow()
-                }
-
-                token = jwt.encode(payload, 'secret', algorithm ='HS256')
-
-                response = Response()
-                response.set_cookie(key='access_token', value=token, httponly=True)
-            
-                response.data = {'token': token,
-                                'User': serializer.data}
-
-                return response
+                return Response(serializer.data, {'message': 'account has been created'}, status=status.HTTP_201_CREATED)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
 class AuthorLogin(APIView):
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.AllowAny,)
+    # authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
         data = request.data
-        # print(data)
         assert validate_username(data)
         assert validate_password(data)
         serializer = AuthorLoginSerializer(data = data)
+
+        
         if serializer.is_valid(raise_exception=True):
             author = serializer.validate_user(data)
-            
-            serializer = AuthorSerializer(author)
-            # print(serializer)
-            user_id = AppAuthor.objects.get(username = data['username']).user_id
-
-            payload = {
-                'id': str(user_id),
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes = 60),
-                'iat': datetime.datetime.utcnow()
-            }
-
-            token = jwt.encode(payload, 'secret', algorithm ='HS256')
-
-            response = Response()
-            response.set_cookie(key='access_token', value=token, httponly=True)
-        
-            response.data = {'token': token,
-                            'User': serializer.data}
-
-            return response
+            token, created = Token.objects.get_or_create(user = author)
+            login(request, author)
+            return Response({
+                'token': token.key,
+                "User": serializer.data},
+                             status=status.HTTP_200_OK)
 
 class AuthorLogout(APIView):
-    # permission_classes = (permissions.AllowAny,)
-
+    permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        user_token = request.COOKIES.get('access_token', None)
-        if user_token:
-            response = Response()
-            response.delete_cookie('access_token')
-            response.data = {
-                'message': 'Logged out successfully.'
-            }
-            return response
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
         
-        response = Response()
-        response.data = {
-            'message': 'User is already logged out.'
-        }
-        return response
-          
+        logout(request)
+        return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
 
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# @login_required(login_url="")
 class AuthorView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
+    # authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        user_token = request.COOKIES.get('access_token')
-
-        if not user_token:
-            raise AuthenticationFailed('Unauthenticated user')
-        try:
-            payload = jwt.decode(user_token, 'secret', algorithms=['HS256'])
-
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-        
-        author = AppAuthor.objects.filter(user_id = payload['id'])
-        print(author)
-        serializer = AuthorSerializer(author, many = True)
+        serializer = AuthorSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
 
 class GetSingleAuthor(APIView):
     '''
@@ -137,6 +110,4 @@ class GetSingleAuthor(APIView):
         # posts = Post.objects.all()
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
-
-
 

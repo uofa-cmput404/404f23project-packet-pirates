@@ -53,9 +53,10 @@ function App() {
     console.log(token)
 
     const config = {
-      headers: {Authorization: 'token ${token}'}
+      headers: {Authorization: 'token ' + token}
     };
-    
+    console.log(config)
+
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
       .get("/api/author", config)
