@@ -43,7 +43,7 @@ export default function ProfilePage({ user }) {
         const res = await axios.post("http://127.0.0.1:8000/api/something", info)
         console.log(res.data)
       };
-
+      
     return (
         <section className="bg-gradient-to-b from-primary-dark to-lm-light-bg dark:bg-gradient-to-b from-dm-dark-bg to-primary-colour">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
