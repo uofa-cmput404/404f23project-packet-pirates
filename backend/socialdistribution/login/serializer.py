@@ -22,9 +22,9 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
         # author_obj.first_name = validated_data['first_name']
         # author_obj.last_name = validated_data['last_name']
         # author_obj.date_of_birth = validated_data['date_of_birth' ]
-        # author_obj.github = validated_data['github']
-        # author_obj.display_name = validated_data['display_name']
-        print("PIC", author_obj.profile_picture)
+        author_obj.github = validated_data['github']
+        author_obj.display_name = validated_data['display_name']
+        author_obj.profile_picture = validated_data['profile_picture']
         author_obj.save()
         return author_obj
 

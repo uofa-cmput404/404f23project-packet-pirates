@@ -39,9 +39,7 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     date_of_birth = models.DateField(blank=True, null=True)
 
-    # profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
-
-    profile_picture = models.CharField(max_length=300, blank=True, null=True)
+    profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
 
     github = models.URLField(max_length=50, blank=True)
 

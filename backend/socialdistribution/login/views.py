@@ -32,30 +32,12 @@ class AuthorRegistration(APIView):
         print(picture.name)
         print(picture.file)
 
-
-
-        fs = FileSystemStorage(location='media/profile_pictures')
-        filename = fs.save(picture.name, picture.file)
-        uploaded_file_url = fs.url(filename)
-        print(uploaded_file_url)
-        # img = Image.open('media/profile_pictures/' + picture.name)
-
-        # image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
         request.data['profile_picture'] = image
  
-        # request.data.update({f'id'{}}) = "media/profile_pictures/" + picture.name
-        # request.data.update({f'username':{}, f'id':{request.data.username}})
-        
-        print("request data", request.data)
-
         validated_data = custom_validation(request.data)
         serializer = AuthorRegisterSerializer(data=validated_data)
 
-        # print("VALIDATED", validated_data)
-        # print("SERIALIZER", serializer)
-        
-        serializer.is_valid()
-        print(serializer.errors)
         
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
