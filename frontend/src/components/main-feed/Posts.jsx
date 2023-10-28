@@ -12,6 +12,23 @@ export default function Post({
 
   const [comments, setComments] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [likeCount, setLikeCount] = useState(likes);
+  const [hasLiked, setHasLiked] = useState(false); // Step 1: Add state for whether the user has liked
+
+  const handleEdit = () => {
+    // Handle edit functionality
+  };
+
+  const handleLike = () => {
+    if (!hasLiked) {
+      setLikeCount(likeCount + 1);
+      setHasLiked(true);
+    }
+  };
+
+  const handleShare = () => {
+    // Handle share functionality
+  };
 
   useEffect(() => {
     //Get data on post load
@@ -96,7 +113,9 @@ export default function Post({
                 <span className="text-center">
                   <h1>{title}</h1>
                 </span>
-                <span className="">Edit Button</span>
+                <button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+                  Edit
+                </button>
               </div>
             </div>
           </div>
@@ -109,13 +128,14 @@ export default function Post({
           <div className="engagement-section flex flex-row justify-between m-5">
             {/* likes share? */}
             <div className="likes">
-              {" "}
-              <span className="mr-4">Like</span>
-              <span className="mr-4">{likes}</span>
+              <button onClick={handleLike} disabled={hasLiked}>
+                Likes: 
+              </button>
+              <span className="mr-4">{likeCount}</span>
             </div>
-            <span className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+            <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
               Share
-            </span>
+            </button>
           </div>
 
           <div className="comment-section flex flex-col divide-y justify-start">
