@@ -1,8 +1,10 @@
 import axios from "axios";
 import {useState} from 'react';
-
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Register() {
+    const navigate = useNavigate();
+
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
@@ -57,6 +59,34 @@ export default function Register() {
         const res2 = await axios.post("http://127.0.0.1:8000/api/login", loginTest)
         console.log(res2.data)
       };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('id', user);
+        formData.append('password', pass);
+        formData.append('github', git);
+        formData.append('display_name', dispName);
+
+        console.log("FORM DATA: ", formData);
+        axios
+        .post(
+            "http://127.0.0.1:8000/api/register", 
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+        .then((response) => {
+            console.log(response.data);
+        }).catch((error) => {
+            console.log("Error Response: ", error.response);
+            console.log("Error Data: ", error.response.data)
+        }).finally(() => {
+            navigate("/");
+        });
+    }
 
 
   return (
@@ -155,7 +185,7 @@ export default function Register() {
 
                     <img src={profPic} width="200" height="200" />
                     <button 
-                        onClick={SignUp}
+                        onClick={handleSubmit}
                         className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
                         Sign Up
                     </button>
