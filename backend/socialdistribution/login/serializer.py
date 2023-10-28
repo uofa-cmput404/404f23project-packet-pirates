@@ -42,7 +42,7 @@ class AuthorLoginSerializer(serializers.Serializer):
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
-        fields = ("user_id", "username", "first_name", "last_name", "display_name") # Add more fields to display when logged in
+        fields = "__all__" # Add more fields to display when logged in
 
 # class AuthorSerializer(models.Model):
 #     class Meta:

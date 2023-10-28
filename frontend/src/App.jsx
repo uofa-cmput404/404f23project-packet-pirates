@@ -7,6 +7,8 @@ import MainPage from "./components/site/MainPage";
 import CreatePost from "./components/main-feed/CreatePost";
 import Post from "./components/main-feed/Posts";
 import Profile from "./components/main-feed/Profile";
+import Cookies from 'universal-cookie'
+
 
 // routing
 import {
@@ -41,12 +43,22 @@ function App() {
 
   const [authorInfo, setAuthorInfo] = useState({});
 
+  const cookies = new Cookies();
+
   // const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("HERE")
+    var token = cookies.get('access_token')
+    console.log(token)
+
+    const config = {
+      headers: {Authorization: 'token ${token}'}
+    };
+    
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
-      .get("/api/author")
+      .get("/api/author", config)
       .then((response) => {
         console.log("Response from /api/author:", response);
         setIsLoggedIn(true);
