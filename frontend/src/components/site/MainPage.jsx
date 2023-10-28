@@ -5,6 +5,8 @@ import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cookies from 'universal-cookie'
+
 
 export default function MainPage({ user }) {
 
@@ -12,10 +14,19 @@ export default function MainPage({ user }) {
   const [posts, setPosts] = useState(null)
   //const [friends, setFriends] = useState()
   //const [notifications, getNotifications] = useState()
+  const cookies = new Cookies();
 
 
 
   useEffect(() => {
+    var token = cookies.get('access_token')
+    console.log(token)
+
+    const config = {
+      headers: {Authorization: 'token ' + token}
+    };
+    console.log(config)
+    
     //Get data on homepage load
     setIsLoading(true)
 
@@ -24,7 +35,7 @@ export default function MainPage({ user }) {
       let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
 
       const postsRes = await axios
-      .get(postsUrl)
+      .get(postsUrl,config)
       .then((postsRes) => {
         
         //Result of post query

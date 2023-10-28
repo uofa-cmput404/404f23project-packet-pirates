@@ -48,7 +48,7 @@ function App() {
   // const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("HERE")
+
     var token = cookies.get('access_token')
     console.log(token)
 

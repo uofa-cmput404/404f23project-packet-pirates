@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model, login, logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework import permissions, status
 
 from django.http import HttpResponseRedirect, HttpResponse
@@ -33,7 +33,7 @@ class GetAuthorsPosts(APIView):
     Get posts that the specific author has posted in the database
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -47,7 +47,7 @@ class GetFeedPosts(APIView):
     Get posts that should show up in a author's feed
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -64,7 +64,7 @@ class GetFeedPosts(APIView):
 
 class CreatePost(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request):
         # print(request.data['post_id'])
@@ -84,7 +84,7 @@ class CreatePost(APIView):
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -106,7 +106,7 @@ class GetPostComments(APIView):
     # permission_classes = (permissions.AllowAny,)
 
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -123,7 +123,7 @@ class getPostLike(APIView):
     # permission_classes = (permissions.AllowAny,)
     
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)

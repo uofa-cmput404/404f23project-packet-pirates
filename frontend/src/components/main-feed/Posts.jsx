@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from 'universal-cookie'
+
 
 export default function Post({
   user,
@@ -12,16 +14,26 @@ export default function Post({
 
   const [comments, setComments] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const cookies = new Cookies();
 
   useEffect(() => {
     //Get data on post load
+
+    var token = cookies.get('access_token')
+    console.log(token)
+
+    const config = {
+      headers: {Authorization: 'token ' + token}
+    };
+    console.log(config)
+
 
     const getComments = async () => {
 
       let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
 
       const commentsRes = await axios
-      .get(commentsUrl)
+      .get(commentsUrl, config)
       .then((commentsRes) => {
 
         //Result of comments query

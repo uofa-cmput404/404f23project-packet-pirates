@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model, login, logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework import permissions, status
 from rest_framework import generics
 
@@ -31,7 +31,7 @@ class GetAllNotifications(APIView):
     Get all notifications that should show up in a given author's feed
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
         notifications = Notifications.objects.filter(author_id = request.user.user_id)
@@ -45,7 +45,7 @@ class GetAuthorFriends(APIView):
     Get all friends of a given author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
           
