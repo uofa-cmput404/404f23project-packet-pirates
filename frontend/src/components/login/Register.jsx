@@ -6,7 +6,7 @@ export default function Register() {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
-    const [profPic, setProfPic] = useState({ preview: "", raw: "" });
+    const [profPic, setProfPic] = useState('');
     const [dispName, setdispName] = useState('');
 
     const handleUserChange = event => {
@@ -25,12 +25,8 @@ export default function Register() {
     };
 
     const handleProfPicChange = event => {
-        if (e.target.files.length) {
-            setProfPic({
-              preview: URL.createObjectURL(e.target.files[0]),
-              raw: e.target.files[0]
-            });
-          }
+        setProfPic(URL.createObjectURL(event.target.files[0]))
+        console.log('user value is:', event.target.files);
     };
 
     const handleDisplayNameChange = event => {
@@ -42,7 +38,7 @@ export default function Register() {
         'username' : user,
         'password' : pass,
         'github' : git,
-        // 'profile_picture' : profPic,
+        'profile_picture' : profPic,
         'display_name' : dispName
     }
 
@@ -141,22 +137,23 @@ export default function Register() {
                     </div>
 
                     <div>
-                    <label htmlFor="upload-button">
-                        {profPic.preview ? (
-                        <img src={profPic.preview} alt="dummy" width="300" height="300" />
-                        ) : (<h5 className="text-center">Upload your photo</h5>)}
+                    
+                    <label htmlFor="select-image">
+                        <div 
+                            className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+                            Upload Image
+                        </div>
                     </label>
                     <input
                         type="file"
-                        
+                        accept="image/*"
                         id="select-image"
                         style={{ display: "none" }}
                         onChange={handleProfPicChange}
                     />
-                    <br />
-                    <button onClick={handleProfPicChange}>Upload</button>
                     </div>
 
+                    <img src={profPic} width="200" height="200" />
                     <button 
                         onClick={SignUp}
                         className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
