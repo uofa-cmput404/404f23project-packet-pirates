@@ -18,7 +18,7 @@ export default function CreatePost({ user }) {
 
   const [isUnlisted, setIsUnlisted] = useState(false);
   const contentOptions = [
-      { value: 'text/plain', label: 'Plaintext' },
+      { value: ('text/plain', 'plaintext'), label: 'Plaintext' },
       { value: 'text/markdown', label: 'Markdown' },
   ];
   const [contentType, setContentType] = useState(contentOptions[0].value);
@@ -54,7 +54,7 @@ export default function CreatePost({ user }) {
       "source": user.user.user_id,
       "origin": user.user.user_id,
       "unlisted": isUnlisted,
-      "visibility": visibility
+      //"visibility": visibility
     }
 
     console.log("Data", data);
@@ -65,7 +65,7 @@ export default function CreatePost({ user }) {
       data, 
       {
         headers: {
-          "Content-Type": "text/plain",
+          "Content-Type": "multipart/form-data",
         },
       })
     .then((response) => {
