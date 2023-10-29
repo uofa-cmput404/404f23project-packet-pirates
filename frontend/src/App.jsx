@@ -71,7 +71,7 @@ function App() {
           element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/user/:id" element={<ViewProfile />} />
+        <Route path="/user/:author" element={<ViewProfile />} />
         <Route
           path="/profilepage"
           element={<ProfilePage user={authorInfo} />}
