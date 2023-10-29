@@ -5,10 +5,13 @@ import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function MainPage({ user }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [posts, setPosts] = useState(null);
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [posts, setPosts] = useState(null)
   //const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
@@ -90,6 +93,19 @@ export default function MainPage({ user }) {
 
   }, []);
 
+  const handleLogout = async (event) => {
+    event.preventDefault();
+
+    try {
+      await axios.get("/api/logout");
+      window.location.reload(false);
+      console.log("logged out");
+    } 
+    catch (err) {
+      console.log(err);
+    } 
+  };
+
   //example of friends json
   const friends = [
     {
@@ -145,17 +161,25 @@ export default function MainPage({ user }) {
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
-              <CreatePost />
+              <CreatePost user={user} />
             </div>
             <div className="feed_content mt-5">
               <ul>{posts}</ul>
             </div>
           </div>
-          <div
-            className="notifications h-fit mx-auto ml-5"
-            style={{ position: "sticky", top: "20px" }}
-          >
+
+          <div className="flex-col justify-center mx-4">
+            <button 
+              onClick={handleLogout}
+              className='block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+              Logout
+            </button>
+            <div
+              className="notifications h-fit mx-auto"
+              style={{ position: "sticky", top: "20px" }}
+            >
             {notifications}
+            </div>
           </div>
         </div>
       </div>

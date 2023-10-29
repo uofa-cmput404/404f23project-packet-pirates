@@ -103,8 +103,8 @@ class GetFeedPosts(APIView):
 
 
 class CreatePost(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
 
     def post(self, request):
         # print(request.data['post_id'])
@@ -112,6 +112,8 @@ class CreatePost(APIView):
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
         # print(authorSerializer)
+        print(request)
+        print(request.data)
     
         # validated_data = custom_validation(request.data)
         picture = request.data['image_file']
