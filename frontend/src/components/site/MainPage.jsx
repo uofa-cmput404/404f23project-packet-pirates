@@ -167,6 +167,7 @@ export default function MainPage({ user }) {
               <ul>{posts}</ul>
             </div>
           </div>
+
           <div className="flex-col justify-center mx-4">
             <button 
               onClick={handleLogout}
