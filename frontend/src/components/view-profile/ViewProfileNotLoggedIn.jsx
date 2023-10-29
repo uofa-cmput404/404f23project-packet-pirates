@@ -7,11 +7,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
-export default function ViewProfile({ user }) {
-  useEffect(() => {
-    console.log("user", user);
-    console.log("user.user", user.user);
-  }, []);
+export default function ViewProfileNotLogged() {
   // check if author exists
   // if not, return 404
   // if yes, return profile
@@ -30,7 +26,7 @@ export default function ViewProfile({ user }) {
     const getUrl = "http://127.0.0.1:8000";
     setIsLoading(true);
     console.log("author", author);
-    console.log("user", user);
+    // console.log("user", user);
 
     const getProfile = async () => {
       try {
@@ -128,26 +124,23 @@ export default function ViewProfile({ user }) {
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
-          <div
+          {/* <div
             className="profile h-fit mx-auto"
             style={{ position: "sticky", top: "20px" }}
           >
             <Profile friends={friends} username={user.user.username} />
-          </div>
+          </div> */}
           <div className="feed flex flex-col ml-5 w-full mx-auto">
-            <div className="flex items-center justify-center">
-              You are looking at {author}'s profile
-            </div>
             <div className="feed_content mt-5">
               <ul>{posts}</ul>
             </div>
           </div>
-          <div
+          {/* <div
             className="notifications h-fit mx-auto ml-5"
             style={{ position: "sticky", top: "20px" }}
           >
             <Notifications notifications={notifications} />
-          </div>
+          </div> */}
         </div>
       </div>
     </>

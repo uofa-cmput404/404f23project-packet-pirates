@@ -15,6 +15,7 @@ export default function MainPage({ user }) {
   useEffect(() => {
     //Get data on homepage load
     setIsLoading(true);
+    console.log("user", user);
 
     const getPosts = async () => {
       let postsUrl =
@@ -83,55 +84,7 @@ export default function MainPage({ user }) {
     // };
 
     getPosts();
-    //getFriends();
-    //getNotifications();
   }, []);
-
-  //example of posts json
-  // const posts = [
-  //   {
-  //     user: {
-  //       username: "obama",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "TITLE OF POST",
-  //     description: "THIS IS A POST",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     user: {
-  //       username: "Joe",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "Joe's Post",
-  //     description: "This is Joe's post",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  // ];
 
   //example of friends json
   const friends = [
