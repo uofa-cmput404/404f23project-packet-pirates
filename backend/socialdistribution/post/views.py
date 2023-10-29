@@ -102,11 +102,11 @@ class GetFeedPosts(APIView):
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
 
-class CreatePost(APIView):
+class PostViews(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 
-    def post(self, request):
+    def post(self, request): # Create a post
         # print(request.data['post_id'])
         # author = AppAuthor.objects.get(user_id = request.user.user_id)
         # print(author.display_name)
@@ -114,24 +114,34 @@ class CreatePost(APIView):
         # print(authorSerializer)
         print(request)
         print(request.data)
+
+        # data = request.data[0]
+        # print(data)
     
         # validated_data = custom_validation(request.data)
-        picture = request.data['image_file']
 
-        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-        request.data['image_file'] = image
+        # picture = request.data['image_file']
+        # image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        # request.data['image_file'] = image
+
+        request.data['image_url'] = 'https://picsum.photos/200'
 
         serializer = PostSerializer(data = request.data)
+        serializer.is_valid()
+        print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
+    # def delete(self, request):
+
+    
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     authentication_classes = ()
 

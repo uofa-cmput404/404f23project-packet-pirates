@@ -17,8 +17,9 @@ export default function CreatePost({ user }) {
   const [visibility, setVisibility] = useState(visibilityOptions[0].value);
 
   const [isUnlisted, setIsUnlisted] = useState(false);
+  
   const contentOptions = [
-      { value: ('text/plain', 'plaintext'), label: 'Plaintext' },
+      { value: 'text/plain', label: 'Plaintext' },
       { value: 'text/markdown', label: 'Markdown' },
   ];
   const [contentType, setContentType] = useState(contentOptions[0].value);
@@ -50,10 +51,11 @@ export default function CreatePost({ user }) {
       "content_type": contentType,
       "url": '',
       "content": text,
-      "author": user.user.username,
+      "author": user.user.user_id,
       "source": user.user.user_id,
       "origin": user.user.user_id,
       "unlisted": isUnlisted,
+      'image_url': ""
       //"visibility": visibility
     }
 
@@ -61,15 +63,17 @@ export default function CreatePost({ user }) {
     
     axios
     .post(
-      'http://127.0.0.1:8000/api/createpost', 
+      'http://127.0.0.1:8000/api/postViews', 
       data, 
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          // "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       })
     .then((response) => {
         console.log(response.data);
+        window.location.reload(false);
     }).catch((error) => {
         console.log("Error Response: ", error.response);
         console.log("Error Data: ", error.response.data)
