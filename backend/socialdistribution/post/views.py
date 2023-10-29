@@ -1,15 +1,15 @@
 # from .models import Author
 from .serializer import PostSerializer
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import get_user_model, login, logout
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.files.images import ImageFile
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import permissions, status
-
-from django.http import HttpResponseRedirect, HttpResponse
 
 from post.models import Post, PostLike
 from feed.models import Friends
@@ -25,6 +25,7 @@ from login.serializer import *
 from post.validate import *
 
 import uuid
+import io
 # Create your views here.
 
 
@@ -74,10 +75,15 @@ class CreatePost(APIView):
         # print(authorSerializer)
     
         # validated_data = custom_validation(request.data)
+        picture = request.data['image_file']
+
+        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        request.data['image_file'] = image
+
         serializer = PostSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
@@ -94,12 +100,12 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
         serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response({"message": "Post successfully updated"}, status=status.HTTP_200_OK)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
 
-class GetPostComments(APIView):
+class PostComments(APIView):
     '''
     All comments of a post
     '''
@@ -114,9 +120,30 @@ class GetPostComments(APIView):
         serializer = CommentSerializer(comments, many = True)
         
         return Response({"Comments": serializer.data}, status=status.HTTP_200_OK)
+    
+    def post(self, request, pk):
+        post_id = uuid.UUID(pk)
+        request.data['post_id'] = post_id
+        serializer = CommentSerializer(data = request.data)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({"message" : "Comment Model Created"}, status=status.HTTP_201_CREATED)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk):
+        comment_id = request.data['comment_id']
+        comment = Comment.objects.filter(comment_id = comment_id)
+
+        if comment:
+            comment.delete()
+            return Response({"message": "Comment Model Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Comment Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
   
 
-class getPostLike(APIView):
+class PostLikeViews(APIView):
     '''
     All likes of a post
     '''
@@ -125,9 +152,34 @@ class getPostLike(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def get(self, request, pk):
-        post_id = uuid.UUID(pk)
-        likes = PostLike.objects.filter(post_object = post_id)
-        serializer = LikeSerializer(likes, many = True)
+    def get(self, request, pk): # Get all likes
+        post_id = uuid.UUID(pk) # pk needs to be post ID not author
 
+        likes = PostLike.objects.filter(post_object_id = post_id)
+    
+        serializer = LikeSerializer(likes, many = True)
+  
         return Response ({"Post Likes": serializer.data}, status=status.HTTP_200_OK)
+ 
+    def post(self, request, pk): # For liking a post
+        post_object_id = uuid.UUID(pk)
+        request.data['post_object_id'] = post_object_id
+        serializer = LikeSerializer(data = request.data)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({"message" : "Like Model Created"}, status=status.HTTP_201_CREATED)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk): # For unliking a post
+        post_id = uuid.UUID(pk)
+        author_id = request.user.user_id
+
+        post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+
+        if post_liked:
+            post_liked.delete()
+            return Response({"message": "Like Model Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Like Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
