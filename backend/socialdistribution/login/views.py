@@ -19,27 +19,6 @@ from .validate import *
 from .serializer import *
 
 
-
-
-# class AuthorView(APIView):
-#     def get(self, request):
-#         output = [{"username": output.username, 
-#                    "first_name": output.first_name,
-#                    "last_name": output.last_name,
-#                    "date_of_birth": output.date_of_birth,
-#                    "github": output.github,
-#                    "profile_picture": output.profile_picture,
-#                    "url": output.url,
-#                    "is_active": output.is_active}
-#                    for output in Author.objects.all()]
-#         return Response(output)
-
-#     def post(self, request):
-#         serializer = AuthorSerializer(data = request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data)
-
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request):
@@ -86,9 +65,7 @@ class AuthorLogout(APIView):
         logout(request)
         return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
 
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
-# @login_required(login_url="")
+
 class AuthorView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
