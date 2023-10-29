@@ -10,7 +10,7 @@ export default function MainPage({ user }) {
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState(null);
   //const [friends, setFriends] = useState()
-  //const [notifications, getNotifications] = useState()
+  const [notifications, setNotifications] = useState()
 
   useEffect(() => {
     //Get data on homepage load
@@ -67,23 +67,27 @@ export default function MainPage({ user }) {
 
     // };
 
-    // const getNotifications = async () => {
+    const getNotifications = async () => {
 
-    //   const notifsRes = await axios
-    //   .get("http://localhost:8000/api/notifications")
-    //   .then((notifsRes) => {
-    //     console.log(notifsRes.data);
+      let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
 
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting notifications:", error);
-    //   });
+      const notifsRes = await axios
+      .get(notificationsUrl)
+      .then((notifsRes) => {
+        console.log("NOTIFSRES", notifsRes.data.Notifications)
+        setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
+      })
+      .catch((error) => {
+        console.error("Error getting notifications:", error);
+      });
 
-    //   setFriends(notifsRes.data)
 
-    // };
+    };
 
     getPosts();
+    //getFriends();
+    getNotifications();
+
   }, []);
 
   //example of friends json
@@ -111,23 +115,23 @@ export default function MainPage({ user }) {
   ];
 
   // example of notifications json
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
+  // const notifications = [
+  //   {
+  //     username: "USERNAME1",
+  //     imageSrc: "https://source.unsplash.com/200x200",
+  //     type: "Requested to follow",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     imageSrc: "https://source.unsplash.com/200x201",
+  //     type: "Liked your post",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     imageSrc: "https://source.unsplash.com/200x202",
+  //     type: "Commented on your post",
+  //   },
+  // ];
 
   return (
     <>
@@ -151,7 +155,7 @@ export default function MainPage({ user }) {
             className="notifications h-fit mx-auto ml-5"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Notifications notifications={notifications} />
+            {notifications}
           </div>
         </div>
       </div>
