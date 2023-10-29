@@ -89,8 +89,10 @@ class CreatePost(APIView):
     
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
+
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+
+    authentication_classes = ()
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
