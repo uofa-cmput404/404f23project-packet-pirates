@@ -22,10 +22,10 @@ export default function Notifications({ notifications }) {
                 />
               </div>
               <div className="notification-content flex flex-col ml-5">
-                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full whitespace-nowrap">
                   {notification.notif_author_username}
                 </span>
-                <span className="mt-1 text-sm text-gray-500">
+                <span className="mt-1 text-sm text-gray-500 whitespace-nowrap">
                   {notification.message}
                 </span>
               </div>
