@@ -10,10 +10,12 @@ export default function Post({
   id
 }) {
 
-  const [comments, setComments] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [comments, setComments] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [hasLiked, setHasLiked] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
+  const [commentText, setCommentText] = useState('');
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -21,20 +23,20 @@ export default function Post({
 
   const handleLike = () => {
     if (!hasLiked) {
-        // Increment the like count and send a POST request to update it
-        const newLikeCount = likeCount + 1;
-        axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
-            withCredentials: true,
-        })
-        .then((response) => {
-            // Handle success
-            setLikeCount(newLikeCount);
-            setHasLiked(true);
-        })
-        .catch((error) => {
-            // Handle errors
-            console.error("Error updating like count:", error);
-        });
+      // Increment the like count and send a POST request to update it
+      const newLikeCount = likeCount + 1;
+      axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        // Handle success
+        setLikeCount(newLikeCount);
+        setHasLiked(true);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Error updating like count:", error);
+      });
     }
   };
 
@@ -43,7 +45,11 @@ export default function Post({
   };
 
   const handleComment = () => {
-    // Handle comment functionality
+    setIsCommenting(true); // Show comment input field
+  };
+
+  const handleCommentSubmit = () => {
+    setIsCommenting(false); // Hide comment input field
   };
 
 
@@ -159,7 +165,7 @@ export default function Post({
               Like
             </button>
 
-            <button onClick={handleComment} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+            <button onClick={() => setIsCommenting(!isCommenting)} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
               Comment
             </button>
 
@@ -167,6 +173,24 @@ export default function Post({
               Share
             </button>
           </div>
+
+          {isCommenting && (
+            <div className="comment-input" style={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="Enter your comment"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                onClick={handleCommentSubmit}
+                style={{ marginLeft: "8px" }}
+              >
+                Submit
+              </button>
+            </div>
+          )}
 
           <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>
