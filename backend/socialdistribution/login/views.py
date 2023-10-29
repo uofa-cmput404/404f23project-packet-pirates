@@ -28,9 +28,6 @@ class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request):
         picture = request.data['profile_picture']
-        # print(request.data)
-        print(picture.name)
-        print(picture.file)
 
         image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
         request.data['profile_picture'] = image
@@ -38,7 +35,6 @@ class AuthorRegistration(APIView):
         validated_data = custom_validation(request.data)
         serializer = AuthorRegisterSerializer(data=validated_data)
 
-        
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
             print("AUTHOR", author.profile_picture)
