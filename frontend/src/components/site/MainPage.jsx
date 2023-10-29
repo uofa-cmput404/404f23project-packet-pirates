@@ -5,8 +5,10 @@ import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function MainPage({ user }) {
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
@@ -89,51 +91,18 @@ export default function MainPage({ user }) {
 
   }, []);
 
-  //example of posts json
-  // const posts = [
-  //   {
-  //     user: {
-  //       username: "obama",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "TITLE OF POST",
-  //     description: "THIS IS A POST",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     user: {
-  //       username: "Joe",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "Joe's Post",
-  //     description: "This is Joe's post",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  // ];
+  const handleLogout = async (event) => {
+    event.preventDefault();
+
+    try {
+      await axios.get("/api/logout");
+      window.location.reload(false);
+      console.log("logged out");
+    } 
+    catch (err) {
+      console.log(err);
+    } 
+  };
 
   //example of friends json
   const friends = [
@@ -199,11 +168,18 @@ export default function MainPage({ user }) {
               </ul>
             </div>
           </div>
-          <div
-            className="notifications h-fit mx-auto ml-5"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            <Notifications notifications={notifications} />
+          <div className="flex-col justify-center mx-4">
+            <button 
+              onClick={handleLogout}
+              className='block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+              Logout
+            </button>
+            <div
+              className="notifications h-fit mx-auto"
+              style={{ position: "sticky", top: "20px" }}
+            >
+              <Notifications notifications={notifications} />
+            </div>
           </div>
         </div>
       </div>
