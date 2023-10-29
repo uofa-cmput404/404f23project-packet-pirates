@@ -13,42 +13,43 @@ export default function MainPage({ user }) {
   const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
   //const [friends, setFriends] = useState()
-  //const [notifications, getNotifications] = useState()
-
-
+  const [notifications, setNotifications] = useState()
 
   useEffect(() => {
     //Get data on homepage load
-    setIsLoading(true)
+    setIsLoading(true);
+    console.log("user", user);
 
     const getPosts = async () => {
-
-      let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
+      let postsUrl =
+        "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
 
       const postsRes = await axios
-      .get(postsUrl)
-      .then((postsRes) => {
-        
-        //Result of post query
-        //console.log("POSTSRES", postsRes.data.Posts[0])
+        .get(postsUrl)
+        .then((postsRes) => {
+          //Result of post query
+          console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
-        setPosts(postsRes.data.Posts.map((post, index) => (
-          <Post
-            key={index}
-            user={user}
-            title={post.title}
-            description={post.content}
-            img={post.image_url}
-            likes={post.likes_count}
-            id={post.post_id}
-          />
-        )))
-
-      }).then(() => { setIsLoading(false) })
-      .catch((error) => {
-        console.error("Error getting posts:", error);
-      });
-
+          setPosts(
+            postsRes.data.Posts.map((post, index) => (
+              <Post
+                key={index}
+                user={user}
+                title={post.title}
+                description={post.content}
+                img={post.image_url}
+                likes={post.likes_count}
+                id={post.post_id}
+              />
+            ))
+          );
+        })
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error getting posts:", error);
+        });
     };
 
     /////////// This stuff will probably have to be implemented in the respective components //////////////////////
@@ -69,25 +70,26 @@ export default function MainPage({ user }) {
 
     // };
 
-    // const getNotifications = async () => {
+    const getNotifications = async () => {
 
-    //   const notifsRes = await axios
-    //   .get("http://localhost:8000/api/notifications")
-    //   .then((notifsRes) => {
-    //     console.log(notifsRes.data);
+      let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
 
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting notifications:", error);
-    //   });
+      const notifsRes = await axios
+      .get(notificationsUrl)
+      .then((notifsRes) => {
+        console.log("NOTIFSRES", notifsRes.data.Notifications)
+        setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
+      })
+      .catch((error) => {
+        console.error("Error getting notifications:", error);
+      });
 
-    //   setFriends(notifsRes.data)
 
-    // };
+    };
 
     getPosts();
     //getFriends();
-    //getNotifications();
+    getNotifications();
 
   }, []);
 
@@ -129,24 +131,23 @@ export default function MainPage({ user }) {
   ];
 
   // example of notifications json
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
-
+  // const notifications = [
+  //   {
+  //     username: "USERNAME1",
+  //     imageSrc: "https://source.unsplash.com/200x200",
+  //     type: "Requested to follow",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     imageSrc: "https://source.unsplash.com/200x201",
+  //     type: "Liked your post",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     imageSrc: "https://source.unsplash.com/200x202",
+  //     type: "Commented on your post",
+  //   },
+  // ];
 
   return (
     <>
@@ -163,9 +164,7 @@ export default function MainPage({ user }) {
               <CreatePost user={user} />
             </div>
             <div className="feed_content mt-5">
-              <ul>
-                {posts}
-              </ul>
+              <ul>{posts}</ul>
             </div>
           </div>
           <div className="flex-col justify-center mx-4">
@@ -178,7 +177,7 @@ export default function MainPage({ user }) {
               className="notifications h-fit mx-auto"
               style={{ position: "sticky", top: "20px" }}
             >
-              <Notifications notifications={notifications} />
+            {notifications}
             </div>
           </div>
         </div>

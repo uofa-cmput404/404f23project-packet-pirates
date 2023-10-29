@@ -55,6 +55,6 @@ class Comment(models.Model):
     date_time = models.DateTimeField(auto_now_add=True, null = True, blank = True)
 
 class PostLike(models.Model): # Assume front-end restricts like
-
+    like_id = models.UUIDField(default = uuid.uuid4, primary_key=True, unique=True)
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE)

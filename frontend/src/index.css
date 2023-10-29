@@ -81,3 +81,15 @@ h1 {
 .post p {
   margin-top: 10px;
 }
+
+.not-liked-button {
+  background-color: #395B64;
+  color: #fff;
+  cursor: pointer;
+}
+
+.liked-button {
+  background-color: #33e7ff;
+  color: #fff;
+  cursor: not-allowed; /* Make the button unclickable when liked */
+}

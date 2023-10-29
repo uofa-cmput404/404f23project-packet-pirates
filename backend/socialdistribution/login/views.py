@@ -83,3 +83,14 @@ class GetSingleAuthor(APIView):
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
 
+class GetSimpleAuthor(APIView):
+    # given author id, gets author username and profile picture
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(user_id = pk)
+        serializer = SimpleAuthorSerializer(author)
+        return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
+
