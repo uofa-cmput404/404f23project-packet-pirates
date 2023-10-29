@@ -191,7 +191,7 @@ export default function MainPage({ user }) {
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
-              <CreatePost />
+              <CreatePost user={user} />
             </div>
             <div className="feed_content mt-5">
               <ul>

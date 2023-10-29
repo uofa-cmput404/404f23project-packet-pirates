@@ -8,7 +8,7 @@ export default function Register() {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
-    const [profPic, setProfPic] = useState('');
+    const [profPic, setProfPic] = useState(null);
     const [dispName, setdispName] = useState('');
 
     const handleUserChange = event => {
@@ -82,7 +82,7 @@ export default function Register() {
         .then((response) => {
             console.log(response.data);
         }).catch((error) => {
-            console.log("Error Response: ", error.response);
+            console.log("Error Response: ", error.response.data);
             console.log("Error Data: ", error.response.data)
         }).finally(() => {
             navigate("/");

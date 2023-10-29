@@ -72,6 +72,7 @@ class CreatePost(APIView):
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
         # print(authorSerializer)
+        print(request)
     
         # validated_data = custom_validation(request.data)
         serializer = PostSerializer(data = request.data)
