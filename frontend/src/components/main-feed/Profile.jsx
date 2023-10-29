@@ -40,14 +40,14 @@ export default function Profile({ friends, username }) {
               >
                 <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                   <img
-                    src="https://picsum.photos/200"
+                    src={"http://127.0.0.1:8000" + friend.friend_pfp}
                     alt="profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="username ml-5">
                   <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                    {friend.username}
+                    {friend.friend_username}
                   </span>
                 </div>
               </li>
