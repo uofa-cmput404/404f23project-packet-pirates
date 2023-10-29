@@ -1,9 +1,9 @@
 import axios from "axios";
 import {useState} from 'react';
-
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Register() {
-
+    const navigate = useNavigate();
 
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
@@ -27,8 +27,8 @@ export default function Register() {
     };
 
     const handleProfPicChange = event => {
-        setProfPic(event.target.value);
-        console.log('user value is:', event.target.value);
+        setProfPic(event.target.files[0])
+        console.log('user value is:', event.target.files);
     };
 
     const handleDisplayNameChange = event => {
@@ -40,7 +40,7 @@ export default function Register() {
         'username' : user,
         'password' : pass,
         'github' : git,
-        // 'profile_picture' : profPic,
+        'profile_picture' : profPic,
         'display_name' : dispName
     }
 
@@ -58,8 +58,36 @@ export default function Register() {
     
         const res2 = await axios.post("http://127.0.0.1:8000/api/login", loginTest)
         console.log(res2.data)
-
       };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('username', user);
+        formData.append('password', pass);
+        formData.append('github', git);
+        formData.append('display_name', dispName);
+        formData.append('profile_picture', profPic)
+
+        console.log("FORM DATA: ", formData);
+        axios
+        .post(
+            "http://127.0.0.1:8000/api/register", 
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+        .then((response) => {
+            console.log(response.data);
+        }).catch((error) => {
+            console.log("Error Response: ", error.response);
+            console.log("Error Data: ", error.response.data)
+        }).finally(() => {
+            navigate("/");
+        });
+    }
 
 
   return (
@@ -121,22 +149,7 @@ export default function Register() {
                         onChange={handleGitChange}
                     />
                     </div>
-                    <div>
-                    <label
-                        htmlFor="picture"
-                        className="block mb-2 text-sm font-medium text-lm-custom-black dark:text-white"
-                    >
-                        Enter a Profile Picture Url (Optional)
-                    </label>
-                    <input
-                        type="picture"
-                        name="picture"
-                        id="picture"
-                        placeholder="Enter a Picture URL..."
-                        className="bg-gray-50 border border-gray-300 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        onChange={handleProfPicChange}
-                    />
-                    </div>
+
                     <div>
                     <label
                         htmlFor="displayname"
@@ -154,10 +167,28 @@ export default function Register() {
                     />
                     </div>
 
+                    <div>
+                    
+                    <label htmlFor="select-image">
+                        <div 
+                            className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+                            Upload Image
+                        </div>
+                    </label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        id="select-image"
+                        style={{ display: "none" }}
+                        onChange={handleProfPicChange}
+                    />
+                    </div>
+
+                    <img src={profPic} width="200" height="200" />
                     <button 
-                        onClick={SignUp}
+                        onClick={handleSubmit}
                         className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
-                    Sign Up
+                        Sign Up
                     </button>
                     
                 </form>
