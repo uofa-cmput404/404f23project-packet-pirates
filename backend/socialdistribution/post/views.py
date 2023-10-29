@@ -142,10 +142,11 @@ class GetPostComments(APIView):
     '''
     All comments of a post
     '''
-    # permission_classes = (permissions.AllowAny,)
-
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)
