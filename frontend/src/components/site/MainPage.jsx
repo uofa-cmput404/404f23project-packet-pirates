@@ -7,46 +7,46 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function MainPage({ user }) {
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [posts, setPosts] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [posts, setPosts] = useState(null);
   //const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
-
-
   useEffect(() => {
     //Get data on homepage load
-    setIsLoading(true)
+    setIsLoading(true);
+    console.log("user", user);
 
     const getPosts = async () => {
-
-      let postsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts"
+      let postsUrl =
+        "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
 
       const postsRes = await axios
-      .get(postsUrl)
-      .then((postsRes) => {
-        
-        //Result of post query
-        //console.log("POSTSRES", postsRes.data.Posts[0])
+        .get(postsUrl)
+        .then((postsRes) => {
+          //Result of post query
+          console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
-        setPosts(postsRes.data.Posts.map((post, index) => (
-          <Post
-            key={index}
-            user={user}
-            title={post.title}
-            description={post.content}
-            img={post.image_url}
-            likes={post.likes_count}
-            id={post.post_id}
-          />
-        )))
-
-      }).then(() => { setIsLoading(false) })
-      .catch((error) => {
-        console.error("Error getting posts:", error);
-      });
-
+          setPosts(
+            postsRes.data.Posts.map((post, index) => (
+              <Post
+                key={index}
+                user={user}
+                title={post.title}
+                description={post.content}
+                img={post.image_url}
+                likes={post.likes_count}
+                id={post.post_id}
+              />
+            ))
+          );
+        })
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error getting posts:", error);
+        });
     };
 
     /////////// This stuff will probably have to be implemented in the respective components //////////////////////
@@ -89,52 +89,6 @@ export default function MainPage({ user }) {
     getNotifications();
 
   }, []);
-
-  //example of posts json
-  // const posts = [
-  //   {
-  //     user: {
-  //       username: "obama",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "TITLE OF POST",
-  //     description: "THIS IS A POST",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     user: {
-  //       username: "Joe",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "Joe's Post",
-  //     description: "This is Joe's post",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
-  //   },
-  // ];
 
   //example of friends json
   const friends = [
@@ -179,7 +133,6 @@ export default function MainPage({ user }) {
   //   },
   // ];
 
-
   return (
     <>
       <div className="flex justify-center items-center w-screen">
@@ -195,9 +148,7 @@ export default function MainPage({ user }) {
               <CreatePost />
             </div>
             <div className="feed_content mt-5">
-              <ul>
-                {posts}
-              </ul>
+              <ul>{posts}</ul>
             </div>
           </div>
           <div
