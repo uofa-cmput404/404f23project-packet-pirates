@@ -10,8 +10,48 @@ export default function Post({
   id
 }) {
 
-  const [comments, setComments] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [comments, setComments] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [likeCount, setLikeCount] = useState(likes);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
+  const [commentText, setCommentText] = useState('');
+
+  const handleEdit = () => {
+    // Handle edit functionality
+  };
+
+  const handleLike = () => {
+    if (!hasLiked) {
+      // Increment the like count and send a POST request to update it
+      const newLikeCount = likeCount + 1;
+      axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        // Handle success
+        setLikeCount(newLikeCount);
+        setHasLiked(true);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Error updating like count:", error);
+      });
+    }
+  };
+
+  const handleShare = () => {
+    // Handle share functionality
+  };
+
+  const handleComment = () => {
+    setIsCommenting(true); // Show comment input field
+  };
+
+  const handleCommentSubmit = () => {
+    setIsCommenting(false); // Hide comment input field
+  };
+
 
   useEffect(() => {
     //Get data on post load
@@ -72,7 +112,6 @@ export default function Post({
 
 
 
-
   return (
     <>
       <li className="list-none mb-5">
@@ -88,17 +127,23 @@ export default function Post({
                 className="w-full h-full object-cover"
               />
             </div>
+
             <div className="info flex flex-col w-full ml-5">
               <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
                 {user.username}
               </span>
               <div className="post-title flex flex-row w-full justify-between items-center">
+                
                 <span className="text-center">
                   <h1>{title}</h1>
                 </span>
-                <span className="">Edit Button</span>
+
+                <button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+                  Edit
+                </button>
               </div>
             </div>
+            
           </div>
           <div className="description-section flex justify-center items-center">
             <p>{description}</p>
@@ -106,17 +151,46 @@ export default function Post({
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
             <img src={img} alt="" className="w-full h-full object-cover" />
           </div>
-          <div className="engagement-section flex flex-row justify-between m-5">
-            {/* likes share? */}
-            <div className="likes">
-              {" "}
-              <span className="mr-4">Like</span>
-              <span className="mr-4">{likes}</span>
-            </div>
-            <span className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-              Share
-            </span>
+
+          <div className="likes">
+            <span>Likes: {likeCount}</span>
           </div>
+
+          <div className="engagement-section flex flex-row justify-between m-5">
+            <button
+              onClick={handleLike}
+              className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
+              disabled={hasLiked}
+            >
+              Like
+            </button>
+
+            <button onClick={() => setIsCommenting(!isCommenting)} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+              Comment
+            </button>
+
+            <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+              Share
+            </button>
+          </div>
+
+          {isCommenting && (
+            <div className="comment-input" style={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="text"
+                placeholder="Enter your comment"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                onClick={handleCommentSubmit}
+                style={{ marginLeft: "8px" }}
+              >
+                Submit
+              </button>
+            </div>
+          )}
 
           <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>

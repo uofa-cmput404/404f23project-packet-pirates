@@ -42,6 +42,45 @@ class GetAuthorsPosts(APIView):
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
     
+    
+class test(APIView):
+    # no permission needed
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    def get(self, request):
+        return Response(status=status.HTTP_200_OK)    
+
+    
+class GetFeedPostsByUsername(APIView):
+    '''
+    Get all posts made by a specific author
+    '''
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(username = pk)
+        # is_private = false
+        posts = Post.objects.filter(author_id=author.user_id) # Find posts that the specific author has posted
+        serializer = PostSerializer(posts, many = True)
+        return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
+
+    # def get(self, request, pk):
+    #     author = AppAuthor.objects.get(username = pk)
+    #     posts = Post.objects.filter(author_id = author.user_id) # Find posts that the specific author has posted
+
+    #     friends = Friends.objects.filter(author = author.user_id) # Friends of author
+
+    #     for friend in friends:
+
+    #         posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
+
+    #     serializer = PostSerializer(posts, many = True)
+    #     return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
 class GetFeedPosts(APIView):
     '''
@@ -89,14 +128,24 @@ class CreatePost(APIView):
     
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
+
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+
+    authentication_classes = ()
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
 
         # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
+        
+        # Update like count
+        new_like_count = request.data.get('like_count', None)
+        if new_like_count is not None:
+            post.likes = new_like_count
+            # post.save() 
+            return Response(status=status.HTTP_200_OK)
+        
         serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -109,10 +158,11 @@ class PostComments(APIView):
     '''
     All comments of a post
     '''
-    # permission_classes = (permissions.AllowAny,)
-
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)
