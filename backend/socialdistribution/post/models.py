@@ -14,20 +14,20 @@ class Post(models.Model):
 
     is_private = models.BooleanField(default=True)
 
-    url = models.CharField(max_length=200)
+    url = models.CharField(max_length=200, blank = True, null= True)
 
     likes_count = models.IntegerField(default=0)
 
     #Typing needed (image, md, text)
-    content_types = [('text/plain', 'plaintext'), ('text/markdown', 'markdown'), ('image/png;base64', 'png'), ('image/jpeg;base64', 'jpeg')]
+    content_types = [('text/plain', 'plaintext'), ('text/markdown', 'markdown')]
     
     content_type = models.CharField(max_length=200,choices=content_types, default=content_types[0])
 
     content = models.CharField(max_length=200, blank=True)
 
-    source = models.CharField(max_length=200) # ?
+    source = models.CharField(max_length=200, blank = True, null= True) # ?
 
-    origin = models.CharField(max_length=200)
+    origin = models.CharField(max_length=200, blank = True, null= True)
 
     date_time = models.DateTimeField(auto_now_add=True, null = True, blank = True)
 
