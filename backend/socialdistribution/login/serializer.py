@@ -9,9 +9,11 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
         fields = "__all__"
+
     def create(self, validated_data):
         print(validated_data["username"])
         print(validated_data['password'])
+        print("VALIDATED", validated_data)
         author_obj = AuthorModel.objects.create_user(username = validated_data['username'],
                                                      password = validated_data['password'])
         
@@ -19,9 +21,9 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
         # author_obj.first_name = validated_data['first_name']
         # author_obj.last_name = validated_data['last_name']
         # author_obj.date_of_birth = validated_data['date_of_birth' ]
-        # author_obj.github = validated_data['github']
-        # author_obj.display_name = validated_data['display_name']
-
+        author_obj.github = validated_data['github']
+        author_obj.display_name = validated_data['display_name']
+        author_obj.profile_picture = validated_data['profile_picture']
         author_obj.save()
         return author_obj
 
@@ -43,9 +45,4 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
         fields = ("user_id", "username", "first_name", "last_name", "display_name") # Add more fields to display when logged in
-
-# class AuthorSerializer(models.Model):
-#     class Meta:
-#         model = Author
-#         fields = ['username', 'display_name', 'first_name', 'last_name', 'date_of_birth', 'github', 'profile_picture', 'url', 'is_active']
 
