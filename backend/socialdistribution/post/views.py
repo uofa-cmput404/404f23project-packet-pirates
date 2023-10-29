@@ -41,6 +41,45 @@ class GetAuthorsPosts(APIView):
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
     
+    
+class test(APIView):
+    # no permission needed
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    def get(self, request):
+        return Response(status=status.HTTP_200_OK)    
+
+    
+class GetFeedPostsByUsername(APIView):
+    '''
+    Get all posts made by a specific author
+    '''
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(username = pk)
+        # is_private = false
+        posts = Post.objects.filter(author_id=author.user_id) # Find posts that the specific author has posted
+        serializer = PostSerializer(posts, many = True)
+        return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
+
+    # def get(self, request, pk):
+    #     author = AppAuthor.objects.get(username = pk)
+    #     posts = Post.objects.filter(author_id = author.user_id) # Find posts that the specific author has posted
+
+    #     friends = Friends.objects.filter(author = author.user_id) # Friends of author
+
+    #     for friend in friends:
+
+    #         posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
+
+    #     serializer = PostSerializer(posts, many = True)
+    #     return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
 class GetFeedPosts(APIView):
     '''
