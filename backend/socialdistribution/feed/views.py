@@ -45,7 +45,7 @@ class GetAllNotifications(APIView):
                             name='pk',
                             in_=openapi.IN_PATH,
                             type=openapi.TYPE_STRING,
-                            description='Post ID',
+                            description='Author ID',
                             required=True,
                             enum=[]
                         )
@@ -68,13 +68,13 @@ class GetAllAuthorFriends(APIView):
     @swagger_auto_schema(operation_description="Get all friends of a specific author",
                     operation_summary="Get Author's Friends",
                     responses={200: FriendsSerializer()},
-                    tags=['Post'],
+                    tags=['Feed'],
                     manual_parameters=[
                         openapi.Parameter(
                             name='pk',
                             in_=openapi.IN_PATH,
                             type=openapi.TYPE_STRING,
-                            description='Post ID',
+                            description='Author ID',
                             required=True,
                             enum=[]
                         )
@@ -106,7 +106,7 @@ class GetAuthorFollowing(APIView):
                             name='pk',
                             in_=openapi.IN_PATH,
                             type=openapi.TYPE_STRING,
-                            description='Post ID',
+                            description='Author ID',
                             required=True,
                             enum=[]
                         )
@@ -138,7 +138,7 @@ class GetAuthorFollowers(APIView):
                             name='pk',
                             in_=openapi.IN_PATH,
                             type=openapi.TYPE_STRING,
-                            description='Post ID',
+                            description='Author ID',
                             required=True,
                             enum=[]
                         )
@@ -169,7 +169,7 @@ class GetTrueFriends(APIView):
                             name='pk',
                             in_=openapi.IN_PATH,
                             type=openapi.TYPE_STRING,
-                            description='Post ID',
+                            description='Author ID',
                             required=True,
                             enum=[]
                         )
