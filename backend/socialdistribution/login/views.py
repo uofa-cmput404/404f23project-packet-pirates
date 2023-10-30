@@ -76,6 +76,8 @@ class AuthorLogout(APIView):
     def get(self, request):
         try:
             request.user.auth_token.delete()
+            return Response({'Message': 'You have successfully logged out'}, status=status.HTTP_200_OK)
+        
         except (AttributeError, ObjectDoesNotExist):
             pass
         
