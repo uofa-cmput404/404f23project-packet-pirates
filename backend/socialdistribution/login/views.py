@@ -25,6 +25,7 @@ import io
 from PIL import Image
 
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -96,11 +97,22 @@ class GetSingleAuthor(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-    @swagger_auto_schema(
-        operation_description="Get one single author", 
-        operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.", 
-        responses={200: AuthorSerializer()}, 
-        tags=['Login'])
+    
+    @swagger_auto_schema(operation_description="Get one single author",
+            operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
+            responses={200: AuthorSerializer()},
+            tags=['Login'],
+            manual_parameters=[
+                openapi.Parameter(
+                    name='pk',
+                    in_=openapi.IN_PATH,
+                    type=openapi.TYPE_STRING,
+                    description='Author ID',
+                    required=True,
+                    enum=[]
+                )
+            ])
+
 
     def get(self, request, pk):
         author = AppAuthor.objects.get(user_id = pk) # Find posts that the specific author has posted
