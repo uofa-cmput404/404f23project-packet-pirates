@@ -72,7 +72,7 @@ export default function CreatePost({ user }) {
     
     axios
     .post(
-      'http://127.0.0.1:8000/api/postViews', 
+      'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/postViews', 
       data, 
       {
         headers: {

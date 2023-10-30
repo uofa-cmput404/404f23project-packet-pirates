@@ -76,7 +76,7 @@ export default function Register() {
         console.log("FORM DATA: ", formData);
         axios
         .post(
-            "http://127.0.0.1:8000/api/register", 
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/register", 
             formData,
             {
                 headers: {
