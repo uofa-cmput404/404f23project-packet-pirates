@@ -19,6 +19,11 @@ class FeedTests(TestCase):
         author2 = AppAuthor.objects.create(username="Tester2", password = "PassTester2")
         author3 = AppAuthor.objects.create(username="Tester3", password = "PassTester3")
 
+        # messages = [('Liked your post', 'liked'), ('Commented on your post', 'commented')]
+
+        notification = Notifications.objects.create(author=author1, notification_author = author2, notif_author_pfp = None, 
+                                                    notif_author_username = author1.username, message = ('Liked your post', 'liked'), url = None)
+        
     # True Friend Exists
     def testTrueFriendsExist(self):
         pass
