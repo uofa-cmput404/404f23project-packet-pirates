@@ -189,7 +189,6 @@ class PostComments(APIView):
         print(request)
         serializer = CommentSerializer(data = request.data)
         serializer.is_valid()
-        print(serializer.errors)
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
             return Response({"message" : "Comment Model Created"}, status=status.HTTP_201_CREATED)
