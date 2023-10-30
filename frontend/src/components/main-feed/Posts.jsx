@@ -75,6 +75,7 @@ export default function Post({
           author: user.user.user_id,
           author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
           author_username: authorRes.data.Author.username,
+          Authorization: 'Token ' + localStorage.getItem('access_token')
         
       })
       .then(() => {
