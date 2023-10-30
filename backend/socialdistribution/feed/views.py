@@ -52,7 +52,7 @@ class GetAllNotifications(APIView):
                     ])
 
     def get(self, request, pk):
-        notifications = Notifications.objects.filter(author_id = request.user.user_id)
+        notifications = Notifications.objects.filter(author_id = pk)
 
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
@@ -114,7 +114,7 @@ class GetAuthorFollowing(APIView):
     
     def get(self, request, pk):
           
-        friends = Friends.objects.filter(friend_id = request.user.user_id)
+        friends = Friends.objects.filter(friend_id = pk)
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
@@ -145,8 +145,8 @@ class GetAuthorFollowers(APIView):
                     ])
     
     def get(self, request, pk):
-          
-        friends = Friends.objects.filter(author_id = request.user.user_id)
+
+        friends = Friends.objects.filter(author_id = pk)
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
@@ -177,16 +177,18 @@ class GetTrueFriends(APIView):
     
     def get(self, request, pk):
           
-        followers = Friends.objects.filter(author_id = request.user.user_id)
+        followers = Friends.objects.filter(author_id = pk)
 
-        following = Friends.objects.filter(friend_id = request.user.user_id)
+        following = Friends.objects.filter(friend_id = pk)
 
         # Empty queryset
         true_friends = Friends.objects.none() 
 
         for follow in following:
 
-            friend  =  followers.filter(author_id = follow.friend)
+            #follow: auth id them friend id me
+
+            friend  =  followers.filter(friend_id = follow.author)
 
             if friend.exists():
 
