@@ -61,7 +61,7 @@ class GetAuthorFollowing(APIView):
     Get all authors an author follows
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
           
@@ -77,7 +77,7 @@ class GetAuthorFollowers(APIView):
     Get all authors an following an author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
           
@@ -93,7 +93,7 @@ class GetTrueFriends(APIView):
     Get all true friends of an author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
           
