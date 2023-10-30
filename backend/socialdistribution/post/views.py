@@ -26,8 +26,10 @@ from post.validate import *
 
 import uuid
 import io
+from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
+from drf_yasg import openapi
 
 class GetAuthorsPosts(APIView):
     '''
@@ -35,6 +37,13 @@ class GetAuthorsPosts(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+
+
+    @swagger_auto_schema(operation_description="Get posts that the specific author has posted in the database",
+                         operation_summary="Get posts",
+                         responses={200: PostSerializer()},
+                         tags=['Post'],
+                         manual_parameters=[])
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -60,6 +69,12 @@ class GetFeedPostsByUsername(APIView):
     permission_classes = (permissions.AllowAny,)
     # no authentication needed
     authentication_classes = ()
+    
+    @swagger_auto_schema(operation_description="Get all posts made by a specific author",
+                            operation_summary="Get posts",
+                            responses={200: PostSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[])
     
     
     def get(self, request, pk):
@@ -88,6 +103,12 @@ class GetFeedPosts(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
+                            operation_summary="Get posts",
+                            responses={200: PostSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[])
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
@@ -105,6 +126,12 @@ class GetFeedPosts(APIView):
 class PostViews(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
+
+    @swagger_auto_schema(operation_description="Create a post",
+                            operation_summary="Create a post",
+                            responses={200: PostSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[])
 
     def post(self, request): # Create a post
         # print(request.data['post_id'])
@@ -144,6 +171,12 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     permission_classes = (permissions.AllowAny,)
 
     authentication_classes = ()
+    
+    @swagger_auto_schema(operation_description="Edit a post",
+                            operation_summary="Edit a post",
+                            responses={200: PostSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[])
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -172,6 +205,21 @@ class PostComments(APIView):
     '''
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
+    
+    @swagger_auto_schema(operation_description="Get all comments of a post",
+                            operation_summary="Get comments",
+                            responses={200: CommentSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[
+                                openapi.Parameter(
+                                    name='pk',
+                                    in_=openapi.IN_PATH,
+                                    type=openapi.TYPE_STRING,
+                                    description='Post ID',
+                                    required=True,
+                                    enum=[]
+                                )
+                            ])
     
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
