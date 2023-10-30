@@ -21,6 +21,10 @@ export default function Post({
   const [commentText, setCommentText] = useState('');
   const [postAuthor, setPostAuthor] = useState('');
 
+  const config = {
+    headers: {Authentication: 'Token ' + localStorage.getItem('access_token')}
+  };
+
   const handleEdit = () => {
     // Handle edit functionality
   };
@@ -29,7 +33,7 @@ export default function Post({
     if (!hasLiked) {
       // Increment the like count and send a POST request to update it
       const newLikeCount = likeCount + 1;
-      axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+      axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/editpost", { like_count: newLikeCount }, config, {
         withCredentials: true,
       })
       .then((response) => {
@@ -62,14 +66,14 @@ export default function Post({
     let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/simpleauthor"
 
     const authorRes = await axios
-    .get(authorUrl)
+    .get(authorUrl,config)
     .then(async (authorRes) => {
 
       await axios.post(commentsUrl, 
         { 
           text: commentText,
           author: user.user.user_id,
-          author_picture: "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
+          author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
           author_username: authorRes.data.Author.username,
         
       })
@@ -87,11 +91,6 @@ export default function Post({
 
   };
 
-  const config = {
-    headers: {
-        'Authentication': 'Token ' + localStorage.getItem('access_token')
-    }
-  }
 
   const getComments = async () => {
 

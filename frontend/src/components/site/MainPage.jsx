@@ -18,10 +18,8 @@ export default function MainPage({ user }) {
   const [notifications, setNotifications] = useState()
 
   const config = {
-    headers: {
-      'Authentication': 'Token ' + localStorage.getItem('access_token')
-    }
-  }
+    headers: {'Authentication': 'Token ' + localStorage.getItem('access_token')}
+  };
 
   const getPosts = async () => {
     let postsUrl =
