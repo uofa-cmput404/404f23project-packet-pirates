@@ -1,0 +1,502 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Social Distribution API",
+        "description": "API for Social Distribution",
+        "termsOfService": "https://www.google.com/policies/terms/",
+        "license": {
+            "name": "BSD License"
+        },
+        "version": "v1"
+    },
+    "basePath": "/api",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Basic": {
+            "type": "basic"
+        }
+    },
+    "security": [
+        {
+            "Basic": []
+        }
+    ],
+    "paths": {
+        "/api/posts/{id}/editpost": {
+            "post": {
+                "operationId": "api_posts_editpost_create",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "api"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author": {
+            "get": {
+                "operationId": "author_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": []
+        },
+        "/author/{id}/allauthorfriends": {
+            "get": {
+                "operationId": "author_allauthorfriends_list",
+                "description": "Get all friends of a given author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/authorfollowers": {
+            "get": {
+                "operationId": "author_authorfollowers_list",
+                "description": "Get all authors an following an author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/authorfollowing": {
+            "get": {
+                "operationId": "author_authorfollowing_list",
+                "description": "Get all authors an author follows",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/authornotifications": {
+            "get": {
+                "operationId": "author_authornotifications_list",
+                "description": "Get all notifications that should show up in a given author's feed",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/authorposts": {
+            "get": {
+                "operationId": "author_authorposts_list",
+                "description": "Get posts that the specific author has posted in the database",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/editpost": {
+            "post": {
+                "operationId": "author_editpost_create",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/feedposts": {
+            "get": {
+                "operationId": "author_feedposts_list",
+                "description": "Get posts that should show up in a author's feed",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/feedposts_byusername": {
+            "get": {
+                "operationId": "author_feedposts_byusername_list",
+                "description": "Get all posts made by a specific author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/postcomments": {
+            "get": {
+                "operationId": "author_postcomments_list",
+                "description": "All comments of a post",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "post": {
+                "operationId": "author_postcomments_create",
+                "description": "All comments of a post",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "delete": {
+                "operationId": "author_postcomments_delete",
+                "description": "All comments of a post",
+                "parameters": [],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/postlikes": {
+            "get": {
+                "operationId": "author_postlikes_list",
+                "description": "All likes of a post",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "post": {
+                "operationId": "author_postlikes_create",
+                "description": "All likes of a post",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "delete": {
+                "operationId": "author_postlikes_delete",
+                "description": "All likes of a post",
+                "parameters": [],
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/simpleauthor": {
+            "get": {
+                "operationId": "author_simpleauthor_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/singleauthor": {
+            "get": {
+                "operationId": "author_singleauthor_list",
+                "description": "Get one single author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/author/{id}/truefriends": {
+            "get": {
+                "operationId": "author_truefriends_list",
+                "description": "Get all true friends of an author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        "/login": {
+            "post": {
+                "operationId": "login_create",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "login"
+                ]
+            },
+            "parameters": []
+        },
+        "/logout": {
+            "get": {
+                "operationId": "logout_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "logout"
+                ]
+            },
+            "parameters": []
+        },
+        "/postViews": {
+            "post": {
+                "operationId": "postViews_create",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "postViews"
+                ]
+            },
+            "parameters": []
+        },
+        "/register": {
+            "post": {
+                "operationId": "register_create",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "register"
+                ]
+            },
+            "parameters": []
+        },
+        "/test": {
+            "get": {
+                "operationId": "test_list",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "test"
+                ]
+            },
+            "parameters": []
+        }
+    },
+    "definitions": {}
+}
