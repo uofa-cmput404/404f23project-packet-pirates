@@ -95,7 +95,7 @@ export default function MainPage({ user }) {
     console.log(token)
 
     const config = {
-      headers: {Authorization: 'token ' + token}
+      headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
     };
     console.log(config)
 

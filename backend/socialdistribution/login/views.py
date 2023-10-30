@@ -70,8 +70,8 @@ class AuthorLogin(APIView):
                              status=status.HTTP_200_OK)
 
 class AuthorLogout(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication)
 
     def get(self, request):
         try:
