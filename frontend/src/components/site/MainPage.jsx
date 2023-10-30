@@ -10,84 +10,83 @@ import { Navigate, useNavigate } from "react-router-dom";
 export default function MainPage({ user }) {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
+
+  const getPosts = async () => {
+    let postsUrl =
+      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
+
+    const postsRes = await axios
+      .get(postsUrl)
+      .then((postsRes) => {
+        //Result of post query
+        console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
+
+        setPosts(
+          postsRes.data.Posts.map((post, index) => (
+            <Post
+              key={index}
+              user={user}
+              post_author={post.author}
+              title={post.title}
+              description={post.content}
+              img={post.image_url}
+              likes={post.likes_count}
+              id={post.post_id}
+            />
+          ))
+        );
+      })
+      .then(() => {
+
+      })
+      .catch((error) => {
+        console.error("Error getting posts:", error);
+      });
+  };
+
+  const getConnections = async () => {
+
+    let connectionsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
+
+    const connectionsRes = await axios
+    .get(connectionsUrl)
+    .then((connectionsRes) => {
+
+      console.log("CONNECTSRES", connectionsRes.data);
+      setFriends(<Profile friends={connectionsRes.data.Friends} username={user.user.username} />)
+
+    })
+    .catch((error) => {
+      console.error("Error getting friends:", error);
+    });
+
+  };
+
+  const getNotifications = async () => {
+
+    let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
+
+    const notifsRes = await axios
+    .get(notificationsUrl)
+    .then((notifsRes) => {
+      console.log("NOTIFSRES", notifsRes.data.Notifications)
+      setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
+    })
+    .catch((error) => {
+      console.error("Error getting notifications:", error);
+    });
+
+
+  };
+
+
   useEffect(() => {
     //Get data on homepage load
-    setIsLoading(true);
     console.log("user", user);
-
-    const getPosts = async () => {
-      let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
-
-      const postsRes = await axios
-        .get(postsUrl)
-        .then((postsRes) => {
-          //Result of post query
-          console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
-
-          setPosts(
-            postsRes.data.Posts.map((post, index) => (
-              <Post
-                key={index}
-                user={user}
-                title={post.title}
-                description={post.content}
-                img={post.image_url}
-                likes={post.likes_count}
-                id={post.post_id}
-              />
-            ))
-          );
-        })
-        .then(() => {
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error getting posts:", error);
-        });
-    };
-
-    /////////// This stuff will probably have to be implemented in the respective components //////////////////////
-
-    const getConnections = async () => {
-
-      let connectionsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
-
-      const connectionsRes = await axios
-      .get(connectionsUrl)
-      .then((connectionsRes) => {
-
-        console.log("CONNECTSRES", connectionsRes.data);
-        setFriends(<Profile friends={connectionsRes.data.Friends} username={user.user.username} />)
-
-      })
-      .catch((error) => {
-        console.error("Error getting friends:", error);
-      });
-
-    };
-
-    const getNotifications = async () => {
-
-      let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
-
-      const notifsRes = await axios
-      .get(notificationsUrl)
-      .then((notifsRes) => {
-        console.log("NOTIFSRES", notifsRes.data.Notifications)
-        setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
-      })
-      .catch((error) => {
-        console.error("Error getting notifications:", error);
-      });
-
-
-    };
 
     getPosts();
     getConnections();

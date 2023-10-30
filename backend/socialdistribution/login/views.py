@@ -78,7 +78,7 @@ class GetSingleAuthor(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
-        author = AppAuthor.objects.get(author_id = pk) # Find posts that the specific author has posted
+        author = AppAuthor.objects.get(user_id = pk) # Find posts that the specific author has posted
         # posts = Post.objects.all()
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
