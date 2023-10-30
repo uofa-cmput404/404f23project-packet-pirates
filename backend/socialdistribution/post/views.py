@@ -231,6 +231,21 @@ class PostComments(APIView):
         
         return Response({"Comments": serializer.data}, status=status.HTTP_200_OK)
     
+    @swagger_auto_schema(operation_description="Create comments for a specific post",
+                        operation_summary="Create comment",
+                        responses={200: CommentSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
+    
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
         request.data['post'] = post_id
@@ -243,6 +258,22 @@ class PostComments(APIView):
             return Response({"message" : "Comment Model Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
+        
+
+    @swagger_auto_schema(operation_description="Delete comment for a specific post",
+                    operation_summary="delete comments",
+                    responses={200: CommentSerializer()},
+                    tags=['Post'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Post ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
         
     def delete(self, request, pk):
         comment_id = request.data['comment_id']
@@ -264,6 +295,22 @@ class PostLikeViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+        
+    @swagger_auto_schema(operation_description="Get likes of a specific post",
+                            operation_summary="post likes",
+                            responses={200: LikeSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[
+                                openapi.Parameter(
+                                    name='pk',
+                                    in_=openapi.IN_PATH,
+                                    type=openapi.TYPE_STRING,
+                                    description='Post ID',
+                                    required=True,
+                                    enum=[]
+                                )
+                            ])
+
     def get(self, request, pk): # Get all likes
         post_id = uuid.UUID(pk) # pk needs to be post ID not author
 
@@ -272,7 +319,22 @@ class PostLikeViews(APIView):
         serializer = LikeSerializer(likes, many = True)
   
         return Response ({"Post Likes": serializer.data}, status=status.HTTP_200_OK)
- 
+    
+    @swagger_auto_schema(operation_description="Creates likes of a specific post",
+                        operation_summary="create post likes",
+                        responses={201: LikeSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
+    
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
         request.data['post_object_id'] = post_object_id
@@ -283,6 +345,23 @@ class PostLikeViews(APIView):
             return Response({"message" : "Like Model Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
+    
+
+        
+    @swagger_auto_schema(operation_description="delete a like of a specific post",
+                        operation_summary="delete post like",
+                        responses={200: LikeSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
 
     def delete(self, request, pk): # For unliking a post
         post_id = uuid.UUID(pk)
