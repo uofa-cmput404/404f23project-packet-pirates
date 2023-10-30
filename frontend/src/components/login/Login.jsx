@@ -38,6 +38,7 @@ export default function Login() {
         console.log(data);
         console.log(data.token);
         cookies.set('access_token', data.token, {path: '/'});
+        localStorage.setItem('access_token', data.token)
         console.log("pushed");
         window.location.reload(false);
         console.log(res);
