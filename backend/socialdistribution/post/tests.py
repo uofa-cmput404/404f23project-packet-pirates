@@ -101,7 +101,28 @@ class PostTests(TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response3.status_code, 200)
 
-    #Add EditPost, DeletePosts, CreatePosts through API once they are implemented
+
+    # #Test Create Post through Posting to API
+    # def testCreatePost(self): 
+
+    #     self.client.login(username='CMPUT404', password='cmput404')
+
+    #     author1 = AppAuthor.objects.get(username="Tester1", password = "PassTester1")
+
+    #     data = {
+    #         "author" : author1,
+    #         "title" : 'testPost4',
+    #         'content_type' : ('text/plain', 'plaintext'),
+    #         'content' : 'test',
+    #     }
+
+    #     response = self.client.post('http://127.0.0.1:8000/api/author/' + str(author1.user_id) + '/feedposts', data)
+
+    #     self.assertEqual(response.status_code, 201)
+
+    #     self.assertEquals(Post.objects.get(title = 'testPost4').title, "testPost4")
+
+    #Add EditPost, DeletePosts, through API once they are implemented
 
 
 
