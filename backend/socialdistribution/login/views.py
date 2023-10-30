@@ -71,11 +71,12 @@ class AuthorLogin(APIView):
 
 class AuthorLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (TokenAuthentication)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
         try:
             request.user.auth_token.delete()
+            # print(request)
             return Response({'Message': 'You have successfully logged out'}, status=status.HTTP_200_OK)
         
         except (AttributeError, ObjectDoesNotExist):
