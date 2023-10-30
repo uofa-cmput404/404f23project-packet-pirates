@@ -7,15 +7,84 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from 'universal-cookie'
 
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function MainPage({ user }) {
+  const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
-  //const [friends, setFriends] = useState()
-  //const [notifications, getNotifications] = useState()
   const cookies = new Cookies();
+  const [friends, setFriends] = useState()
+  const [notifications, setNotifications] = useState()
 
+
+  const getPosts = async () => {
+    let postsUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/feedposts";
+
+    const postsRes = await axios
+      .get(postsUrl)
+      .then((postsRes) => {
+        //Result of post query
+        console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
+
+        setPosts(
+          postsRes.data.Posts.map((post, index) => (
+            <Post
+              key={index}
+              user={user}
+              post_author={post.author}
+              title={post.title}
+              description={post.content}
+              img={post.image_url}
+              likes={post.likes_count}
+              id={post.post_id}
+            />
+          ))
+        );
+      })
+      .then(() => {
+
+      })
+      .catch((error) => {
+        console.error("Error getting posts:", error);
+      });
+  };
+
+  const getConnections = async () => {
+
+    let connectionsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/truefriends";
+
+    const connectionsRes = await axios
+    .get(connectionsUrl)
+    .then((connectionsRes) => {
+
+      console.log("CONNECTSRES", connectionsRes.data);
+      setFriends(<Profile friends={connectionsRes.data.Friends} username={user.user.username} />)
+
+    })
+    .catch((error) => {
+      console.error("Error getting friends:", error);
+    });
+
+  };
+
+  const getNotifications = async () => {
+
+    let notificationsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/authornotifications"
+
+    const notifsRes = await axios
+    .get(notificationsUrl)
+    .then((notifsRes) => {
+      console.log("NOTIFSRES", notifsRes.data.Notifications)
+      setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
+    })
+    .catch((error) => {
+      console.error("Error getting notifications:", error);
+    });
+
+
+  };
 
 
   useEffect(() => {
@@ -28,167 +97,69 @@ export default function MainPage({ user }) {
     console.log(config)
 
     //Get data on homepage load
-    setIsLoading(true)
-
-    const getPosts = async () => {
-
-      let postsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/feedposts"
-
-      const postsRes = await axios
-      .get(postsUrl,config)
-      .then((postsRes) => {
-        
-        //Result of post query
-        //console.log("POSTSRES", postsRes.data.Posts[0])
-
-        setPosts(postsRes.data.Posts.map((post, index) => (
-          <Post
-            key={index}
-            user={user}
-            title={post.title}
-            description={post.content}
-            img={post.image_url}
-            likes={post.likes_count}
-            id={post.post_id}
-          />
-        )))
-
-      }).then(() => { setIsLoading(false) })
-      .catch((error) => {
-        console.error("Error getting posts:", error);
-      });
-
-    };
-
-    /////////// This stuff will probably have to be implemented in the respective components //////////////////////
-
-    // const getFriends = async () => {
-
-    //   const friendsRes = await axios
-    //   .get("http://localhost:8000/api/friends")
-    //   .then((friendsRes) => {
-    //     console.log(friendsRes.data);
-
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
-
-    //   setFriends(friendsRes.data)
-
-    // };
-
-    // const getNotifications = async () => {
-
-    //   const notifsRes = await axios
-    //   .get("http://localhost:8000/api/notifications")
-    //   .then((notifsRes) => {
-    //     console.log(notifsRes.data);
-
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting notifications:", error);
-    //   });
-
-    //   setFriends(notifsRes.data)
-
-    // };
+    console.log("user", user);
 
     getPosts();
-    //getFriends();
-    //getNotifications();
+    getConnections();
+    getNotifications();
 
   }, []);
 
-  //example of posts json
-  // const posts = [
+  const handleLogout = async (event) => {
+    event.preventDefault();
+
+    try {
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout");
+      window.location.reload(false);
+      console.log("logged out");
+    } 
+    catch (err) {
+      console.log(err);
+    } 
+  };
+
+  //example of friends json
+  // const friends = [
   //   {
-  //     user: {
-  //       username: "obama",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "TITLE OF POST",
-  //     description: "THIS IS A POST",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
+  //     username: "USERNAME1",
+  //     pfp: "https://picsum.photos/200",
   //   },
   //   {
-  //     user: {
-  //       username: "Joe",
-  //       pfp: "https://picsum.photos/200",
-  //     },
-  //     title: "Joe's Post",
-  //     description: "This is Joe's post",
-  //     img: "https://picsum.photos/200",
-  //     likes: 4,
-  //     id: crypto.randomUUID(),
-  //     comments: [
-  //       {
-  //         user: {
-  //           username: "USERNAME",
-  //           pfp: "https://picsum.photos/200",
-  //         },
-  //         likes: 4,
-  //         comment: "sfdsfsdfsdfdsfsd",
-  //       },
-  //     ],
+  //     username: "USERNAME2",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME4",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME5",
+  //     pfp: "https://picsum.photos/200",
   //   },
   // ];
 
-  //example of friends json
-  const friends = [
-    {
-      username: "USERNAME1",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME2",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME3",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME4",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME5",
-      pfp: "https://picsum.photos/200",
-    },
-  ];
-
   // example of notifications json
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
-
+  // const notifications = [
+  //   {
+  //     username: "USERNAME1",
+  //     imageSrc: "https://source.unsplash.com/200x200",
+  //     type: "Requested to follow",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     imageSrc: "https://source.unsplash.com/200x201",
+  //     type: "Liked your post",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     imageSrc: "https://source.unsplash.com/200x202",
+  //     type: "Commented on your post",
+  //   },
+  // ];
 
   return (
     <>
@@ -198,23 +169,29 @@ export default function MainPage({ user }) {
             className="profile h-fit mx-auto"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Profile friends={friends} username={user.user.username} />
+            {friends}
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
-              <CreatePost />
+              <CreatePost user={user} />
             </div>
             <div className="feed_content mt-5">
-              <ul>
-                {posts}
-              </ul>
+              <ul>{posts}</ul>
             </div>
           </div>
-          <div
-            className="notifications h-fit mx-auto ml-5"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            <Notifications notifications={notifications} />
+
+          <div className="flex-col justify-center mx-4">
+            <button 
+              onClick={handleLogout}
+              className='block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+              Logout
+            </button>
+            <div
+              className="notifications h-fit mx-auto"
+              style={{ position: "sticky", top: "20px" }}
+            >
+            {notifications}
+            </div>
           </div>
         </div>
       </div>

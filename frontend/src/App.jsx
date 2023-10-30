@@ -20,7 +20,9 @@ import {
 
 import axios from "axios";
 import Register from "./components/login/Register";
+import ViewProfile from "./components/view-profile/ViewProfile";
 import ProfilePage from "./components/profilepage/ProfilePage";
+import ViewProfileNotLogged from "./components/view-profile/ViewProfileNotLoggedIn";
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -83,7 +85,20 @@ function App() {
           element={isLoggedIn ? <MainPage user={authorInfo} /> : <Landing />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/profilepage" element={<ProfilePage user={authorInfo}/>} />
+        <Route
+          path="/user/:author"
+          element={
+            isLoggedIn ? (
+              <ViewProfile user={authorInfo} />
+            ) : (
+              <ViewProfileNotLogged />
+            )
+          }
+        />
+        <Route
+          path="/profilepage"
+          element={<ProfilePage user={authorInfo} />}
+        />
       </Routes>
     </Router>
   );

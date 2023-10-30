@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout', views.AuthorLogout.as_view(), name = "logout"),
     path('author', views.AuthorView.as_view(), name = "author"),
     path('author/<str:pk>/singleauthor', views.GetSingleAuthor.as_view(), name = "single_author"),
+    path('author/<str:pk>/simpleauthor', views.GetSimpleAuthor.as_view(), name = "simple_author"),
 ]

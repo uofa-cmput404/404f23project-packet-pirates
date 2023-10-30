@@ -73,14 +73,15 @@ class AuthorLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
-    def post(self, request):
+    def get(self, request):
         try:
             request.user.auth_token.delete()
         except (AttributeError, ObjectDoesNotExist):
             pass
         
-        logout(request)
-        return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
+    # def get(self, request):
+    #     logout(request)
+    #     return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
 
 
 class AuthorView(APIView):
@@ -101,8 +102,19 @@ class GetSingleAuthor(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request, pk):
-        author = AppAuthor.objects.get(author_id = pk) # Find posts that the specific author has posted
+        author = AppAuthor.objects.get(user_id = pk) # Find posts that the specific author has posted
         # posts = Post.objects.all()
         serializer = AuthorSerializer(author)
+        return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
+
+class GetSimpleAuthor(APIView):
+    # given author id, gets author username and profile picture
+    permission_classes = (permissions.AllowAny,)
+    # no authentication needed
+    authentication_classes = ()
+    
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(user_id = pk)
+        serializer = SimpleAuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
 

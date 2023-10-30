@@ -8,7 +8,10 @@ export default function Register() {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
+
     const [profPic, setProfPic] = useState('');
+    const [dispPic, setDispPic] = useState('');
+
     const [dispName, setdispName] = useState('');
 
     const handleUserChange = event => {
@@ -28,6 +31,7 @@ export default function Register() {
 
     const handleProfPicChange = event => {
         setProfPic(event.target.files[0])
+        setDispPic(URL.createObjectURL(event.target.files[0]))
         console.log('user value is:', event.target.files);
     };
 
@@ -82,7 +86,7 @@ export default function Register() {
         .then((response) => {
             console.log(response.data);
         }).catch((error) => {
-            console.log("Error Response: ", error.response);
+            console.log("Error Response: ", error.response.data);
             console.log("Error Data: ", error.response.data)
         }).finally(() => {
             navigate("/");
@@ -184,7 +188,7 @@ export default function Register() {
                     />
                     </div>
 
-                    <img src={profPic} width="200" height="200" />
+                    <img src={dispPic} width="200" height="200" />
                     <button 
                         onClick={handleSubmit}
                         className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
