@@ -1,0 +1,547 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Social Distribution API",
+        "description": "API for Social Distribution",
+        "termsOfService": "https://www.google.com/policies/terms/",
+        "license": {
+            "name": "BSD License"
+        },
+        "version": "v1"
+    },
+    "basePath": "/api",
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Basic": {
+            "type": "basic"
+        }
+    },
+    "security": [
+        {
+            "Basic": []
+        }
+    ],
+    "paths": {
+        "/api/posts/{id}/editpost": {
+            "post": {
+                "operationId": "api_posts_editpost_create",
+                "description": "Edit a post by ID",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Post successfully updated"
+                    },
+                    "400": {
+                      "description": "Bad Request"
+                    }
+
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author": {
+            "get": {
+                "operationId": "author",
+                "description": "Gets author that's logged in",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Author JSON is successfully retrieved"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/allauthorfriends": {
+            "get": {
+                "operationId": "author_allauthorfriends_list",
+                "description": "Get all friends of a given author",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sucessfully retrieved the list of JSONs of authors friends."
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/authorfollowers": {
+            "get": {
+                "operationId": "author_authorfollowers_list",
+                "description": "Get all authors who are following an author",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the list of JSONs of authors following the specified author"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/authorfollowing": {
+            "get": {
+                "operationId": "author_authorfollowing_list",
+                "description": "Get all authors an author follows",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully gets all author JSONs an author follows"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/authornotifications": {
+            "get": {
+                "operationId": "author_authornotifications_list",
+                "description": "Get all notifications that should show up in a given author's feed",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the list of JSONs of notifications for the specified author's feed"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/authorposts": {
+            "get": {
+                "operationId": "author_authorposts_list",
+                "description": "Get posts that the specific author has posted in the database",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the lists of JSONs of posts by the specified author"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/editpost": {
+            "post": {
+                "operationId": "author_editpost_create",
+                "description": "Edits a post made by the author",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Post successfully edited"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                    
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/feedposts": {
+            "get": {
+                "operationId": "author_feedposts_list",
+                "description": "Get posts that should show up in an author's feed",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully gets list of JSONs of posts in an author's feed"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/feedposts_byusername": {
+            "get": {
+                "operationId": "author_feedposts_byusername_list",
+                "description": "Get all posts made by a specific author",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieves list of JSONs of all posts made by the specificed author"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/postcomments": {
+            "get": {
+                "operationId": "author_postcomments_list",
+                "description": "Get all comments of a post",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which comments are to be retrieved."
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieves list of JSONs of all comments of the specified post."
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "post": {
+                "operationId": "author_postcomments_create",
+                "description": "Creates a new comment on a post",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which a comment is to be created."
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully created a new comment for the specified post."
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "delete": {
+                "operationId": "author_postcomments_delete",
+                "description": "Delete comment of a post",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which a comment will be deleted."
+                  }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully deleted comment on specific post"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which comments or a comment is to be manipulated"
+                }
+            ]
+        },
+        "/author/{id}/postlikes": {
+            "get": {
+                "operationId": "author_postlikes_list",
+                "description": "Gets all likes of a post",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which likes are to be retrieved."
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all of the likes of a post"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "post": {
+                "operationId": "author_postlikes_create",
+                "description": "Creates a like object",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post to be liked."
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully liked the specified post."
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "delete": {
+                "operationId": "author_postlikes_delete",
+                "description": "Deletes the like object",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post to be unliked."
+                  }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully unliked the specified post"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string",
+                    "description": "The unique identifier of the post for which likes are to be manipulated"
+                }
+            ]
+        },
+        "/author/{id}/simpleauthor": {
+            "get": {
+                "operationId": "author_simpleauthor_list",
+                "description": "Gets an author with just ID, username, and profile picture",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved a simplified representation of the specified author."
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/singleauthor": {
+            "get": {
+                "operationId": "author_singleauthor_list",
+                "description": "Gets one single author",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the single author based on the specified identifier"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/author/{id}/truefriends": {
+            "get": {
+                "operationId": "author_truefriends_list",
+                "description": "Get all true friends of an author based on their ID's, if both follow one another",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all true friends of the specified author"
+                    }
+                },
+                "tags": [
+                    "author"
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "operationId": "login_create",
+                "description": "Log in an author using their credentials",
+                "parameters": [
+                  {
+                    "name": "credentials",
+                    "in": "body",
+                    "required": true,
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                            "type": "string",
+                            "description": "The username of the author."
+                        },
+                        "password": {
+                            "type": "string",
+                            "description": "The password of the author."
+                        }
+                      }
+                    },
+                    "description": "The author's login credentials."
+                  }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully logged in the author"
+                    }
+                },
+                "tags": [
+                    "login"
+                ]
+            }
+        },
+        "/logout": {
+            "get": {
+                "operationId": "logout_list",
+                "description": "Logout the current author",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Successfully logged out the author"
+                    }
+                },
+                "tags": [
+                    "logout"
+                ]
+            }
+        },
+        "/postViews": {
+            "post": {
+                "operationId": "postViews_create",
+                "description": "Creates a new post",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "The post is successfully created"
+                    }
+                },
+                "tags": [
+                    "postViews"
+                ]
+            }
+        },
+        "/register": {
+            "post": {
+                "operationId": "register_create",
+                "description": "Register a new author",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "An author is successfully registered"
+                    }
+                },
+                "tags": [
+                    "register"
+                ]
+            }
+        }
+    },
+    "definitions": {}
+}
