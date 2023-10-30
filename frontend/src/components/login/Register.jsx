@@ -46,14 +46,14 @@ export default function Register() {
         'github' : git,
         'profile_picture' : profPic,
         'display_name' : dispName,
-        'Authentication': 'Token ' + localStorage.getItem('access_token')
+        'Authorization': 'Token ' + localStorage.getItem('access_token')
         
     }
 
     const loginTest = {
         'username' : user,
         'password' : pass,
-        'Authentication': 'Token' + localStorage.getItem('access_token')
+        'Authorization': 'Token' + localStorage.getItem('access_token')
     }
 
     const SignUp = async (event) => {
@@ -84,7 +84,7 @@ export default function Register() {
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    'Authentication': 'Token ' + localStorage.getItem('access_token')
+                    'Authorization': 'Token ' + localStorage.getItem('access_token')
                 },
             })
         .then((response) => {

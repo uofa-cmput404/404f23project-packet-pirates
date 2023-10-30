@@ -33,14 +33,15 @@ export default function ProfilePage({ user }) {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
-        'display_name' : dispName
+        'display_name' : dispName,
+        'Authorization': 'Token ' + localStorage.getItem('access_token')
     }
 
     const SaveProfile = async (event) => {
         event.preventDefault()
         console.log(info)
 
-        const res = await axios.post("http://127.0.0.1:8000/api/something", info)
+        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/something", info)
         console.log(res.data)
       };
       

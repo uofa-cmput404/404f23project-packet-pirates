@@ -23,7 +23,7 @@ export default function Login() {
   const content = {
     username: user,
     password: pass,
-    Authentication: 'Token ' + localStorage.getItem('access_token')
+    Authorization: 'Token ' + localStorage.getItem('access_token')
   };
 
   const cookies = new Cookies()

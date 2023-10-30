@@ -66,7 +66,7 @@ export default function CreatePost({ user }) {
       "is_private" : isPrivate,
       'image_url': "",
       //"visibility": visibility
-      'Authentication': 'Token ' + localStorage.getItem('access_token')
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
 
     }
 

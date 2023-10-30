@@ -22,7 +22,7 @@ export default function Post({
   const [postAuthor, setPostAuthor] = useState('');
 
   const config = {
-    headers: {Authentication: 'Token ' + localStorage.getItem('access_token')}
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
 
   const handleEdit = () => {
