@@ -117,7 +117,7 @@ class GetFeedPosts(APIView):
     @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
                 operation_summary="Get posts",
                 responses={200: PostSerializer()},
-                tags=['Feed'],
+                tags=['Post'],
                 manual_parameters=[
                     openapi.Parameter(
                         name='pk',
