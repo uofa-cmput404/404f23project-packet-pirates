@@ -43,9 +43,9 @@ export default function CreatePost({ user }) {
   const handleVisibilityChange = value => {
     setVisibility(value);
 
-    if (value == 'Private'){
+    if (value['value'] === 'Private'){
       setIsPrivate(true)
-    } else if (value == 'Unlisted'){
+    } else if (value['value'] === 'Unlisted'){
       setIsUnlisted(true)
     }
 
