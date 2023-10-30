@@ -79,8 +79,8 @@ class AuthorLogout(APIView):
             return Response({'Message': 'You have successfully logged out'}, status=status.HTTP_200_OK)
         
         except (AttributeError, ObjectDoesNotExist):
-            pass
-        
+            return Response({"Error"}, status=status.HTTP_404_NOT_FOUND)
+
     # def get(self, request):
     #     logout(request)
     #     return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
