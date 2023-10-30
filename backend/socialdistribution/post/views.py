@@ -90,9 +90,9 @@ class GetFeedPosts(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
+        posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
-        friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
+        friends = Friends.objects.filter(author = request.user.user_id).exclude(unlisted = True) # Friends of author
 
         for friend in friends:
 
