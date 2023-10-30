@@ -59,8 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_yasg',
-
 ]
 
 MIDDLEWARE = [
@@ -166,10 +164,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-SWAGGER_SETTINGS = {
-   'DEFAULT_INFO': 'socialdistribution.urls.api_info',
-}
 
 django_on_heroku.settings(locals()) # bottom of the file
