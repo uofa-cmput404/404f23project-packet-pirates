@@ -64,8 +64,10 @@ export default function CreatePost({ user }) {
       "origin": user.user.user_id,
       "unlisted": isUnlisted,
       "is_private" : isPrivate,
-      'image_url': ""
+      'image_url': "",
       //"visibility": visibility
+      'Authentication': 'Token ' + localStorage.getItem('access_token')
+
     }
 
     console.log("Data", data);

@@ -17,13 +17,18 @@ export default function MainPage({ user }) {
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
+  const config = {
+    headers: {
+      'Authentication': 'Token ' + localStorage.getItem('access_token')
+    }
+  }
 
   const getPosts = async () => {
     let postsUrl =
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/feedposts";
 
     const postsRes = await axios
-      .get(postsUrl)
+      .get(postsUrl, config)
       .then((postsRes) => {
         //Result of post query
         console.log("POSTSRES_fomr", postsRes.data.Posts[0]);

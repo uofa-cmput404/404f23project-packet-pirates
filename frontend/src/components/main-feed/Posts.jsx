@@ -87,12 +87,18 @@ export default function Post({
 
   };
 
+  const config = {
+    headers: {
+        'Authentication': 'Token ' + localStorage.getItem('access_token')
+    }
+  }
+
   const getComments = async () => {
 
     let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postcomments"
 
     const commentsRes = await axios
-    .get(commentsUrl)
+    .get(commentsUrl,config)
     .then((commentsRes) => {
 
       //Result of comments query
