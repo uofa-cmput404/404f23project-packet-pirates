@@ -90,13 +90,13 @@ class GetFeedPosts(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
+        posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
         friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
 
         for friend in friends:
 
-            posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
+            posts = posts | Post.objects.filter(author_id = friend.author_id).exclude(unlisted = True) # Add posts from each friend
 
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)

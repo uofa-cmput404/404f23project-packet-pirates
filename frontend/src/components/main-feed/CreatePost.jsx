@@ -17,6 +17,7 @@ export default function CreatePost({ user }) {
   const [visibility, setVisibility] = useState(visibilityOptions[0].value);
 
   const [isUnlisted, setIsUnlisted] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   
   const contentOptions = [
       { value: 'text/plain', label: 'Plaintext' },
@@ -41,6 +42,13 @@ export default function CreatePost({ user }) {
 
   const handleVisibilityChange = value => {
     setVisibility(value);
+
+    if (value['value'] === 'Private'){
+      setIsPrivate(true)
+    } else if (value['value'] === 'Unlisted'){
+      setIsUnlisted(true)
+    }
+
     console.log('Sent visibility is:', value);
   }
 
@@ -55,6 +63,7 @@ export default function CreatePost({ user }) {
       "source": user.user.user_id,
       "origin": user.user.user_id,
       "unlisted": isUnlisted,
+      "is_private" : isPrivate,
       'image_url': ""
       //"visibility": visibility
     }

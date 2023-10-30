@@ -12,7 +12,7 @@ export default function MainPage({ user }) {
 
   const [isLoading, setIsLoading] = useState(false)
   const [posts, setPosts] = useState(null)
-  //const [friends, setFriends] = useState()
+  const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
   useEffect(() => {
@@ -54,21 +54,23 @@ export default function MainPage({ user }) {
 
     /////////// This stuff will probably have to be implemented in the respective components //////////////////////
 
-    // const getFriends = async () => {
+    const getConnections = async () => {
 
-    //   const friendsRes = await axios
-    //   .get("http://localhost:8000/api/friends")
-    //   .then((friendsRes) => {
-    //     console.log(friendsRes.data);
+      let connectionsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
 
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
+      const connectionsRes = await axios
+      .get(connectionsUrl)
+      .then((connectionsRes) => {
 
-    //   setFriends(friendsRes.data)
+        console.log("CONNECTSRES", connectionsRes.data);
+        setFriends(<Profile friends={connectionsRes.data.Friends} username={user.user.username} />)
 
-    // };
+      })
+      .catch((error) => {
+        console.error("Error getting friends:", error);
+      });
+
+    };
 
     const getNotifications = async () => {
 
@@ -88,7 +90,7 @@ export default function MainPage({ user }) {
     };
 
     getPosts();
-    //getFriends();
+    getConnections();
     getNotifications();
 
   }, []);
@@ -107,28 +109,28 @@ export default function MainPage({ user }) {
   };
 
   //example of friends json
-  const friends = [
-    {
-      username: "USERNAME1",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME2",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME3",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME4",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME5",
-      pfp: "https://picsum.photos/200",
-    },
-  ];
+  // const friends = [
+  //   {
+  //     username: "USERNAME1",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME4",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME5",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  // ];
 
   // example of notifications json
   // const notifications = [
@@ -157,7 +159,7 @@ export default function MainPage({ user }) {
             className="profile h-fit mx-auto"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Profile friends={friends} username={user.user.username} />
+            {friends}
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
