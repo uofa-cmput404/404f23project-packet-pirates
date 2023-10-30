@@ -59,7 +59,7 @@ export default function MainPage({ user }) {
     let connectionsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
-    .get(connectionsUrl)
+    .get(connectionsUrl,config)
     .then((connectionsRes) => {
 
       console.log("CONNECTSRES", connectionsRes.data);
@@ -77,7 +77,7 @@ export default function MainPage({ user }) {
     let notificationsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/authornotifications"
 
     const notifsRes = await axios
-    .get(notificationsUrl)
+    .get(notificationsUrl,config)
     .then((notifsRes) => {
       console.log("NOTIFSRES", notifsRes.data.Notifications)
       setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
@@ -112,7 +112,7 @@ export default function MainPage({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout");
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } 

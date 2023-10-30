@@ -40,7 +40,7 @@ export default function Profile({ friends, username }) {
               >
                 <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                   <img
-                    src={"http://127.0.0.1:8000" + friend.friend_pfp}
+                    src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + friend.friend_pfp}
                     alt="profile"
                     className="w-full h-full object-cover"
                   /> 

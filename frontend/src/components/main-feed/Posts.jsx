@@ -147,7 +147,7 @@ export default function Post({
     let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + post_author + "/simpleauthor"
 
     const authorRes = await axios
-    .get(authorUrl)
+    .get(authorUrl,config)
     .then((authorRes) => {
 
       //Result of author query
