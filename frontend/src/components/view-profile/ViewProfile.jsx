@@ -20,6 +20,8 @@ export default function ViewProfile({ user }) {
   const [posts, setPosts] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [postauthor, setPostauthor] = useState(null);
+  const [friends, setFriends] = useState(null);
+  const [notifications, setNotifications] = useState(null);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -32,6 +34,27 @@ export default function ViewProfile({ user }) {
     console.log("author", author);
     console.log("user", user);
 
+    const getConnections = async () => {
+      let connectionsUrl =
+        "http://127.0.0.1:8000/api/author/" +
+        user.user.user_id +
+        "/truefriends";
+      const connectionsRes = await axios
+        .get(connectionsUrl)
+        .then((connectionsRes) => {
+          console.log("CONNECTSRES", connectionsRes.data);
+          setFriends(
+            <Profile
+              friends={connectionsRes.data.Friends}
+              username={user.user.username}
+            />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting friends:", error);
+        });
+    };
+
     const getProfile = async () => {
       try {
         const profileUrl = `${getUrl}/user/${author}`;
@@ -40,6 +63,25 @@ export default function ViewProfile({ user }) {
       } catch (error) {
         console.error("Error getting profile:", error);
       }
+    };
+
+    const getNotifications = async () => {
+      let notificationsUrl =
+        "http://127.0.0.1:8000/api/author/" +
+        user.user.user_id +
+        "/authornotifications";
+
+      const notifsRes = await axios
+        .get(notificationsUrl)
+        .then((notifsRes) => {
+          console.log("NOTIFSRES", notifsRes.data.Notifications);
+          setNotifications(
+            <Notifications notifications={notifsRes.data.Notifications} />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting notifications:", error);
+        });
     };
 
     const fetchPosts = async () => {
@@ -79,50 +121,52 @@ export default function ViewProfile({ user }) {
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
+    getConnections();
+    getNotifications();
     console.log("posts", posts);
   }, [author]);
   //example of friends json
-  const friends = [
-    {
-      username: "USERNAME1",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME2",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME3",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME4",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME5",
-      pfp: "https://picsum.photos/200",
-    },
-  ];
+  // const friends = [
+  //   {
+  //     username: "USERNAME1",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME4",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  //   {
+  //     username: "USERNAME5",
+  //     pfp: "https://picsum.photos/200",
+  //   },
+  // ];
 
   // example of notifications json
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
+  // const notifications = [
+  //   {
+  //     username: "USERNAME1",
+  //     imageSrc: "https://source.unsplash.com/200x200",
+  //     type: "Requested to follow",
+  //   },
+  //   {
+  //     username: "USERNAME2",
+  //     imageSrc: "https://source.unsplash.com/200x201",
+  //     type: "Liked your post",
+  //   },
+  //   {
+  //     username: "USERNAME3",
+  //     imageSrc: "https://source.unsplash.com/200x202",
+  //     type: "Commented on your post",
+  //   },
+  // ];
 
   return (
     <>
@@ -132,7 +176,8 @@ export default function ViewProfile({ user }) {
             className="profile h-fit mx-auto"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Profile friends={friends} username={user.user.username} />
+            {/* <Profile friends={friends} username={user.user.username} /> */}
+            {friends}
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="flex items-center justify-center">
@@ -146,7 +191,8 @@ export default function ViewProfile({ user }) {
             className="notifications h-fit mx-auto ml-5"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Notifications notifications={notifications} />
+            {/* <Notifications notifications={notifications} /> */}
+            {notifications}
           </div>
         </div>
       </div>
