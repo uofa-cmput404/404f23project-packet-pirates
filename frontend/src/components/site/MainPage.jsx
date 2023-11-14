@@ -10,10 +10,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 export default function MainPage({ user }) {
   const navigate = useNavigate();
 
-  const [posts, setPosts] = useState(null)
-  const [friends, setFriends] = useState()
-  const [notifications, setNotifications] = useState()
-
+  const [posts, setPosts] = useState(null);
+  const [friends, setFriends] = useState();
+  const [notifications, setNotifications] = useState();
 
   const getPosts = async () => {
     let postsUrl =
@@ -40,49 +39,47 @@ export default function MainPage({ user }) {
           ))
         );
       })
-      .then(() => {
-
-      })
+      .then(() => {})
       .catch((error) => {
         console.error("Error getting posts:", error);
       });
   };
-
+  console.log("user", user);
   const getConnections = async () => {
-
-    let connectionsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
+    let connectionsUrl =
+      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
-    .get(connectionsUrl)
-    .then((connectionsRes) => {
-
-      console.log("CONNECTSRES", connectionsRes.data);
-      setFriends(<Profile friends={connectionsRes.data.Friends} username={user.user.username} />)
-
-    })
-    .catch((error) => {
-      console.error("Error getting friends:", error);
-    });
-
+      .get(connectionsUrl)
+      .then((connectionsRes) => {
+        console.log("CONNECTSRES", connectionsRes.data);
+        setFriends(
+          <Profile friends={connectionsRes.data.Friends} user={user} />
+        );
+      })
+      .catch((error) => {
+        console.error("Error getting friends:", error);
+      });
   };
 
   const getNotifications = async () => {
-
-    let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
+    let notificationsUrl =
+      "http://127.0.0.1:8000/api/author/" +
+      user.user.user_id +
+      "/authornotifications";
 
     const notifsRes = await axios
-    .get(notificationsUrl)
-    .then((notifsRes) => {
-      console.log("NOTIFSRES", notifsRes.data.Notifications)
-      setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
-    })
-    .catch((error) => {
-      console.error("Error getting notifications:", error);
-    });
-
-
+      .get(notificationsUrl)
+      .then((notifsRes) => {
+        console.log("NOTIFSRES", notifsRes.data.Notifications);
+        setNotifications(
+          <Notifications notifications={notifsRes.data.Notifications} />
+        );
+      })
+      .catch((error) => {
+        console.error("Error getting notifications:", error);
+      });
   };
-
 
   useEffect(() => {
     //Get data on homepage load
@@ -91,7 +88,6 @@ export default function MainPage({ user }) {
     getPosts();
     getConnections();
     getNotifications();
-
   }, []);
 
   const handleLogout = async (event) => {
@@ -101,54 +97,10 @@ export default function MainPage({ user }) {
       await axios.get("/api/logout");
       window.location.reload(false);
       console.log("logged out");
-    } 
-    catch (err) {
+    } catch (err) {
       console.log(err);
-    } 
+    }
   };
-
-  //example of friends json
-  // const friends = [
-  //   {
-  //     username: "USERNAME1",
-  //     pfp: "https://picsum.photos/200",
-  //   },
-  //   {
-  //     username: "USERNAME2",
-  //     pfp: "https://picsum.photos/200",
-  //   },
-  //   {
-  //     username: "USERNAME3",
-  //     pfp: "https://picsum.photos/200",
-  //   },
-  //   {
-  //     username: "USERNAME4",
-  //     pfp: "https://picsum.photos/200",
-  //   },
-  //   {
-  //     username: "USERNAME5",
-  //     pfp: "https://picsum.photos/200",
-  //   },
-  // ];
-
-  // example of notifications json
-  // const notifications = [
-  //   {
-  //     username: "USERNAME1",
-  //     imageSrc: "https://source.unsplash.com/200x200",
-  //     type: "Requested to follow",
-  //   },
-  //   {
-  //     username: "USERNAME2",
-  //     imageSrc: "https://source.unsplash.com/200x201",
-  //     type: "Liked your post",
-  //   },
-  //   {
-  //     username: "USERNAME3",
-  //     imageSrc: "https://source.unsplash.com/200x202",
-  //     type: "Commented on your post",
-  //   },
-  // ];
 
   return (
     <>
@@ -170,16 +122,17 @@ export default function MainPage({ user }) {
           </div>
 
           <div className="flex-col justify-center mx-4">
-            <button 
+            <button
               onClick={handleLogout}
-              className='block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+              className="block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+            >
               Logout
             </button>
             <div
               className="notifications h-fit mx-auto"
               style={{ position: "sticky", top: "20px" }}
             >
-            {notifications}
+              {notifications}
             </div>
           </div>
         </div>
