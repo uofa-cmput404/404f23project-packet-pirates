@@ -143,8 +143,11 @@ class GetFeedPosts(APIView):
 
 
 class PostViews(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()    
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     @swagger_auto_schema(operation_description="Create a post for a specific author",
                 operation_summary="Create Author Post",
@@ -196,9 +199,11 @@ class PostViews(APIView):
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()
 
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
     
     @swagger_auto_schema(operation_description="Edit Post of an Author",
                 operation_summary="Edit post",
@@ -240,8 +245,11 @@ class PostComments(APIView):
     '''
     All comments of a post
     '''
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
     
     @swagger_auto_schema(operation_description="Get all comments of a post",
                             operation_summary="Get comments",
