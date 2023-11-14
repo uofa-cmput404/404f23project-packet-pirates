@@ -30,7 +30,7 @@ export default function Profile({ friends, user }) {
           </div>
           <button
             onClick={() => navigate("/profilepage")}
-            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10"
+            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-5 pr-5"
           >
             Edit Profile
           </button>
