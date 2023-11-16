@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState([]);
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { value } = event.target;
@@ -22,7 +24,9 @@ export default function SearchBar() {
 
   const handleInputBlur = () => {
     // Hide the results dropdown when the input loses focus.
-    setShowResults(false);
+    setTimeout(() => {
+      setShowResults(false);
+    }, 100);
   };
 
   //   const handleSearchLinkClick = async (event) => {
@@ -39,8 +43,9 @@ export default function SearchBar() {
   //     console.log("Search link clicked:", result);
   //   };
   function handleFriendClick(friend) {
-    console.log("test");
-    navigate("/user/" + friend.friend_username);
+    // console.log(friend);
+    console.log("HANDLE FRIEND CLICK" + friend);
+    navigate("/user/" + friend);
   }
 
   return (

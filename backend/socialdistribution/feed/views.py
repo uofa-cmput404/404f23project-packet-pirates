@@ -73,6 +73,16 @@ class GetUsers(APIView):
         users = AppAuthor.objects.filter(username__icontains = query)
         serializer = AuthorSerializer(users, many = True)
         return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
+    
+class GetAllUsers(APIView):
+    """Returns ALL users"""
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = () 
+    
+    def get(self, request):
+        users = AppAuthor.objects.all()
+        serializer = AuthorSerializer(users, many=True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
 
 class GetAllAuthorFriends(APIView):
     '''
