@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 export default function SearchBarTest() {
   const [users, setUsers] = useState([]);
+  const [debouncedInputValue, setDebouncedInputValue] = useState("");
 
   const options = [
     { value: "chocolate", label: "Chocolate" },
