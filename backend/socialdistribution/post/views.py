@@ -70,6 +70,17 @@ class test(APIView):
     def get(self, request):
         return Response(status=status.HTTP_200_OK)    
 
+class GetUsers(APIView):
+    """Returns a list of users, given query"""
+    # no authentication needed
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    def get(self, request):
+        query = request.GET.get('query')
+        users = AppAuthor.objects.filter(username__icontains = query)
+        serializer = AuthorSerializer(users, many = True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
     
 class GetFeedPostsByUsername(APIView):
     '''

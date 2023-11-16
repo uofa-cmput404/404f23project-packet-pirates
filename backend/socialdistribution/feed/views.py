@@ -58,6 +58,22 @@ class GetAllNotifications(APIView):
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
 
 
+class GetUsers(APIView):
+    """Returns a list of users, given query"""
+    # no authentication needed
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+    
+        # no permission needed
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = () 
+    
+    def get(self, request):
+        query = request.GET.get('q')
+        users = AppAuthor.objects.filter(username__icontains = query)
+        serializer = AuthorSerializer(users, many = True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
+
 class GetAllAuthorFriends(APIView):
     '''
     Get all friends of a given author
