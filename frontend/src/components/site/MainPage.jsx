@@ -6,6 +6,7 @@ import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import SearchBar from "../main-feed/Search";
 
 export default function MainPage({ user }) {
   const navigate = useNavigate();
@@ -122,18 +123,21 @@ export default function MainPage({ user }) {
           </div>
 
           <div className="flex-col justify-center mx-4">
-            <button
-              onClick={handleLogout}
-              className="block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
-            >
-              Logout
-            </button>
+            <div className="search-bar">
+              <SearchBar />
+            </div>
             <div
               className="notifications h-fit mx-auto"
               style={{ position: "sticky", top: "20px" }}
             >
               {notifications}
             </div>
+            <button
+              onClick={handleLogout}
+              className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
