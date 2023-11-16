@@ -26,7 +26,7 @@ export default function SearchBar() {
     // Hide the results dropdown when the input loses focus.
     setTimeout(() => {
       setShowResults(false);
-    }, 100);
+    }, 2000);
   };
 
   //   const handleSearchLinkClick = async (event) => {

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 
-export default function SearchBarTest() {
+export default function TESTINGONLY() {
   const [users, setUsers] = useState([]);
   const [debouncedInputValue, setDebouncedInputValue] = useState("");
 
