@@ -29,20 +29,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-COR_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'https://packet-pirates-frontend-46271456b73c.herokuapp.com'
-]
+# COR_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+#     'http://127.0.0.1:3000',
+#     'https://packet-pirates-frontend-46271456b73c.herokuapp.com'
+# ]
 
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
-# CSRF_COOKIE_HTTPONLY = False  # False since we will grab it via universal-cookies
-# SESSION_COOKIE_HTTPONLY = False  
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# SESSION_COOKIE_SAMESITE = 'Lax'
+# # CSRF_COOKIE_HTTPONLY = False  # False since we will grab it via universal-cookies
+# # SESSION_COOKIE_HTTPONLY = False  
+
+# CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
