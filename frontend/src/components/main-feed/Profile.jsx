@@ -20,7 +20,7 @@ export default function Profile({ friends, user }) {
         <div className="header flex flex-col justify-center items-center">
           <div className="image-container w-24 h-24 rounded-full overflow-hidden bg-black">
             <img
-              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.profile_picture}
+              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
@@ -49,7 +49,7 @@ export default function Profile({ friends, user }) {
               >
                 <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                   <img
-                    src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + friend.friend_pfp}
+                    src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + friend.friend_pfp}
                     alt="profile"
                     className="w-full h-full object-cover"
                   /> 
