@@ -91,7 +91,6 @@ h1 {
 .liked-button {
   background-color: #33e7ff;
   color: #fff;
-  cursor: not-allowed; /* Make the button unclickable when liked */
 }
 
 .comment-button {

@@ -24,22 +24,22 @@ export default function Post({
   };
 
   const handleLike = () => {
-    if (!hasLiked) {
-      // Increment the like count and send a POST request to update it
-      const newLikeCount = likeCount + 1;
-      axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        // Handle success
+    const newLikeState = !hasLiked;
+  
+    // Calculate the new like count based on the like state
+    const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
+  
+    // Send a POST request to update the like count
+    axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+      withCredentials: true,
+    })
+      .then(() => { // Handle success
         setLikeCount(newLikeCount);
-        setHasLiked(true);
+        setHasLiked(newLikeState);
       })
-      .catch((error) => {
-        // Handle errors
+      .catch((error) => { // Handle errors
         console.error("Error updating like count:", error);
       });
-    }
   };
 
   const handleShare = () => {
@@ -207,17 +207,16 @@ export default function Post({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
-            <button
-              onClick={handleLike}
-              className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
-              disabled={hasLiked}
-            >
-              <img
-                src="/like-button.png"
-                alt="Like"
-                className="like-button-img"
-              />
-            </button>
+          <button
+            onClick={handleLike}
+            className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
+          >
+            <img
+              src="/like-button.png"
+              alt="Like"
+              className="like-button-img"
+            />
+          </button>
 
             <button
               onClick={() => setIsCommenting(!isCommenting)}
