@@ -39,20 +39,20 @@ class GetAuthorsPosts(APIView):
     authentication_classes = (TokenAuthentication,)
 
 
-    @swagger_auto_schema(operation_description="Get all posts from a specific author",
-                    operation_summary="Get All Author's Posts",
-                    responses={200: PostSerializer()},
-                    tags=['Post'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+    # @swagger_auto_schema(operation_description="Get all posts from a specific author",
+    #                 operation_summary="Get All Author's Posts",
+    #                 responses={200: PostSerializer()},
+    #                 tags=['Post'],
+    #                 manual_parameters=[
+    #                     openapi.Parameter(
+    #                         name='pk',
+    #                         in_=openapi.IN_PATH,
+    #                         type=openapi.TYPE_STRING,
+    #                         description='Author ID',
+    #                         required=True,
+    #                         enum=[]
+    #                     )
+    #                 ])
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -90,11 +90,11 @@ class GetFeedPostsByUsername(APIView):
     # no authentication needed
     authentication_classes = ()
     
-    @swagger_auto_schema(operation_description="Get all posts made by a specific author",
-                            operation_summary="Get posts",
-                            responses={200: PostSerializer()},
-                            tags=['Post'],
-                            manual_parameters=[])
+    # @swagger_auto_schema(operation_description="Get all posts made by a specific author",
+    #                         operation_summary="Get posts",
+    #                         responses={200: PostSerializer()},
+    #                         tags=['Post'],
+    #                         manual_parameters=[])
     
     
     def get(self, request, pk):
@@ -125,20 +125,20 @@ class GetFeedPosts(APIView):
     authentication_classes = (TokenAuthentication,)
         
 
-    @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
-                operation_summary="Get posts",
-                responses={200: PostSerializer()},
-                tags=['Post'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='pk',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+    # @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
+                # operation_summary="Get posts",
+                # responses={200: PostSerializer()},
+                # tags=['Post'],
+                # manual_parameters=[
+                #     openapi.Parameter(
+                #         name='pk',
+                #         in_=openapi.IN_PATH,
+                #         type=openapi.TYPE_STRING,
+                #         description='Author ID',
+                #         required=True,
+                #         enum=[]
+                #     )
+                # ])
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
