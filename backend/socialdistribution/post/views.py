@@ -237,14 +237,17 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
 
         # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
-        
+        # new_post = post
+        # post.likes_count = 
         # Update like count
-        new_like_count = request.data.get('like_count', None)
-        if new_like_count is not None:
-            post.likes = new_like_count
-            # post.save() 
-            return Response(status=status.HTTP_200_OK)
+        # new_like_count = request.data.get('like_count', None)
+        # print(new_like_count)
+        # if new_like_count is not None:
+        #     post.likes = new_like_count
+        #     # post.save() 
+        #     return Response(status=status.HTTP_200_OK)
         
+        print(request.data)
         serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -393,8 +396,12 @@ class PostLikeViews(APIView):
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
-        request.data['post_object_id'] = post_object_id
-        serializer = LikeSerializer(data = request.data)
+
+        post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
+
+        like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
+
+        serializer = LikeSerializer(data = like_data)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -424,6 +431,8 @@ class PostLikeViews(APIView):
         author_id = request.user.user_id
 
         post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+
+        post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
         if post_liked:
             post_liked.delete()
