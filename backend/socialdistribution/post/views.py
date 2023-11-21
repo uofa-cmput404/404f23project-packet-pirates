@@ -396,7 +396,7 @@ class PostLikeViews(APIView):
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
 
-        post = Post.objects.filter(post_id = post_object_id).update(likes_count = 1)
+        post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
 
         like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
 
@@ -430,6 +430,8 @@ class PostLikeViews(APIView):
         author_id = request.user.user_id
 
         post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+
+        post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
         if post_liked:
             post_liked.delete()
