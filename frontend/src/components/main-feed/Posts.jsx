@@ -212,15 +212,33 @@ export default function Post({
               className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
               disabled={hasLiked}
             >
-              Like
+              <img
+                src="/like-button.png"
+                alt="Like"
+                className="like-button-img"
+              />
             </button>
 
-            <button onClick={() => setIsCommenting(!isCommenting)} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-              Comment
+            <button
+              onClick={() => setIsCommenting(!isCommenting)}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full comment-button"
+            >
+              <img
+                src="/comment-button.png"
+                alt="Comment"
+                className="comment-button-img"
+              />
             </button>
 
-            <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-              Share
+            <button 
+              onClick={handleShare}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
+              >
+              <img
+                src="/share-button.png"
+                alt="Share"
+                className="share-button-img"
+              />
             </button>
           </div>
 
