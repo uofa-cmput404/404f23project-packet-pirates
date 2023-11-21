@@ -64,7 +64,7 @@ class GetUsers(APIView):
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
     
-        # no permission needed
+    # no permission needed
     permission_classes = (permissions.AllowAny,)
     authentication_classes = () 
     
@@ -91,20 +91,20 @@ class GetAllAuthorFriends(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
-    # @swagger_auto_schema(operation_description="Get all friends of a specific author",
-    #                 operation_summary="Get Author's Friends",
-    #                 responses={200: FriendsSerializer()},
-    #                 tags=['Feed'],
-    #                 manual_parameters=[
-    #                     openapi.Parameter(
-    #                         name='pk',
-    #                         in_=openapi.IN_PATH,
-    #                         type=openapi.TYPE_STRING,
-    #                         description='Author ID',
-    #                         required=True,
-    #                         enum=[]
-    #                     )
-    #                 ])
+    @swagger_auto_schema(operation_description="Get all friends of a specific author",
+                    operation_summary="Get Author's Friends",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
     
     def get(self, request, pk):
           
@@ -123,20 +123,20 @@ class GetAuthorFollowing(APIView):
     authentication_classes = (TokenAuthentication,)
 
 
-    # @swagger_auto_schema(operation_description="Get all authors that a specific author follows",
-    #                 operation_summary="Get Authors That Author Follows",
-    #                 responses={200: FriendsSerializer()},
-    #                 tags=['Feed'],
-    #                 manual_parameters=[
-    #                     openapi.Parameter(
-    #                         name='pk',
-    #                         in_=openapi.IN_PATH,
-    #                         type=openapi.TYPE_STRING,
-    #                         description='Author ID',
-    #                         required=True,
-    #                         enum=[]
-    #                     )
-    #                 ])
+    @swagger_auto_schema(operation_description="Get all authors that a specific author follows",
+                    operation_summary="Get Authors That Author Follows",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
     
     def get(self, request, pk):
           
@@ -155,20 +155,20 @@ class GetAuthorFollowers(APIView):
     authentication_classes = (TokenAuthentication,)
 
 
-    # @swagger_auto_schema(operation_description="Get all authors that follow a speciifc author",
-    #                 operation_summary="Get Authors That Follow An Author",
-    #                 responses={200: FriendsSerializer()},
-    #                 tags=['Feed'],
-    #                 manual_parameters=[
-    #                     openapi.Parameter(
-    #                         name='pk',
-    #                         in_=openapi.IN_PATH,
-    #                         type=openapi.TYPE_STRING,
-    #                         description='Author ID',
-    #                         required=True,
-    #                         enum=[]
-    #                     )
-    #                 ])
+    @swagger_auto_schema(operation_description="Get all authors that follow a speciifc author",
+                    operation_summary="Get Authors That Follow An Author",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
     
     def get(self, request, pk):
 
@@ -186,20 +186,20 @@ class GetTrueFriends(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
-    # @swagger_auto_schema(operation_description="Get all True Friends",
-    #                 operation_summary="Get All True Friends",
-    #                 responses={200: FriendsSerializer()},
-    #                 tags=['Feed'],
-    #                 manual_parameters=[
-    #                     openapi.Parameter(
-    #                         name='pk',
-    #                         in_=openapi.IN_PATH,
-    #                         type=openapi.TYPE_STRING,
-    #                         description='Author ID',
-    #                         required=True,
-    #                         enum=[]
-    #                     )
-    #                 ])
+    @swagger_auto_schema(operation_description="Get all True Friends",
+                    operation_summary="Get All True Friends",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
     
     def get(self, request, pk):
           

@@ -30,14 +30,14 @@ export default function ViewProfile({ user }) {
   };
 
   useEffect(() => {
-    const getUrl = "http://127.0.0.1:8000";
+    const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
     console.log("author", author);
     console.log("user", user);
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -69,7 +69,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -88,7 +88,7 @@ export default function ViewProfile({ user }) {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + author + "/feedposts_byusername";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)

@@ -13,7 +13,7 @@ export default function TESTINGONLY() {
   ];
 
   const getUsers = () => {
-    let endpoint = "http://127.0.0.1:8000/api/author/getall";
+    let endpoint = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/getall";
     axios.get(endpoint).then((res) => {
       console.log("res", res.data.Users);
       const userNames = res.data.Users.map((user) => user.username);

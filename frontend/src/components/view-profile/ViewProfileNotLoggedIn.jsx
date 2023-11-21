@@ -23,7 +23,7 @@ export default function ViewProfileNotLogged() {
   };
 
   useEffect(() => {
-    const getUrl = "http://127.0.0.1:8000";
+    const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
     console.log("author", author);
     // console.log("user", user);
@@ -40,7 +40,7 @@ export default function ViewProfileNotLogged() {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + author + "/feedposts_byusername";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)
