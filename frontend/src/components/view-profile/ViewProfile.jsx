@@ -105,7 +105,7 @@ export default function ViewProfile({ user }) {
             postsRes.data.Posts.map((post, index) => (
               <Post
                 key={index}
-                user={fake_user}
+                user={user}
                 title={post.title}
                 description={post.content}
                 img={post.image_url}
