@@ -1,8 +1,16 @@
 import { Navigate, useNavigate } from "react-router-dom";
 
-export default function Profile({ friends, username }) {
+export default function Profile({ friends, user }) {
   const navigate = useNavigate();
-  
+  console.log("friends", friends);
+  // console.log("username", username);
+  // function handleFriendClick = () => {
+  //   navigate("/viewprofile/" + friend.friend_username);
+  // };
+  function handleFriendClick(friend) {
+    navigate("/user/" + friend.friend_username);
+  }
+
   return (
     <>
       <div
@@ -12,17 +20,18 @@ export default function Profile({ friends, username }) {
         <div className="header flex flex-col justify-center items-center">
           <div className="image-container w-24 h-24 rounded-full overflow-hidden bg-black">
             <img
-              src="https://picsum.photos/200"
+              src={"http://127.0.0.1:8000" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="username mt-5">
-            <span className="text-2xl font-bold">{username}</span>
+            <span className="text-2xl font-bold">{user.user.username}</span>
           </div>
-          <button 
-            onClick={() => navigate('/profilepage')}
-            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10">
+          <button
+            onClick={() => navigate("/profilepage")}
+            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-5 pr-5"
+          >
             Edit Profile
           </button>
           <div className="flex flex-col items-center">

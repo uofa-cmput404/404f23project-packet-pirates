@@ -77,48 +77,6 @@ export default function ViewProfileNotLogged() {
     fetchPosts(); // Call the fetchPosts function
     console.log("posts", posts);
   }, [author]);
-  //example of friends json
-  const friends = [
-    {
-      username: "USERNAME1",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME2",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME3",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME4",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME5",
-      pfp: "https://picsum.photos/200",
-    },
-  ];
-
-  // example of notifications json
-  const notifications = [
-    {
-      username: "USERNAME1",
-      imageSrc: "https://source.unsplash.com/200x200",
-      type: "Requested to follow",
-    },
-    {
-      username: "USERNAME2",
-      imageSrc: "https://source.unsplash.com/200x201",
-      type: "Liked your post",
-    },
-    {
-      username: "USERNAME3",
-      imageSrc: "https://source.unsplash.com/200x202",
-      type: "Commented on your post",
-    },
-  ];
 
   return (
     <>

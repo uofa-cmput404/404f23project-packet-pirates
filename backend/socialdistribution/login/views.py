@@ -30,8 +30,17 @@ from urllib.request import urlopen
 import io
 from PIL import Image
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
+    
+    @swagger_auto_schema(operation_description="Registers an author", 
+                         operation_summary="Register", 
+                         responses={201: AuthorSerializer()}, 
+                         tags=['Login'])
+    
     def post(self, request):
         picture = request.data['profile_picture']
 
@@ -51,7 +60,9 @@ class AuthorRegistration(APIView):
 
 class AuthorLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    # authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Log in an author using their credentials", operation_summary="Login", responses={200: AuthorSerializer()}, tags=['Login'], manual_parameters=[])
 
     def post(self, request):
         data = request.data
@@ -72,7 +83,14 @@ class AuthorLogin(APIView):
 class AuthorLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
-
+    
+    @swagger_auto_schema(
+        operation_description="Logs out an author", 
+        operation_summary="Logout", 
+        responses={200: "OK"}, 
+        tags=['Login'], 
+            manual_parameters=[])
+    
     def get(self, request):
         try:
             request.user.auth_token.delete()
@@ -92,6 +110,8 @@ class AuthorView(APIView):
     authentication_classes = (TokenAuthentication,)
     # authentication_classes = (SessionAuthentication,)
 
+    @swagger_auto_schema(operation_description="Get all authors", operation_summary="Get all authors", responses={200: AuthorSerializer(many=True)}, tags=['Login'], manual_parameters=[])
+
     def get(self, request):
         serializer = AuthorSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
@@ -103,6 +123,22 @@ class GetSingleAuthor(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Get one single author",
+            operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
+            responses={200: AuthorSerializer()},
+            tags=['Login'],
+            manual_parameters=[
+                openapi.Parameter(
+                    name='pk',
+                    in_=openapi.IN_PATH,
+                    type=openapi.TYPE_STRING,
+                    description='Author ID',
+                    required=True,
+                    enum=[]
+                )
+            ])
+
 
     def get(self, request, pk):
         author = AppAuthor.objects.get(user_id = pk) # Find posts that the specific author has posted
@@ -115,6 +151,12 @@ class GetSimpleAuthor(APIView):
     permission_classes = (permissions.AllowAny,)
     # no authentication needed
     authentication_classes = ()
+    
+    @swagger_auto_schema(
+        operation_description="Get simple author", 
+        operation_summary="This endpoint returns the username and profile picture of an author.", 
+        responses={200: SimpleAuthorSerializer()}, 
+        tags=['Login'])
     
     def get(self, request, pk):
         author = AppAuthor.objects.get(user_id = pk)

@@ -24,6 +24,9 @@ from login.serializer import *
 from post.validate import *
 
 import uuid
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 # Create your views here.
 
 class GetAllNotifications(APIView):
@@ -33,12 +36,53 @@ class GetAllNotifications(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    @swagger_auto_schema(operation_description="Get all notifications for a specific author",
+                    operation_summary="Get All Author Notifications",
+                    responses={200: NotificationsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
+
     def get(self, request, pk):
-        notifications = Notifications.objects.filter(author_id = request.user.user_id)
+        notifications = Notifications.objects.filter(author_id = pk)
 
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
 
+
+class GetUsers(APIView):
+    """Returns a list of users, given query"""
+    # no authentication needed
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+    
+        # no permission needed
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = () 
+    
+    def get(self, request):
+        query = request.GET.get('q')
+        users = AppAuthor.objects.filter(username__icontains = query)
+        serializer = AuthorSerializer(users, many = True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
+    
+class GetAllUsers(APIView):
+    """Returns ALL users"""
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = () 
+    
+    def get(self, request):
+        users = AppAuthor.objects.all()
+        serializer = AuthorSerializer(users, many=True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
 
 class GetAllAuthorFriends(APIView):
     '''
@@ -47,6 +91,21 @@ class GetAllAuthorFriends(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    @swagger_auto_schema(operation_description="Get all friends of a specific author",
+                    operation_summary="Get Author's Friends",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
+    
     def get(self, request, pk):
           
         friends = Friends.objects.filter(author_id = request.user.user_id)
@@ -63,9 +122,25 @@ class GetAuthorFollowing(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+
+    @swagger_auto_schema(operation_description="Get all authors that a specific author follows",
+                    operation_summary="Get Authors That Author Follows",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
+    
     def get(self, request, pk):
           
-        friends = Friends.objects.filter(friend_id = request.user.user_id)
+        friends = Friends.objects.filter(friend_id = pk)
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
@@ -79,9 +154,25 @@ class GetAuthorFollowers(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+
+    @swagger_auto_schema(operation_description="Get all authors that follow a speciifc author",
+                    operation_summary="Get Authors That Follow An Author",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
+    
     def get(self, request, pk):
-          
-        friends = Friends.objects.filter(author_id = request.user.user_id)
+
+        friends = Friends.objects.filter(author_id = pk)
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
@@ -95,18 +186,35 @@ class GetTrueFriends(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    @swagger_auto_schema(operation_description="Get all True Friends",
+                    operation_summary="Get All True Friends",
+                    responses={200: FriendsSerializer()},
+                    tags=['Feed'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
+    
     def get(self, request, pk):
           
-        followers = Friends.objects.filter(author_id = request.user.user_id)
+        followers = Friends.objects.filter(author_id = pk)
 
-        following = Friends.objects.filter(friend_id = request.user.user_id)
+        following = Friends.objects.filter(friend_id = pk)
 
         # Empty queryset
         true_friends = Friends.objects.none() 
 
         for follow in following:
 
-            friend  =  followers.filter(author_id = follow.friend)
+            #follow: auth id them friend id me
+
+            friend  =  followers.filter(friend_id = follow.author)
 
             if friend.exists():
 
