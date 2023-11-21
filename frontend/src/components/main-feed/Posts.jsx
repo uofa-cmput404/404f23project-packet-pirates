@@ -23,24 +23,67 @@ export default function Post({
     // Handle edit functionality
   };
 
-  const handleLike = () => {
+
+  const handleLike = async () => {
     const newLikeState = !hasLiked;
-  
+
     // Calculate the new like count based on the like state
     const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
   
-    // Send a POST request to update the like count
-    axios.post("http://127.0.0.1:8000/api/author/" + id + "/postlikes", { post_object_id: id, author: user, like_count: newLikeCount }, {
-      withCredentials: true,
-    })
-      .then(() => { // Handle success
-        setLikeCount(newLikeCount);
-        setHasLiked(newLikeState);
-      })
-      .catch((error) => { // Handle errors
-        console.error("Error updating like count:", error);
-      });
+    // Update the like status
+    setLikeCount(newLikeCount);
+    setHasLiked(newLikeState);
+  
+    try {
+      if (newLikeState) {
+        // If liking, make a POST request to add a like
+        await axios.post(
+          "http://127.0.0.1:8000/api/author/" + id + "/postlikes",
+          {
+            post_object_id: id,
+            author: user,
+            like_count: newLikeCount,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+      } else {
+        // If unliking, make a DELETE request to remove the like
+        await axios.delete("http://127.0.0.1:8000/api/author/" + id + "/postlikes", {
+          data: {
+            post_object_id: id,
+            author: user,
+            like_count: newLikeCount,
+          },
+          withCredentials: true,
+        });
+      }
+    } catch (error) {
+      // If error found, revert any changes made
+      console.error("Error updating like status:", error);
+  
+      // Revert changes
+      setLikeCount(likeCount); // Reset like count
+      setHasLiked(!hasLiked); // Toggle like state back
+    }
   };
+
+  useEffect(() => {
+    // Check if the current user has liked the post
+    const checkLikeStatus = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/author/" + id + "/postlikes");
+        const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
+        setHasLiked(likedByCurrentUser);
+      } catch (error) {
+        console.error("Error checking like status:", error);
+      }
+    };
+
+    checkLikeStatus();
+  }, [id, user]);
+
 
   const handleShare = () => {
     // Handle share functionality
