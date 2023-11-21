@@ -30,7 +30,7 @@ export default function Post({
     const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
   
     // Send a POST request to update the like count
-    axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
+    axios.post("http://127.0.0.1:8000/api/author/" + id + "/postlikes", { post_object_id: id, author: user, like_count: newLikeCount }, {
       withCredentials: true,
     })
       .then(() => { // Handle success
