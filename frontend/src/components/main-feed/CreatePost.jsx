@@ -66,8 +66,6 @@ export default function CreatePost({ user }) {
       "is_private" : isPrivate,
       'image_url': "",
       //"visibility": visibility
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
-
     }
 
     console.log("Data", data);
@@ -80,6 +78,7 @@ export default function CreatePost({ user }) {
         headers: {
           // "Content-Type": "multipart/form-data",
           "Content-Type": "application/json",
+          'Authorization': 'Token ' + localStorage.getItem('access_token'),
         },
       })
       .then((response) => {
