@@ -36,8 +36,8 @@ export default function CreatePost({ user }) {
   };
 
   const handleContentTypeChange = (value) => {
-    setContentType(value);
-    console.log("Sent content type is:", value);
+    setContentType(value['value']);
+    console.log("Sent content type is:", value['value']);
   };
 
   const handleVisibilityChange = (value) => {
