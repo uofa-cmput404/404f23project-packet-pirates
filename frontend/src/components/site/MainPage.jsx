@@ -58,7 +58,7 @@ export default function MainPage({ user }) {
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
-      .get(connectionsUrl)
+      .get(connectionsUrl, config)
       .then((connectionsRes) => {
         console.log("CONNECTSRES", connectionsRes.data);
         setFriends(
@@ -77,7 +77,7 @@ export default function MainPage({ user }) {
       "/authornotifications";
 
     const notifsRes = await axios
-      .get(notificationsUrl)
+      .get(notificationsUrl, config)
       .then((notifsRes) => {
         console.log("NOTIFSRES", notifsRes.data.Notifications);
         setNotifications(

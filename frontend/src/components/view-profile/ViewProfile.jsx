@@ -29,6 +29,10 @@ export default function ViewProfile({ user }) {
     username: "fake_user",
   };
 
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+  };
+
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
@@ -41,7 +45,7 @@ export default function ViewProfile({ user }) {
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
-        .get(connectionsUrl)
+        .get(connectionsUrl,config)
         .then((connectionsRes) => {
           console.log("CONNECTSRES", connectionsRes.data);
           setFriends(
@@ -74,7 +78,7 @@ export default function ViewProfile({ user }) {
         "/authornotifications";
 
       const notifsRes = await axios
-        .get(notificationsUrl)
+        .get(notificationsUrl,config)
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
@@ -91,7 +95,7 @@ export default function ViewProfile({ user }) {
         "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
-        .get(postsUrl)
+        .get(postsUrl,config)
         .then((postsRes) => {
           //Result of post query
           // console.log("POSTSRES", postsRes.data.Posts[0]);
@@ -132,7 +136,7 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/api/logout");
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {

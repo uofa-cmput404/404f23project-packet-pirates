@@ -8,12 +8,16 @@ export default function SearchBar() {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+  };
+
   const handleInputChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
     let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/search?q=" + value;
 
-    axios.get(url).then((res) => {
+    axios.get(url, config).then((res) => {
       //   console.log("res", res);
       const userNames = res.data.Users.map((user) => user.username);
       //   setResults(res.data.Users);
