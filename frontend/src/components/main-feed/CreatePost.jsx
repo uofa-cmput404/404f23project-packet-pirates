@@ -101,7 +101,7 @@ export default function CreatePost({ user }) {
         <div className="post-content flex flex-row">
           <div className="image-container w-12 h-12 rounded-full overflow-hidden bg-black">
             <img
-              src={"http://127.0.0.1:8000" + user.user.profile_picture}
+              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
