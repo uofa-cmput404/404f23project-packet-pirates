@@ -142,7 +142,7 @@ export default function ViewProfile({ user }) {
           />
 
           {/* User's Name */}
-          <h2 className="text-xl font-semibold mb-2">{author}</h2>
+          <h2 className="text-xl font-semibold mb-2">{author + "'s profile"}</h2>
 
           {/* Follow Button */}
           <button 
