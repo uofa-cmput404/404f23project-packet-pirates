@@ -33,7 +33,8 @@ export default function MainPage({ user }) {
               post_author={post.author}
               title={post.title}
               description={post.content}
-              img={post.image_url}
+              img={'http://127.0.0.1:8000' + post.image_file}
+              // img={post.image_url}
               likes={post.likes_count}
               id={post.post_id}
             />

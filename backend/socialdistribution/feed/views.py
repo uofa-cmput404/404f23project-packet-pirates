@@ -261,5 +261,4 @@ class NotificationViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request, pk):
-
+    # def delete(self, request, pk):        
