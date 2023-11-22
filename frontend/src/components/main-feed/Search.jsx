@@ -46,6 +46,8 @@ export default function SearchBar() {
     // console.log(friend);
     console.log("HANDLE FRIEND CLICK" + friend);
     navigate("/user/" + friend);
+    window.location.reload(false);
+
   }
 
   return (

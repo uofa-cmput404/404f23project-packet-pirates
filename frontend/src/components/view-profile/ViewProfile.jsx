@@ -104,6 +104,7 @@ export default function ViewProfile({ user }) {
               <Post
                 key={index}
                 user={user}
+                post_author={post.author}
                 title={post.title}
                 description={post.content}
                 img={post.image_url}
@@ -131,13 +132,11 @@ export default function ViewProfile({ user }) {
         .get(authUrl)
         .then((authRes) => {
           setAuthorInfo(authRes.data)
-          console.log(authRes.data)
-
           setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
           {/* User's Profile Picture */}
           <img
-            src={authRes.Author.profile_picture}
+            src={"http://127.0.0.1:8000" + authRes.data.Author.profile_picture}
             alt={`${user.user.username}'s Profile`}
             className="w-12 h-12 rounded-full object-cover mb-4"
           />
@@ -183,6 +182,8 @@ export default function ViewProfile({ user }) {
     }
   };
 
+  // console.log("AUTHOR INFO", authorInfo)
+  
   const handleFollow = async (event) => {
     event.preventDefault();
 
@@ -192,7 +193,7 @@ export default function ViewProfile({ user }) {
     const data = {
       author : author,
       notification_author : user.user.user_id,
-      notif_author_pfp : user.user.profile_picture,
+      notif_author_pfp : "http://127.0.0.1:8000" + user.user.profile_picture,
       notif_author_username : user.user.username,
       message : "Requested to follow you",
       is_follow_notification : true,
@@ -219,10 +220,12 @@ export default function ViewProfile({ user }) {
         <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
           {/* Spacer to push down content
           <div className="invisible h-16"></div> */}
-  
+
+
           {/* Visible Box at the Top */}
           {profileHeader}
-  
+
+
           <div>
             {/* Profile Header Section */}
             {profile && (
