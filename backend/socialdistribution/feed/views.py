@@ -225,4 +225,40 @@ class GetTrueFriends(APIView):
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         
         # friends = Friends.author.objects.get(author_id = request.user.user_id)
+
+class FollowRequestViews(APIView):
+    '''
+    Creates a Follow Request Object
+    '''
+
+    def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
+                                  # Or request can have both.
+
+        serializer = FriendsSerializer(data = request.data)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+
+
+
+class NotificationViews(APIView):
+    '''
+    Creates a notification object
+    '''
+
+    def post(self, request, pk):
+        serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
+                                                                  # that are affected by the action
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
+        
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    # def delete(self, request, pk):        
