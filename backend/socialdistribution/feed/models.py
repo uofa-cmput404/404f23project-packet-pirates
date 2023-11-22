@@ -32,7 +32,7 @@ class Notifications(models.Model):
     notif_author_pfp = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
     notif_author_username = models.CharField(max_length=40, blank=True)
 
-    messages = [('Liked your post', 'liked'), ('Commented on your post', 'commented')]
+    messages = [('Liked your post', 'liked'), ('Commented on your post', 'commented'), ('Created a new post', "posted")]
     message = models.CharField(max_length=200,choices=messages)
 
     url = models.URLField(max_length = 300, null=True, blank=True) # URL of post
