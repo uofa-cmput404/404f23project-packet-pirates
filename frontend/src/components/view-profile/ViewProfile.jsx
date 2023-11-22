@@ -148,7 +148,7 @@ export default function ViewProfile({ user }) {
         .then((authRes) => {
           setAuthorInfo(authRes.data);
           setProfileHeader(
-            <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
+            <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
               {/* User's Profile Picture */}
               <img
                 src={
@@ -233,7 +233,7 @@ export default function ViewProfile({ user }) {
           <div className="invisible h-16"></div> */}
 
           {/* Visible Box at the Top */}
-          {profileHeader}
+          {/* {profileHeader} */}
 
           <div>
             {/* Profile Header Section */}
@@ -245,13 +245,11 @@ export default function ViewProfile({ user }) {
                   className="w-16 h-16 rounded-full object-cover mb-2"
                 />
                 <h2 className="text-xl font-semibold">{profile.username}</h2>
-                {/* Add more details about the profile here if needed */}
                 <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
                   Follow
                 </button>
               </div>
             )}
-
             <div className="flex flex-row w-full mx-auto">
               <div
                 className="profile h-fit mx-auto"
@@ -260,7 +258,8 @@ export default function ViewProfile({ user }) {
                 {friends}
               </div>
               <div className="feed flex flex-col ml-5 w-full mx-auto">
-                <div className="feed_content mt-5">
+                <div className="feed_content mt-[-20px]">
+                  {profileHeader}
                   <ul>{posts}</ul>
                 </div>
               </div>
