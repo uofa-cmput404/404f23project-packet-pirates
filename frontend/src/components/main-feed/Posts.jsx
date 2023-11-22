@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default function Post({
   user,
+  post_author,
   title,
   description,
   img,
@@ -16,29 +17,73 @@ export default function Post({
   const [hasLiked, setHasLiked] = useState(false);
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [postAuthor, setPostAuthor] = useState('');
 
   const handleEdit = () => {
     // Handle edit functionality
   };
 
-  const handleLike = () => {
-    if (!hasLiked) {
-      // Increment the like count and send a POST request to update it
-      const newLikeCount = likeCount + 1;
-      axios.post("http://127.0.0.1:8000/api/author/" + id + "/editpost", { like_count: newLikeCount }, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        // Handle success
-        setLikeCount(newLikeCount);
-        setHasLiked(true);
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error("Error updating like count:", error);
-      });
+
+  const handleLike = async () => {
+    const newLikeState = !hasLiked;
+
+    // Calculate the new like count based on the like state
+    const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
+  
+    // Update the like status
+    setLikeCount(newLikeCount);
+    setHasLiked(newLikeState);
+  
+    try {
+      if (newLikeState) {
+        // If liking, make a POST request to add a like
+        await axios.post(
+          "http://127.0.0.1:8000/api/author/" + id + "/postlikes",
+          {
+            post_object_id: id,
+            author: user,
+            like_count: newLikeCount,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+      } else {
+        // If unliking, make a DELETE request to remove the like
+        await axios.delete("http://127.0.0.1:8000/api/author/" + id + "/postlikes", {
+          data: {
+            post_object_id: id,
+            author: user,
+            like_count: newLikeCount,
+          },
+          withCredentials: true,
+        });
+      }
+    } catch (error) {
+      // If error found, revert any changes made
+      console.error("Error updating like status:", error);
+  
+      // Revert changes
+      setLikeCount(likeCount); // Reset like count
+      setHasLiked(!hasLiked); // Toggle like state back
     }
   };
+
+  useEffect(() => {
+    // Check if the current user has liked the post
+    const checkLikeStatus = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/author/" + id + "/postlikes");
+        const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
+        setHasLiked(likedByCurrentUser);
+      } catch (error) {
+        console.error("Error checking like status:", error);
+      }
+    };
+
+    checkLikeStatus();
+  }, [id, user]);
+
 
   const handleShare = () => {
     // Handle share functionality
@@ -48,68 +93,116 @@ export default function Post({
     setIsCommenting(true); // Show comment input field
   };
 
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
+    
     setIsCommenting(false); // Hide comment input field
+
+    console.log("USER!!!" , user)
+
+    let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
+    let authorUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/simpleauthor"
+
+    const authorRes = await axios
+    .get(authorUrl)
+    .then(async (authorRes) => {
+
+      await axios.post(commentsUrl, 
+        { 
+          text: commentText,
+          author: user.user.user_id,
+          author_picture: "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
+          author_username: authorRes.data.Author.username,
+        
+      })
+      .then(() => {
+
+        getComments()
+
+      })
+
+    })
+    .catch((error) => {
+      // Handle errors
+      console.error("Error creating comment:", error);
+    });
+
   };
 
+  const getComments = async () => {
+
+    let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
+
+    const commentsRes = await axios
+    .get(commentsUrl)
+    .then((commentsRes) => {
+
+      //Result of comments query
+      //console.log("COMMENTSRES", commentsRes.data.Comments)
+      
+      setComments(commentsRes.data.Comments.map((comment, index) => (
+        <li className="mt-4" key={index}>
+          <div className="comments">
+            <div className="comment flex flex-row">
+              <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                <img
+                  src={comment.author_picture}
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="engagement flex flex-col ml-4">
+                <div className="username">
+                  <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                    {comment.author_username}
+                  </span>
+                </div>
+                <div className="">
+                  <span>Likes</span>
+                  <span className="ml-3">{comment.likes}</span>
+                </div>
+              </div>
+              <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
+                <div className="comment">{comment.text}</div>
+              </div>
+            </div>
+          </div>
+        </li>
+      )))
+
+      setIsLoading(false)
+
+    })
+    .catch((error) => {
+      console.error("Error getting comments:", error);
+    });
+
+  };
+
+  const getPostAuthor = async () => {
+
+    let authorUrl = "http://127.0.0.1:8000/api/author/" + post_author + "/simpleauthor"
+
+    const authorRes = await axios
+    .get(authorUrl)
+    .then((authorRes) => {
+
+      //Result of author query
+      console.log("authorRes hehehe", authorRes.data.Comments)
+      setPostAuthor(authorRes.data.Author)
+
+    })
+    .catch((error) => {
+      console.error("Error getting author:", error);
+    });
+
+  }
 
   useEffect(() => {
     //Get data on post load
-
-    const getComments = async () => {
-
-      let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
-
-      const commentsRes = await axios
-      .get(commentsUrl)
-      .then((commentsRes) => {
-
-        //Result of comments query
-        //console.log("COMMENTSRES", commentsRes.data.Comments)
-        
-        setComments(commentsRes.data.Comments.map((comment, index) => (
-          <li className="mt-4" key={index}>
-            <div className="comments">
-              <div className="comment flex flex-row">
-                <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                  <img
-                    src={comment.author_picture}
-                    alt="profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="engagement flex flex-col ml-4">
-                  <div className="username">
-                    <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                      {comment.author_username}
-                    </span>
-                  </div>
-                  <div className="">
-                    <span>Likes</span>
-                    <span className="ml-3">{comment.likes}</span>
-                  </div>
-                </div>
-                <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
-                  <div className="comment">{comment.text}</div>
-                </div>
-              </div>
-            </div>
-          </li>
-        )))
-
-        setIsLoading(false)
-
-      })
-      .catch((error) => {
-        console.error("Error getting comments:", error);
-      });
-
-    };
-
     getComments();
+    getPostAuthor();
 
   }, []);
-
 
 
   return (
@@ -122,7 +215,7 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={user.profile_picture}
+                src={"http://127.0.0.1:8000" + postAuthor.profile_picture}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -130,7 +223,7 @@ export default function Post({
 
             <div className="info flex flex-col w-full ml-5">
               <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                {user.username}
+                {postAuthor.username}
               </span>
               <div className="post-title flex flex-row w-full justify-between items-center">
                 
@@ -157,20 +250,37 @@ export default function Post({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
+          <button
+            onClick={handleLike}
+            className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
+          >
+            <img
+              src="/like-button.png"
+              alt="Like"
+              className="like-button-img"
+            />
+          </button>
+
             <button
-              onClick={handleLike}
-              className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
-              disabled={hasLiked}
+              onClick={() => setIsCommenting(!isCommenting)}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full comment-button"
             >
-              Like
+              <img
+                src="/comment-button.png"
+                alt="Comment"
+                className="comment-button-img"
+              />
             </button>
 
-            <button onClick={() => setIsCommenting(!isCommenting)} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-              Comment
-            </button>
-
-            <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-              Share
+            <button 
+              onClick={handleShare}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
+              >
+              <img
+                src="/share-button.png"
+                alt="Share"
+                className="share-button-img"
+              />
             </button>
           </div>
 

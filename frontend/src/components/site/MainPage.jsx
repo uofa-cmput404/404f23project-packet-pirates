@@ -6,91 +6,89 @@ import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import SearchBar from "../main-feed/Search";
 
 export default function MainPage({ user }) {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [posts, setPosts] = useState(null)
-  //const [friends, setFriends] = useState()
-  const [notifications, setNotifications] = useState()
+  const [posts, setPosts] = useState(null);
+  const [friends, setFriends] = useState();
+  const [notifications, setNotifications] = useState();
 
-  useEffect(() => {
-    //Get data on homepage load
-    setIsLoading(true);
-    console.log("user", user);
+  const getPosts = async () => {
+    let postsUrl =
+      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
 
-    const getPosts = async () => {
-      let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
+    const postsRes = await axios
+      .get(postsUrl)
+      .then((postsRes) => {
+        //Result of post query
+        console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
-      const postsRes = await axios
-        .get(postsUrl)
-        .then((postsRes) => {
-          //Result of post query
-          console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
+        setPosts(
+          postsRes.data.Posts.map((post, index) => (
+            <Post
+              key={index}
+              user={user}
+              post_author={post.author}
+              title={post.title}
+              description={post.content}
+              img={post.image_url}
+              likes={post.likes_count}
+              id={post.post_id}
+            />
+          ))
+        );
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.error("Error getting posts:", error);
+      });
+  };
+  console.log("user", user);
+  const getConnections = async () => {
+    let connectionsUrl =
+      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
 
-          setPosts(
-            postsRes.data.Posts.map((post, index) => (
-              <Post
-                key={index}
-                user={user}
-                title={post.title}
-                description={post.content}
-                img={post.image_url}
-                likes={post.likes_count}
-                id={post.post_id}
-              />
-            ))
-          );
-        })
-        .then(() => {
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error getting posts:", error);
-        });
-    };
+    const connectionsRes = await axios
+      .get(connectionsUrl)
+      .then((connectionsRes) => {
+        console.log("CONNECTSRES", connectionsRes.data);
+        setFriends(
+          <Profile friends={connectionsRes.data.Friends} user={user} />
+        );
+      })
+      .catch((error) => {
+        console.error("Error getting friends:", error);
+      });
+  };
 
-    /////////// This stuff will probably have to be implemented in the respective components //////////////////////
+  const getNotifications = async () => {
+    let notificationsUrl =
+      "http://127.0.0.1:8000/api/author/" +
+      user.user.user_id +
+      "/authornotifications";
 
-    // const getFriends = async () => {
-
-    //   const friendsRes = await axios
-    //   .get("http://localhost:8000/api/friends")
-    //   .then((friendsRes) => {
-    //     console.log(friendsRes.data);
-
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
-
-    //   setFriends(friendsRes.data)
-
-    // };
-
-    const getNotifications = async () => {
-
-      let notificationsUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/authornotifications"
-
-      const notifsRes = await axios
+    const notifsRes = await axios
       .get(notificationsUrl)
       .then((notifsRes) => {
-        console.log("NOTIFSRES", notifsRes.data.Notifications)
-        setNotifications(<Notifications notifications={notifsRes.data.Notifications} />)
+        console.log("NOTIFSRES", notifsRes.data.Notifications);
+        setNotifications(
+          <Notifications notifications={notifsRes.data.Notifications} />
+        );
       })
       .catch((error) => {
         console.error("Error getting notifications:", error);
       });
+  };
 
-
-    };
+  useEffect(() => {
+    //Get data on homepage load
+    console.log("user", user);
 
     getPosts();
-    //getFriends();
+    getConnections();
     getNotifications();
-
   }, []);
 
   const handleLogout = async (event) => {
@@ -100,54 +98,10 @@ export default function MainPage({ user }) {
       await axios.get("/api/logout");
       window.location.reload(false);
       console.log("logged out");
-    } 
-    catch (err) {
+    } catch (err) {
       console.log(err);
-    } 
+    }
   };
-
-  //example of friends json
-  const friends = [
-    {
-      username: "USERNAME1",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME2",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME3",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME4",
-      pfp: "https://picsum.photos/200",
-    },
-    {
-      username: "USERNAME5",
-      pfp: "https://picsum.photos/200",
-    },
-  ];
-
-  // example of notifications json
-  // const notifications = [
-  //   {
-  //     username: "USERNAME1",
-  //     imageSrc: "https://source.unsplash.com/200x200",
-  //     type: "Requested to follow",
-  //   },
-  //   {
-  //     username: "USERNAME2",
-  //     imageSrc: "https://source.unsplash.com/200x201",
-  //     type: "Liked your post",
-  //   },
-  //   {
-  //     username: "USERNAME3",
-  //     imageSrc: "https://source.unsplash.com/200x202",
-  //     type: "Commented on your post",
-  //   },
-  // ];
 
   return (
     <>
@@ -157,7 +111,7 @@ export default function MainPage({ user }) {
             className="profile h-fit mx-auto"
             style={{ position: "sticky", top: "20px" }}
           >
-            <Profile friends={friends} username={user.user.username} />
+            {friends}
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
@@ -169,17 +123,21 @@ export default function MainPage({ user }) {
           </div>
 
           <div className="flex-col justify-center mx-4">
-            <button 
-              onClick={handleLogout}
-              className='block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
-              Logout
-            </button>
+            <div className="search-bar">
+              <SearchBar />
+            </div>
             <div
               className="notifications h-fit mx-auto"
               style={{ position: "sticky", top: "20px" }}
             >
-            {notifications}
+              {notifications}
             </div>
+            <button
+              onClick={handleLogout}
+              className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>

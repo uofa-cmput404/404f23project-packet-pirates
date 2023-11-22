@@ -1,8 +1,16 @@
 import { Navigate, useNavigate } from "react-router-dom";
 
-export default function Profile({ friends, username }) {
+export default function Profile({ friends, user }) {
   const navigate = useNavigate();
-  
+  console.log("friends", friends);
+  // console.log("username", username);
+  // function handleFriendClick = () => {
+  //   navigate("/viewprofile/" + friend.friend_username);
+  // };
+  function handleFriendClick(friend) {
+    navigate("/user/" + friend.friend_username);
+  }
+
   return (
     <>
       <div
@@ -12,17 +20,18 @@ export default function Profile({ friends, username }) {
         <div className="header flex flex-col justify-center items-center">
           <div className="image-container w-24 h-24 rounded-full overflow-hidden bg-black">
             <img
-              src="https://picsum.photos/200"
+              src={"http://127.0.0.1:8000" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="username mt-5">
-            <span className="text-2xl font-bold">{username}</span>
+            <span className="text-2xl font-bold">{user.user.username}</span>
           </div>
-          <button 
-            onClick={() => navigate('/profilepage')}
-            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-10 pr-10">
+          <button
+            onClick={() => navigate("/profilepage")}
+            className="border border-gray-700 rounded-full p-2 text-white bg-gray-700 mt-5 pl-5 pr-5"
+          >
             Edit Profile
           </button>
           <div className="flex flex-col items-center">
@@ -34,22 +43,26 @@ export default function Profile({ friends, username }) {
           <ul>
             {/* max of 6 friends on display? */}
             {friends.slice(0, 6).map((friend, index) => (
-              <li
-                className="flex flex-row list-image-none justify-center items-center mt-3"
-                key={index}
-              >
-                <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                  <img
-                    src="https://picsum.photos/200"
-                    alt="profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="username ml-5">
-                  <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                    {friend.username}
-                  </span>
-                </div>
+              <li key={index}>
+                {/* idk? what should this behavior be? change this later on i guess */}
+                <button
+                  className="flex flex-row list-image-none justify-center items-center mt-3"
+                  onClick={() => handleFriendClick(friend)}
+                  // onClick={() => navigate("/user/" + friend.friend_username)}
+                >
+                  <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                    <img
+                      src={"http://127.0.0.1:8000" + friend.friend_pfp}
+                      alt="profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="username ml-5">
+                    <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                      {friend.friend_username}
+                    </span>
+                  </div>
+                </button>
               </li>
             ))}
           </ul>

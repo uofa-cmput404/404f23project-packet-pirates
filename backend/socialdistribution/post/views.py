@@ -26,8 +26,10 @@ from post.validate import *
 
 import uuid
 import io
+from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
+from drf_yasg import openapi
 
 class GetAuthorsPosts(APIView):
     '''
@@ -35,6 +37,22 @@ class GetAuthorsPosts(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+
+
+    @swagger_auto_schema(operation_description="Get all posts from a specific author",
+                    operation_summary="Get All Author's Posts",
+                    responses={200: PostSerializer()},
+                    tags=['Post'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -52,6 +70,17 @@ class test(APIView):
     def get(self, request):
         return Response(status=status.HTTP_200_OK)    
 
+class GetUsers(APIView):
+    """Returns a list of users, given query"""
+    # no authentication needed
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    def get(self, request):
+        query = request.GET.get('query')
+        users = AppAuthor.objects.filter(username__icontains = query)
+        serializer = AuthorSerializer(users, many = True)
+        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
     
 class GetFeedPostsByUsername(APIView):
     '''
@@ -60,6 +89,12 @@ class GetFeedPostsByUsername(APIView):
     permission_classes = (permissions.AllowAny,)
     # no authentication needed
     authentication_classes = ()
+    
+    @swagger_auto_schema(operation_description="Get all posts made by a specific author",
+                            operation_summary="Get posts",
+                            responses={200: PostSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[])
     
     
     def get(self, request, pk):
@@ -88,23 +123,58 @@ class GetFeedPosts(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+        
+
+    @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
+                operation_summary="Get posts",
+                responses={200: PostSerializer()},
+                tags=['Post'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='pk',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Author ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
+        posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
         friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
-
         for friend in friends:
+            # print(friend.friend.user_id)
 
-            posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
-
+            posts = posts | Post.objects.filter(author_id = friend.friend.user_id).exclude(unlisted = True) # Add posts from each friend
+        # print("Friends", friends)
+        # print("Posts", posts)
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
 
 class PostViews(APIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()    
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    @swagger_auto_schema(operation_description="Create a post for a specific author",
+                operation_summary="Create Author Post",
+                responses={201: PostSerializer()},
+                tags=['Post'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='pk',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Author ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
 
     def post(self, request): # Create a post
         # print(request.data['post_id'])
@@ -141,23 +211,43 @@ class PostViews(APIView):
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()
 
-    authentication_classes = ()
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Edit Post of an Author",
+                operation_summary="Edit post",
+                responses={200: PostSerializer()},
+                tags=['Post'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='pk',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Post ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
 
         # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
-        
+        # new_post = post
+        # post.likes_count = 
         # Update like count
-        new_like_count = request.data.get('like_count', None)
-        if new_like_count is not None:
-            post.likes = new_like_count
-            # post.save() 
-            return Response(status=status.HTTP_200_OK)
+        # new_like_count = request.data.get('like_count', None)
+        # print(new_like_count)
+        # if new_like_count is not None:
+        #     post.likes = new_like_count
+        #     # post.save() 
+        #     return Response(status=status.HTTP_200_OK)
         
+        print(request.data)
         serializer = PostSerializer(post, data = request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -170,8 +260,26 @@ class PostComments(APIView):
     '''
     All comments of a post
     '''
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
+    # permission_classes = (permissions.AllowAny,)
+    # authentication_classes = ()
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Get all comments of a post",
+                            operation_summary="Get comments",
+                            responses={200: CommentSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[
+                                openapi.Parameter(
+                                    name='pk',
+                                    in_=openapi.IN_PATH,
+                                    type=openapi.TYPE_STRING,
+                                    description='Post ID',
+                                    required=True,
+                                    enum=[]
+                                )
+                            ])
     
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
@@ -183,16 +291,48 @@ class PostComments(APIView):
         
         return Response({"Comments": serializer.data}, status=status.HTTP_200_OK)
     
+    @swagger_auto_schema(operation_description="Create comments for a specific post",
+                        operation_summary="Create comment",
+                        responses={201: CommentSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
+    
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
-        request.data['post_id'] = post_id
+        request.data['post'] = post_id
+        print(request)
         serializer = CommentSerializer(data = request.data)
-
+        serializer.is_valid()
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
             return Response({"message" : "Comment Model Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
+        
+
+    @swagger_auto_schema(operation_description="Delete comment for a specific post",
+                    operation_summary="delete comments",
+                    responses={200: CommentSerializer()},
+                    tags=['Post'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='pk',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Post ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
         
     def delete(self, request, pk):
         comment_id = request.data['comment_id']
@@ -214,6 +354,22 @@ class PostLikeViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+        
+    @swagger_auto_schema(operation_description="Get likes of a specific post",
+                            operation_summary="post likes",
+                            responses={200: LikeSerializer()},
+                            tags=['Post'],
+                            manual_parameters=[
+                                openapi.Parameter(
+                                    name='pk',
+                                    in_=openapi.IN_PATH,
+                                    type=openapi.TYPE_STRING,
+                                    description='Post ID',
+                                    required=True,
+                                    enum=[]
+                                )
+                            ])
+
     def get(self, request, pk): # Get all likes
         post_id = uuid.UUID(pk) # pk needs to be post ID not author
 
@@ -222,23 +378,61 @@ class PostLikeViews(APIView):
         serializer = LikeSerializer(likes, many = True)
   
         return Response ({"Post Likes": serializer.data}, status=status.HTTP_200_OK)
- 
+    
+    @swagger_auto_schema(operation_description="Creates likes of a specific post",
+                        operation_summary="create post likes",
+                        responses={201: LikeSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
+    
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
-        request.data['post_object_id'] = post_object_id
-        serializer = LikeSerializer(data = request.data)
+
+        post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
+
+        like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
+
+        serializer = LikeSerializer(data = like_data)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
             return Response({"message" : "Like Model Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
+    
+
+        
+    @swagger_auto_schema(operation_description="delete a like of a specific post",
+                        operation_summary="delete post like",
+                        responses={200: LikeSerializer()},
+                        tags=['Post'],
+                        manual_parameters=[
+                            openapi.Parameter(
+                                name='pk',
+                                in_=openapi.IN_PATH,
+                                type=openapi.TYPE_STRING,
+                                description='Post ID',
+                                required=True,
+                                enum=[]
+                            )
+                        ])
 
     def delete(self, request, pk): # For unliking a post
         post_id = uuid.UUID(pk)
         author_id = request.user.user_id
 
         post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+
+        post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
         if post_liked:
             post_liked.delete()

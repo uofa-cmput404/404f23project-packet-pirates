@@ -1,8 +1,8 @@
 import axios from "axios";
-import {useState} from 'react';
+import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import Dropdown from 'react-dropdown';
-import 'react-dropdown/style.css';
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
 export default function CreatePost({ user }) {
   const navigate = useNavigate();
@@ -10,75 +10,83 @@ export default function CreatePost({ user }) {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const visibilityOptions = [
-      { value: 'Public', label: 'Public' },
-      { value: 'Private', label: 'Private' },
-      { value: 'Unlisted', label: 'Unlisted' }
+    { value: "Public", label: "Public" },
+    { value: "Private", label: "Private" },
+    { value: "Unlisted", label: "Unlisted" },
   ];
   const [visibility, setVisibility] = useState(visibilityOptions[0].value);
 
   const [isUnlisted, setIsUnlisted] = useState(false);
-  
+  const [isPrivate, setIsPrivate] = useState(false);
+
   const contentOptions = [
-      { value: 'text/plain', label: 'Plaintext' },
-      { value: 'text/markdown', label: 'Markdown' },
+    { value: "text/plain", label: "Plaintext" },
+    { value: "text/markdown", label: "Markdown" },
   ];
   const [contentType, setContentType] = useState(contentOptions[0].value);
-  
-  const handleTitleChange = event => {
-      setTitle(event.target.value);
-      console.log('Sent title is:', event.target.value);
+
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+    console.log("Sent title is:", event.target.value);
   };
 
-  const handleTextChange = event => {
+  const handleTextChange = (event) => {
     setText(event.target.value);
-    console.log('Sent text is:', event.target.value);
+    console.log("Sent text is:", event.target.value);
   };
 
-  const handleContentTypeChange = value => {
-    setContentType(value);
-    console.log('Sent content type is:', value);
-};
+  const handleContentTypeChange = (value) => {
+    setContentType(value['value']);
+    console.log("Sent content type is:", value['value']);
+    // console.log(value['value'])
+  };
 
-  const handleVisibilityChange = value => {
+  const handleVisibilityChange = (value) => {
     setVisibility(value);
-    console.log('Sent visibility is:', value);
-  }
+
+    if (value["value"] === "Private") {
+      setIsPrivate(true);
+    } else if (value["value"] === "Unlisted") {
+      setIsUnlisted(true);
+    }
+
+    console.log("Sent visibility is:", value);
+  };
 
   const handleTextPosting = (e) => {
     e.preventDefault();
     const data = {
-      "title": title,
-      "content_type": contentType,
-      "url": '',
-      "content": text,
-      "author": user.user.user_id,
-      "source": user.user.user_id,
-      "origin": user.user.user_id,
-      "unlisted": isUnlisted,
-      'image_url': ""
+      title: title,
+      content_type: contentType,
+      url: "",
+      content: text,
+      author: user.user.user_id,
+      source: user.user.user_id,
+      origin: user.user.user_id,
+      unlisted: isUnlisted,
+      is_private: isPrivate,
+      image_url: "",
       //"visibility": visibility
-    }
+    };
 
     console.log("Data", data);
-    
+
     axios
-    .post(
-      'http://127.0.0.1:8000/api/postViews', 
-      data, 
-      {
+      .post("http://127.0.0.1:8000/api/postViews", data, {
         headers: {
           // "Content-Type": "multipart/form-data",
           "Content-Type": "application/json",
         },
       })
-    .then((response) => {
+      .then((response) => {
         console.log(response.data);
         window.location.reload(false);
-    }).catch((error) => {
+      })
+      .catch((error) => {
         console.log("Error Response: ", error.response);
-        console.log("Error Data: ", error.response.data)
-    });
-  }
+        console.log("Error Data: ", error.response.data);
+      });
+  };
 
   return (
     <div>
@@ -89,12 +97,15 @@ export default function CreatePost({ user }) {
         <div className="post-content flex flex-row">
           <div className="image-container w-12 h-12 rounded-full overflow-hidden bg-black">
             <img
-              src="https://picsum.photos/200"
+              src={"http://127.0.0.1:8000" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
           </div>
-          <form className="stuff-to-post flex flex-col w-[80%] ml-5 " action="#">
+          <form
+            className="stuff-to-post flex flex-col w-[80%] ml-5 "
+            action="#"
+          >
             {/* Title Input */}
             <input
               id="title"
@@ -126,17 +137,16 @@ export default function CreatePost({ user }) {
             </li>
             <li>
               <div className="chooseVisibility">
-                <Dropdown 
+                <Dropdown
                   options={visibilityOptions}
                   value={visibility}
                   onChange={handleVisibilityChange}
                 />
               </div>
-              
             </li>
             <li>
               <div className="chooseContentType">
-                <Dropdown 
+                <Dropdown
                   options={contentOptions}
                   value={contentType}
                   onChange={handleContentTypeChange}
@@ -144,9 +154,10 @@ export default function CreatePost({ user }) {
               </div>
             </li>
             <li>
-              <button className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+              <button
+                className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
                 onClick={handleTextPosting}
-                >
+              >
                 Post
               </button>
             </li>
