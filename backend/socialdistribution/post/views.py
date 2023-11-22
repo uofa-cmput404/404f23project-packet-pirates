@@ -176,24 +176,18 @@ class PostViews(APIView):
                 ])
 
     def post(self, request): # Create a post
-        # print(request.data['post_id'])
+        print(request.data['post_id'])
         # author = AppAuthor.objects.get(user_id = request.user.user_id)
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
         # print(authorSerializer)
         print(request)
         print(request.data)
+        print(request.data['image_file'])
 
-        # data = request.data[0]
-        # print(data)
-    
-        # validated_data = custom_validation(request.data)
-
-        # picture = request.data['image_file']
-        # image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-        # request.data['image_file'] = image
-
-        request.data['image_url'] = 'https://picsum.photos/200'
+        picture = request.data['image_file']
+        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        request.data['image_url'] = image
 
         serializer = PostSerializer(data = request.data)
         serializer.is_valid()
