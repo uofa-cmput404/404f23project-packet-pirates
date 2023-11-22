@@ -101,10 +101,10 @@ export default function ViewProfile({ user }) {
             postsRes.data.Posts.map((post, index) => (
               <Post
                 key={index}
-                user={user}
+                user={fake_user}
                 title={post.title}
                 description={post.content}
-                img={post.image_url} // Change this to image_file
+                img={post.image_url}
                 likes={post.likes_count}
                 id={post.post_id}
               />
