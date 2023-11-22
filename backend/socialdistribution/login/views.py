@@ -153,7 +153,7 @@ class GetSingleAuthorByUsername(APIView):
                     name='pk',
                     in_=openapi.IN_PATH,
                     type=openapi.TYPE_STRING,
-                    description='Author ID',
+                    description='Author username',
                     required=True,
                     enum=[]
                 )
