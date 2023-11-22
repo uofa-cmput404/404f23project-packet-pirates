@@ -26,10 +26,11 @@ class Notifications(models.Model):
     # Need two authors
     # Also need FollowRequests
     # Posts, Likes, Comments
+    notif_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True)
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="main_author") # Main user
 
     notification_author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="notifier") # Person who likes/comments
-    notif_author_pfp = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
+    notif_author_pfp = models.URLField(max_length=300, null=True, blank=True)
     notif_author_username = models.CharField(max_length=40, blank=True)
 
     messages = [('Liked your post', 'liked'), ('Commented on your post', 'commented'), ("Created a new post", "posted"), ("Requested to follow you", "follow")]

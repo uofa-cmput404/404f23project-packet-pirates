@@ -89,7 +89,8 @@ class AuthorView(APIView):
 
     def get(self, request):
         serializer = AuthorSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK) # CHANGE LATER NO MORE JSON, REMOVE
+        # return Response(serializer.data, status=status.HTTP_200_OK) # TO THIS
 
 class GetSingleAuthor(APIView):
     '''

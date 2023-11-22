@@ -7,6 +7,7 @@ urlpatterns = [
     path("author/<str:pk>/authorfollowing", views.GetAuthorFollowing.as_view(), name = "get_all_following"),
     path("author/<str:pk>/authorfollowers", views.GetAuthorFollowers.as_view(), name = "get_all_followers"),
     path("author/<str:pk>/truefriends", views.GetTrueFriends.as_view(), name = "get_true_friends"),
+    path("<str:pk>/createnotif", views.NotificationViews.as_view(), name = "create_notification"),
     path("author/search", views.GetUsers.as_view(), name = "search_author"),
     path("author/getall", views.GetAllUsers.as_view(), name = "search_author"),
 

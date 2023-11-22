@@ -255,9 +255,14 @@ class NotificationViews(APIView):
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
                                                                   # that are affected by the action
 
+        author = AppAuthor.objects.get(username = request.data['author'])
+        request.data['author'] = author.user_id
+
+        serializer.is_valid()
+        print(serializer.errors)
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
-            return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Notification Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
