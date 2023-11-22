@@ -225,4 +225,14 @@ class GetTrueFriends(APIView):
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         
         # friends = Friends.author.objects.get(author_id = request.user.user_id)
-        
+
+# def SendFollowRequest(APIView):
+#     '''
+#     Creates a Follow Request Object
+#     '''
+
+
+# def CreateNotification(APIView):
+#     '''
+#     Creates a notification object
+#     '''
