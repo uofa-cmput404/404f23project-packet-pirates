@@ -242,6 +242,9 @@ class FollowRequestViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    # def delete(self, request, pk):
+
+
 
 class NotificationViews(APIView):
     '''
@@ -257,3 +260,6 @@ class NotificationViews(APIView):
             return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    # def delete(self, request, pk):
+
