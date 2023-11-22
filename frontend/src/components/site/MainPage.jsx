@@ -26,7 +26,7 @@ export default function MainPage({ user }) {
         console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
         setPosts(
-            postsRes.data.Posts.map((post, index) => {
+          postsRes.data.Posts.map((post, index) => {
               const image_conditions = post.image_url === null && post.image_file != null
               // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url

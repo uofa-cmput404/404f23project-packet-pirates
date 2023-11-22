@@ -99,7 +99,7 @@ export default function ViewProfile({ user }) {
           console.log("posts", postsRes.data.Posts);
           if (author === user.user.username) {
             setPosts(
-              postsRes.data.Posts.map((post, index) => {
+              postsRes.data.Posts.map((post, index) => { // As the user, want to be able to see your all your posts.
                 const image_conditions = post.image_url === null && post.image_file != null
                 // console.log("TESTING", image_conditions)
                 const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
@@ -121,7 +121,7 @@ export default function ViewProfile({ user }) {
             );
           } else {
             setPosts(
-              postsRes.data.Posts.map((post, index) => {
+              postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => { // Swap !post.is_private to our boolean checker to see if they are friends
                 const image_conditions = post.image_url === null && post.image_file != null
                 // console.log("TESTING", image_conditions)
                 const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
