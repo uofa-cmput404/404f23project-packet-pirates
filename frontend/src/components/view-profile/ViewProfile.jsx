@@ -23,6 +23,7 @@ export default function ViewProfile({ user }) {
   const [postauthor, setPostauthor] = useState(null);
   const [friends, setFriends] = useState(null);
   const [notifications, setNotifications] = useState(null);
+  const [authorInfo, setAuthorInfo] = useState(null);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -121,10 +122,27 @@ export default function ViewProfile({ user }) {
         });
     };
 
+    const getAuthorInfo = async () => {
+      let authUrl =
+        "http://127.0.0.1:8000/api/author/" + author + "/username";
+
+      const authRes = await axios
+        .get(authUrl)
+        .then((authRes) => {
+          setAuthorInfo(authRes.data)
+          console.log(authRes.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        });
+
+    }
+
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
+    getAuthorInfo();
     console.log("posts", posts);
   }, [author]);
 
@@ -140,6 +158,36 @@ export default function ViewProfile({ user }) {
     }
   };
 
+  const handleFollow = async (event) => {
+    event.preventDefault();
+
+    let notifsUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    const data = {
+      author : author,
+      notification_author : user.user.user_id,
+      notif_author_pfp : user.user.profile_picture,
+      notif_author_username : user.user.username,
+      message : "Requested to follow you",
+      is_follow_notification : true,
+      url : ''
+    }
+
+    try {
+
+      const res = await axios.post(notifsUrl, data)
+      .then ((res) => {
+        console.log(res.data)
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+  };
+
   return (
     <>
       <div className="flex justify-center items-center w-screen">
@@ -151,7 +199,7 @@ export default function ViewProfile({ user }) {
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
-              src={user.user.profile_picture}
+              src={authorInfo.profile_picture}
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
             />
@@ -160,7 +208,10 @@ export default function ViewProfile({ user }) {
             <h2 className="text-xl font-semibold mb-2">{user.user.username}</h2>
   
             {/* Follow Button */}
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
+            <button 
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              onClick = {handleFollow}
+            >
               Follow
             </button>
           </div>
