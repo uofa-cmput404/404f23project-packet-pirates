@@ -47,7 +47,6 @@ export default function SearchBar() {
     console.log("HANDLE FRIEND CLICK" + friend);
     navigate("/user/" + friend);
     window.location.reload(false);
-
   }
 
   return (
@@ -64,7 +63,7 @@ export default function SearchBar() {
         {showResults && results.length > 0 && (
           <div className="results absolute bg-white border border-gray-300 rounded-lg p-2 mt-12 w-full z-50">
             {/* Render the search results here */}
-            {results.map((result, index) => (
+            {results.slice(0, 8).map((result, index) => (
               <button
                 key={index}
                 className="block w-full text-left m-2"

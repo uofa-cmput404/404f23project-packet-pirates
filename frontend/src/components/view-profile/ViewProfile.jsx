@@ -95,24 +95,40 @@ export default function ViewProfile({ user }) {
       const postsRes = await axios
         .get(postsUrl)
         .then((postsRes) => {
-          //Result of post query
-          // console.log("POSTSRES", postsRes.data.Posts[0]);
-          // console.log("POSTSRES_FULL", postsRes.data.Posts);
           console.log("POSTSRES", postsRes.status);
-          setPosts(
-            postsRes.data.Posts.map((post, index) => (
-              <Post
-                key={index}
-                user={user}
-                post_author={post.author}
-                title={post.title}
-                description={post.content}
-                img={post.image_url}
-                likes={post.likes_count}
-                id={post.post_id}
-              />
-            ))
-          );
+          console.log("posts", postsRes.data.Posts);
+          if (author === user.user.username) {
+            setPosts(
+              postsRes.data.Posts.map((post, index) => (
+                <Post
+                  key={index}
+                  user={user}
+                  post_author={post.author}
+                  title={post.title}
+                  description={post.content}
+                  img={post.image_url}
+                  likes={post.likes_count}
+                  id={post.post_id}
+                />
+              ))
+            );
+          } else {
+            setPosts(
+              postsRes.data.Posts.filter((post) => !post.is_private) // Filter before map
+                .map((post, index) => (
+                  <Post
+                    key={index}
+                    user={user}
+                    post_author={post.author}
+                    title={post.title}
+                    description={post.content}
+                    img={post.image_url}
+                    likes={post.likes_count}
+                    id={post.post_id}
+                  />
+                ))
+            );
+          }
         })
         .catch((error) => {
           console.error("Error getting posts:", error);
@@ -125,42 +141,42 @@ export default function ViewProfile({ user }) {
     };
 
     const getAuthorInfo = async () => {
-      let authUrl =
-        "http://127.0.0.1:8000/api/author/" + author + "/username";
+      let authUrl = "http://127.0.0.1:8000/api/author/" + author + "/username";
 
       const authRes = await axios
         .get(authUrl)
         .then((authRes) => {
-          setAuthorInfo(authRes.data)
+          setAuthorInfo(authRes.data);
           setProfileHeader(
-          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
-          {/* User's Profile Picture */}
-          <img
-            src={"http://127.0.0.1:8000" + authRes.data.Author.profile_picture}
-            alt={`${user.user.username}'s Profile`}
-            className="w-12 h-12 rounded-full object-cover mb-4"
-          />
+            <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
+              {/* User's Profile Picture */}
+              <img
+                src={
+                  "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
+                }
+                alt={`${user.user.username}'s Profile`}
+                className="w-12 h-12 rounded-full object-cover mb-4"
+              />
 
-          {/* User's Name */}
-          <h2 className="text-xl font-semibold mb-2">{author + "'s profile"}</h2>
+              {/* User's Name */}
+              <h2 className="text-xl font-semibold mb-2">
+                {author + "'s profile"}
+              </h2>
 
-          {/* Follow Button */}
-          <button 
-            className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            onClick = {handleFollow}
-          >
-            Follow
-          </button>
-        </div>
-        )
-
-
+              {/* Follow Button */}
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleFollow}
+              >
+                Follow
+              </button>
+            </div>
+          );
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
-
-    }
+    };
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
@@ -183,34 +199,29 @@ export default function ViewProfile({ user }) {
   };
 
   // console.log("AUTHOR INFO", authorInfo)
-  
+
   const handleFollow = async (event) => {
     event.preventDefault();
 
     let notifsUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+      "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
 
     const data = {
-      author : author,
-      notification_author : user.user.user_id,
-      notif_author_pfp : "http://127.0.0.1:8000" + user.user.profile_picture,
-      notif_author_username : user.user.username,
-      message : "Requested to follow you",
-      is_follow_notification : true,
-      url : ''
-    }
+      author: author,
+      notification_author: user.user.user_id,
+      notif_author_pfp: "http://127.0.0.1:8000" + user.user.profile_picture,
+      notif_author_username: user.user.username,
+      message: "Requested to follow you",
+      is_follow_notification: true,
+      url: "",
+    };
 
     try {
-
-      const res = await axios.post(notifsUrl, data)
-      .then ((res) => {
-        console.log(res.data)
+      const res = await axios.post(notifsUrl, data).then((res) => {
+        console.log(res.data);
       });
-
     } catch (err) {
-
       console.log(err);
-
     }
   };
 
@@ -221,10 +232,8 @@ export default function ViewProfile({ user }) {
           {/* Spacer to push down content
           <div className="invisible h-16"></div> */}
 
-
           {/* Visible Box at the Top */}
           {profileHeader}
-
 
           <div>
             {/* Profile Header Section */}
@@ -242,7 +251,7 @@ export default function ViewProfile({ user }) {
                 </button>
               </div>
             )}
-  
+
             <div className="flex flex-row w-full mx-auto">
               <div
                 className="profile h-fit mx-auto"
