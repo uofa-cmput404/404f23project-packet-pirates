@@ -99,34 +99,47 @@ export default function ViewProfile({ user }) {
           console.log("posts", postsRes.data.Posts);
           if (author === user.user.username) {
             setPosts(
-              postsRes.data.Posts.map((post, index) => (
-                <Post
-                  key={index}
-                  user={user}
-                  post_author={post.author}
-                  title={post.title}
-                  description={post.content}
-                  img={post.image_url}
-                  likes={post.likes_count}
-                  id={post.post_id}
-                />
-              ))
-            );
-          } else {
-            setPosts(
-              postsRes.data.Posts.filter((post) => !post.unlisted) // Filter before map
-                .map((post, index) => (
+              postsRes.data.Posts.map((post, index) => {
+                const image_conditions = post.image_url === null && post.image_file != null
+                // console.log("TESTING", image_conditions)
+                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
+                // console.log("IMAGE", image)
+                return (
                   <Post
                     key={index}
                     user={user}
                     post_author={post.author}
                     title={post.title}
                     description={post.content}
-                    img={post.image_url}
+                    img={image}
+                    img_url={post.image_url}
                     likes={post.likes_count}
                     id={post.post_id}
                   />
-                ))
+                );
+              })
+            );
+          } else {
+            setPosts(
+              postsRes.data.Posts.map((post, index) => {
+                const image_conditions = post.image_url === null && post.image_file != null
+                // console.log("TESTING", image_conditions)
+                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
+                // console.log("IMAGE", image)
+                return (
+                  <Post
+                    key={index}
+                    user={user}
+                    post_author={post.author}
+                    title={post.title}
+                    description={post.content}
+                    img={image}
+                    img_url={post.image_url}
+                    likes={post.likes_count}
+                    id={post.post_id}
+                  />
+                );
+              })
             );
           }
         })

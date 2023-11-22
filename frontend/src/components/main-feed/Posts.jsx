@@ -7,6 +7,7 @@ export default function Post({
   title,
   description,
   img,
+  img_url,
   likes,
   id
 }) {
@@ -127,6 +128,8 @@ export default function Post({
     });
 
   };
+
+  // console.log("IMG_file", img, "IMG_url", img_url)
 
   const getComments = async () => {
 
