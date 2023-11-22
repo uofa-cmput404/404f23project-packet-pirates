@@ -396,6 +396,8 @@ class PostLikeViews(APIView):
 
         post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
 
+        print('DATAAAAAAAA', request.data)
+
         like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
 
         serializer = LikeSerializer(data = like_data)

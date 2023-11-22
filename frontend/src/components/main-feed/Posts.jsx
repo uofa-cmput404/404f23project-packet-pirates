@@ -42,7 +42,7 @@ export default function Post({
           "http://127.0.0.1:8000/api/author/" + id + "/postlikes",
           {
             post_object_id: id,
-            author: user.user.id,
+            author: user,
             like_count: newLikeCount,
           },
           {
@@ -54,7 +54,7 @@ export default function Post({
         await axios.delete("http://127.0.0.1:8000/api/author/" + id + "/postlikes", {
           data: {
             post_object_id: id,
-            author: user.user.id,
+            author: user,
             like_count: newLikeCount,
           },
           withCredentials: true,
