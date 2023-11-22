@@ -181,17 +181,20 @@ class PostViews(APIView):
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
         # print(authorSerializer)
-        print(request)
-        print(request.data)
+        # print(request)
+        # print(request.data)
         print(request.data['image_file'])
 
         picture = request.data['image_file']
+
         image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-        request.data['image_url'] = image
+
+        request.data['image_file'] = image
 
         serializer = PostSerializer(data = request.data)
-        serializer.is_valid()
-        print(serializer.errors)
+        # serializer.is_valid()
+        # print(serializer)
+        # print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
