@@ -24,6 +24,7 @@ export default function ViewProfile({ user }) {
   const [friends, setFriends] = useState(null);
   const [notifications, setNotifications] = useState(null);
   const [authorInfo, setAuthorInfo] = useState(null);
+  const [profileHeader, setProfileHeader] = useState(null);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -131,6 +132,30 @@ export default function ViewProfile({ user }) {
         .then((authRes) => {
           setAuthorInfo(authRes.data)
           console.log(authRes.data)
+
+          setProfileHeader(
+          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
+          {/* User's Profile Picture */}
+          <img
+            src={authRes.Author.profile_picture}
+            alt={`${user.user.username}'s Profile`}
+            className="w-12 h-12 rounded-full object-cover mb-4"
+          />
+
+          {/* User's Name */}
+          <h2 className="text-xl font-semibold mb-2">{author}</h2>
+
+          {/* Follow Button */}
+          <button 
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            onClick = {handleFollow}
+          >
+            Follow
+          </button>
+        </div>
+        )
+
+
         })
         .catch((err) => {
           console.log(err)
@@ -196,25 +221,7 @@ export default function ViewProfile({ user }) {
           <div className="invisible h-16"></div> */}
   
           {/* Visible Box at the Top */}
-          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center w-1/2 max-w-[70rem] top-0 border border-gray-300 shadow-md">
-            {/* User's Profile Picture */}
-            <img
-              src={authorInfo.profile_picture}
-              alt={`${user.user.username}'s Profile`}
-              className="w-12 h-12 rounded-full object-cover mb-4"
-            />
-  
-            {/* User's Name */}
-            <h2 className="text-xl font-semibold mb-2">{user.user.username}</h2>
-  
-            {/* Follow Button */}
-            <button 
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              onClick = {handleFollow}
-            >
-              Follow
-            </button>
-          </div>
+          {profileHeader}
   
           <div>
             {/* Profile Header Section */}
