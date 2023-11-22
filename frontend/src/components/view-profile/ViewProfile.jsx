@@ -114,7 +114,7 @@ export default function ViewProfile({ user }) {
             );
           } else {
             setPosts(
-              postsRes.data.Posts.filter((post) => !post.is_private) // Filter before map
+              postsRes.data.Posts.filter((post) => !post.unlisted) // Filter before map
                 .map((post, index) => (
                   <Post
                     key={index}
