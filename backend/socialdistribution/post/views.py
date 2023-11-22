@@ -176,7 +176,7 @@ class PostViews(APIView):
                 ])
 
     def post(self, request): # Create a post
-        print(request.data['post_id'])
+        # print(request.data['post_id'])
         # author = AppAuthor.objects.get(user_id = request.user.user_id)
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)

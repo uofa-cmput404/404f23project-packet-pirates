@@ -70,27 +70,27 @@ export default function CreatePost({ user }) {
 
   const handlePosting = (e) => {
     e.preventDefault();
-    const data = {
-      author: user.user.user_id,
-      title: title,
-      content_type: contentType,
-      content: text,
-      source: user.user.user_id,
-      origin: user.user.user_id,
-      unlisted: isUnlisted,
-      is_private: isPrivate,
-      image_file: imageFile,
-      visibility: visibility,
-      url: "",
-    };
+    const formData = new FormData();
+    formData.append('author', user.user.user_id);
+    formData.append('title', title);
+    formData.append('content_type', contentType);
+    formData.append('content', text);
+    formData.append('source', user.user.user_id)
+    formData.append('origin', user.user.user_id)
+    formData.append('unlisted', isUnlisted)
+    formData.append('is_private', isPrivate)
+    formData.append('image_file', imageFile)
+    formData.append('visibility', visibility)
+    formData.append('url', "")
 
-    console.log("Data", data);
+    console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/api/postViews", data, {
+      .post("http://127.0.0.1:8000/api/postViews", formData, 
+      {
         headers: {
-          //"Content-Type": "multipart/form-data",
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
+          //"Content-Type": "application/json",
         },
       })
       .then((response) => {
