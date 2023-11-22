@@ -104,7 +104,7 @@ export default function ViewProfile({ user }) {
                 user={user}
                 title={post.title}
                 description={post.content}
-                img={post.image_url}
+                img={post.image_url} // Change this to image_file
                 likes={post.likes_count}
                 id={post.post_id}
               />
