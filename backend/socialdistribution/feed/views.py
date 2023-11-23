@@ -234,6 +234,24 @@ class FollowRequestViews(APIView):
     def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
                                   # Or request can have both.
 
+        serializer = FollowerRequestSerializer(data = request.data)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({'message': 'Follow Request Object Successfully Created'}, status=status.HTTP_201_CREATED)
+        
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, pk):
+
+
+class FriendsViews(APIView):
+    '''
+    Creates a Follow Request Object
+    '''
+
+    def post (self, request, pk):
+
         serializer = FriendsSerializer(data = request.data)
 
         if (serializer.is_valid(raise_exception=True)):
@@ -241,10 +259,7 @@ class FollowRequestViews(APIView):
             return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # def delete(self, request, pk):
-
-
+    
 
 class NotificationViews(APIView):
     '''
@@ -266,4 +281,41 @@ class NotificationViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request, pk):        
+    # def delete(self, request, pk):
+
+
+class InboxViews(APIView):
+    '''
+    Inbox Notification Views
+    Get, Post
+    '''
+
+    def get(self, request, pk): 
+        '''
+        Return the inbox of an author
+        '''
+        inbox = Inbox.objects.get(author = pk)
+
+        serializer = InboxSerializer(data = inbox)
+
+        return Response({serializer.data}, status=status.HTTP_201_CREATED)
+    
+    def post(self, request, pk):
+        '''
+        Update the inbox of an author
+        '''
+        inbox = Inbox.objects.get(author = pk)
+
+        author = request.data['author']
+
+        posts = request.data['posts']
+
+        post_comments = request.data['comments']
+
+        post_likes = request.data['likes']
+
+        new_inbox = None
+
+        serializer = InboxSerializer(inbox, data = new_inbox)
+
+        # if (serializer.is_valid(raise_exception=True)):

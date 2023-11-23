@@ -8,7 +8,8 @@ from post.models import Post, Comment, PostLike
 class FollowerRequest(models.Model):
     sender = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_requester")
     recipient = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_receiver")
-
+    is_pending = models.BooleanField(default=True)
+    
 class Friends(models.Model):
     # Check if author and friend both follow each other => True friend
     # If friendship one way => Friend
