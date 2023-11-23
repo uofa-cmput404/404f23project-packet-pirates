@@ -31,6 +31,15 @@ from drf_yasg.utils import swagger_auto_schema
 
 from drf_yasg import openapi
 
+class ViewPostByID(APIView): # FOR TESTING PURPOSES DELETE LATER
+
+    def get(self, request, pk):
+        post = Post.objects.get(post_id = pk)
+
+        serializer = PostSerializer(post)
+
+        return Response({"post": serializer.data}, status=status.HTTP_200_OK)
+
 class GetAuthorsPosts(APIView):
     '''
     Get posts that the specific author has posted in the database

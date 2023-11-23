@@ -50,7 +50,7 @@ class Notifications(models.Model):
 class Inbox(models.Model):
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
 
-    notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True, null=True)
+    notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True)
 
     posts = models.ManyToManyField(Post, symmetrical=False, blank = True)
 
