@@ -46,5 +46,16 @@ class Notifications(models.Model):
     # likes = models.ManyToManyField(PostLike, symmetrical=False, blank = True)
     # friend_requests = models.ManyToManyField(FollowerRequest, symmetrical=False, blank = True)
 
+class Inbox(models.Model):
+    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
 
+    notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True, null=True)
+
+    posts = models.ManyToManyField(Post, symmetrical=False, blank = True)
+
+    post_comments = models.ManyToManyField(Comment, symmetrical=False, blank = True)
+
+    post_likes = models.ManyToManyField(PostLike, symmetrical=False, blank = True)
+
+    follow_requests = models.ManyToManyField(FollowerRequest, symmetrical=False, blank = True)
 
