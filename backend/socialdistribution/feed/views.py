@@ -344,6 +344,7 @@ class InboxViews(APIView):
 
         post = Post.objects.filter(post_id = posts['post_id'])
 
+        # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
         if (len(post) != 0):
             print(post[0])
             inbox.posts.add(post[0])
