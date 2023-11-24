@@ -198,14 +198,19 @@ class PostViews(APIView):
 
         picture = request.data['image_file']
 
-        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        if (picture != "null"):
+            image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+            request.data['image_file'] = image
+            serializer = PostSerializer(data = request.data)
+        else:
+            new_request_data = request.data.copy()
+            new_request_data['image_file'] = ''
+            serializer = PostSerializer(data = new_request_data)
 
-        request.data['image_file'] = image
 
-        serializer = PostSerializer(data = request.data)
-        # serializer.is_valid()
-        # print(serializer)
-        # print(serializer.errors)
+        serializer.is_valid()
+        print(serializer)
+        print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
