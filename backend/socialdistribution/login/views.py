@@ -13,6 +13,8 @@ from .validate import *
 from .serializer import *
 from .models import *
 
+from feed.serializer import InboxSerializer
+
 from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
 from django.core.files.base import ContentFile
 from django.core.files.storage import DefaultStorage, FileSystemStorage
@@ -46,9 +48,16 @@ class AuthorRegistration(APIView):
 
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
-            print("AUTHOR", author.profile_picture)
-            if author:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            inbox_data = {'author': author.user_id}
+            
+            inbox_serializer = InboxSerializer(data = inbox_data)
+
+            if (inbox_serializer.is_valid(raise_exception=True)):
+                inbox_serializer.save()
+
+                if author:
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 

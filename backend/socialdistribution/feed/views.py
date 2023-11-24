@@ -32,6 +32,8 @@ from post.serializer import PostSerializer
 
 from django.core.serializers import serialize
 
+import json, copy
+
 # Create your views here.
 
 class GetAllNotifications(APIView):
@@ -252,7 +254,7 @@ class FollowRequestViews(APIView):
 
 class FriendsViews(APIView):
     '''
-    Creates a Follow Request Object
+    Creates a Friend Object
     '''
 
     def post (self, request, pk):
@@ -309,20 +311,19 @@ class InboxViews(APIView):
         '''
         Update the inbox of an author
         '''
-        inbox = Inbox.objects.get(author = pk)
+        # inbox = Inbox.objects.get(author = pk)
 
-        print("Inbox", inbox.author.user_id)
+        inbox = Inbox.objects.get(author = request.data['author'])
 
-        print("Inbox", inbox.posts.all())
+        # print("Inbox", inbox.author.user_id)
 
-        # for post in list(inbox.posts.all()):
-        #     print(serialize('json', [post]) + "\n")
+        # print("Inbox", dict(inbox.posts))
 
-        print("Inbox", inbox.post_comments.all())
+        # print("Inbox", inbox.post_comments)
 
-        print("Inbox", inbox.post_likes.all())
+        # print("Inbox", inbox.post_likes)
 
-        print("Inbox", inbox.follow_requests.all())
+        # print("Inbox", inbox.follow_requests)
 
         author = request.data['author']
 
@@ -336,13 +337,21 @@ class InboxViews(APIView):
 
         new_inbox = None
         
-        print("Request", author)
+        key = list(posts.keys())[0]
+        inbox.posts[key] = posts[key]
+        print("APPENDED", inbox.posts)
 
-        print("Request", posts)
+        key = list(post_comments.keys())[0]
+        inbox.post_comments[key] = post_comments[key]
+        print("APPENDED", inbox.post_comments)
 
-        print("POST_ID", posts['post_id'])
+        key = list(post_likes.keys())[0]
+        inbox.post_likes[key] = post_likes[key]
+        print("APPENDED", inbox.post_likes)
 
-        post = Post.objects.filter(post_id = posts['post_id'])
+        key = list(follow_requests.keys())[0]
+        inbox.follow_requests[key] = follow_requests[key]
+        print("APPENDED", inbox.follow_requests)
 
         # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
         # if (len(post) != 0):
@@ -358,5 +367,19 @@ class InboxViews(APIView):
         #                                             unlisted = posts['unlisted'], author = found_author)
         #     inbox.posts.add(new_post)
         #     print(new_post)
+        # print(inbox.notifications.all())
+        # author = AppAuthor.objects.get(user_id = request.data['author'])
+        # new_notification = Notifications.objects.create(author = author, notification_author = author, notif_author_pfp = author.profile_picture, 
+                                                        # notif_author_username = author.username, message = 'Liked your post', is_follow_notification = False, url = "")
+        # print(new_notification)
+        
+        new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
+                     'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
+
+        serializer = InboxSerializer(inbox, new_inbox)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({'message':"Inbox Successfully Updated"}, status = status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
