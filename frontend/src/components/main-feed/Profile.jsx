@@ -52,7 +52,7 @@ export default function Profile({ friends, user }) {
                 >
                   <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                     <img
-                      src={"http://127.0.0.1:8000" + friend.friend_pfp}
+                      src={friend.friend_pfp}
                       alt="profile"
                       className="w-full h-full object-cover"
                     />

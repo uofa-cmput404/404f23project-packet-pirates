@@ -8,7 +8,8 @@ from post.models import Post, Comment, PostLike
 class FollowerRequest(models.Model):
     sender = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_requester")
     recipient = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_receiver")
-
+    is_pending = models.BooleanField(default=True)
+    
 class Friends(models.Model):
     # Check if author and friend both follow each other => True friend
     # If friendship one way => Friend
@@ -19,7 +20,7 @@ class Friends(models.Model):
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors") # Overwrites query_set name. so query by using AppAuthor.objects.get(uuid).authors.all()
     friend = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors_friends")
 
-    friend_pfp = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
+    friend_pfp = models.URLField(max_length= 200, null=True, blank=True)
     friend_username = models.CharField(max_length=40, blank=True)
 
 class Notifications(models.Model):
@@ -49,13 +50,17 @@ class Notifications(models.Model):
 class Inbox(models.Model):
     author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
 
-    notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True, null=True)
+    notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True)
 
-    posts = models.ManyToManyField(Post, symmetrical=False, blank = True)
+    # posts = models.ManyToManyField(Post, symmetrical=False, blank = True)
+    posts = models.JSONField(blank=True, null=True)
 
-    post_comments = models.ManyToManyField(Comment, symmetrical=False, blank = True)
+    # post_comments = models.ManyToManyField(Comment, symmetrical=False, blank = True)
+    post_comments = models.JSONField(blank=True, null=True)
 
-    post_likes = models.ManyToManyField(PostLike, symmetrical=False, blank = True)
+    # post_likes = models.ManyToManyField(PostLike, symmetrical=False, blank = True)
+    post_likes = models.JSONField(blank=True, null=True)
 
-    follow_requests = models.ManyToManyField(FollowerRequest, symmetrical=False, blank = True)
+    # follow_requests = models.ManyToManyField(FollowerRequest, symmetrical=False, blank = True)
+    follow_requests = models.JSONField(blank=True, null=True)
 

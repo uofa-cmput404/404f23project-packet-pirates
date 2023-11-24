@@ -1,4 +1,6 @@
-export default function Notifications({ notifications }) {
+import axios from "axios";
+
+export default function Notifications({ notifications , user}) {
   return (
     <button
       className="notifications-container flex flex-col justify-start items-start w-fit h-full bg-white border border-gray-300 p-4 rounded-lg divide-y"
@@ -12,6 +14,7 @@ export default function Notifications({ notifications }) {
           {notifications.map((notification, index) => (
             <Notification
               key={index}
+              user = {user}
               index={index}
               notification={notification}
             />
@@ -22,8 +25,105 @@ export default function Notifications({ notifications }) {
   );
 }
 
-export function Notification({ index, notification }) {
+export function Notification({ user, index, notification }) {
   const isFollowRequest = notification.is_follow_notification;
+
+  const requestDeclined = async (event) => {
+
+    console.log("USERERERERE", user)
+
+    //Delete notif and request
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const notifData = {
+      notif_id : notification.notif_id
+    }
+
+    const requestData = {
+      sender :  notification.notification_author,
+      recipient : user.user.user_id
+    }
+
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
+    .then((notifRes) => {
+      window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error deleting notification:", err);
+    })
+
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
+    .then((requestRes) => {
+      
+    })
+    .catch((err) => {
+      console.error("Error deleting follow request:", err);
+    })
+
+  }
+
+  const requestAccepted = async (event) => {
+    
+    //Remove notif and request, create friend
+    console.log("USERERERERE", user)
+
+    //Delete notif and request
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const notifData = {
+      notif_id : notification.notif_id
+    }
+
+    const requestData = {
+      sender :  notification.notification_author,
+      recipient : user.user.user_id
+    }
+
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
+    .then((notifRes) => {
+      // window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error deleting notification:", err);
+    })
+
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
+    .then((requestRes) => {
+      
+    })
+    .catch((err) => {
+      console.error("Error deleting follow request:", err);
+    })
+
+
+    let friendUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/friends";
+
+    const friendData = {
+      author : user.user.user_id,
+      friend : notification.notification_author,
+      friend_pfp : notification.notif_author_pfp,
+      friend_username : notification.notif_author_username
+    }
+
+    const friendRes = await axios.post(friendUrl, friendData)
+    .then((friendRes) => {
+      window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error creating friend:", err);
+    })
+
+  }
+
 
   return (
     <li
@@ -44,10 +144,15 @@ export function Notification({ index, notification }) {
           </span>
           {isFollowRequest && (
             <div className="buttons flex flex-row">
-              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
+              <button 
+              className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+              onClick = {requestAccepted}
+              >
                 ✔️
               </button>
-              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
+              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+              onClick = {requestDeclined}
+              >
                 ❌
               </button>
             </div>

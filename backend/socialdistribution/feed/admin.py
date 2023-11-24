@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Friends)
 admin.site.register(Notifications)
 admin.site.register(FollowerRequest)
+admin.site.register(Inbox)
