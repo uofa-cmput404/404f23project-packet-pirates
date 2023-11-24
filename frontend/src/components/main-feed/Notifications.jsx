@@ -10,7 +10,7 @@ export default function Notifications({ notifications }) {
       <div className="notifications">
         <ul>
           {notifications.map((notification, index) => (
-            <FollowNotification
+            <Notification
               key={index}
               index={index}
               notification={notification}
@@ -22,7 +22,9 @@ export default function Notifications({ notifications }) {
   );
 }
 
-export function FollowNotification({ index, notification }) {
+export function Notification({ index, notification }) {
+  const isFollowRequest = notification.is_follow_notification;
+
   return (
     <li
       key={index}
@@ -40,14 +42,16 @@ export function FollowNotification({ index, notification }) {
           <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full whitespace-nowrap">
             {notification.notif_author_username}
           </span>
-          <div className="buttons flex flex-row">
-            <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
-              ✔️
-            </button>
-            <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
-              ❌
-            </button>
-          </div>
+          {isFollowRequest && (
+            <div className="buttons flex flex-row">
+              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
+                ✔️
+              </button>
+              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1">
+                ❌
+              </button>
+            </div>
+          )}
         </div>
         <span className="mt-1 text-sm text-gray-500 whitespace-nowrap">
           {notification.message}
