@@ -9,7 +9,9 @@ export default function Post({
   img,
   img_url,
   likes,
-  id
+  id,
+  is_private,
+  unlisted,
 }) {
 
   const [comments, setComments] = useState(null);
@@ -239,8 +241,14 @@ export default function Post({
                 </button>
               </div>
             </div>
-            
           </div>
+
+          <div className="privacy-status">
+            {is_private && <span className="privacy-private">Private</span>}
+            {unlisted && <span className="privacy-unlisted">Unlisted</span>}
+            {!is_private && !unlisted && <span className="privacy-public">Public</span>}
+          </div>
+
           <div className="description-section flex justify-center items-center">
             <p>{description}</p>
           </div>
