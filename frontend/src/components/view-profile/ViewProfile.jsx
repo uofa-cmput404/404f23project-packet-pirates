@@ -80,7 +80,7 @@ export default function ViewProfile({ user }) {
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
-            <Notifications notifications={notifsRes.data.Notifications} />
+            <Notifications notifications={notifsRes.data.Notifications} user = {user} />
           );
         })
         .catch((error) => {
@@ -153,51 +153,53 @@ export default function ViewProfile({ user }) {
         });
     };
 
-    const getAuthorInfo = async () => {
-      let authUrl = "http://127.0.0.1:8000/api/author/" + author + "/username";
-
-      const authRes = await axios
-        .get(authUrl)
-        .then((authRes) => {
-          setAuthorInfo(authRes.data);
-          setProfileHeader(
-            <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
-              {/* User's Profile Picture */}
-              <img
-                src={
-                  "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
-                }
-                alt={`${user.user.username}'s Profile`}
-                className="w-12 h-12 rounded-full object-cover mb-4"
-              />
-
-              {/* User's Name */}
-              <h2 className="text-xl font-semibold mb-2">
-                {author + "'s profile"}
-              </h2>
-
-              {/* Follow Button */}
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                onClick={handleFollow}
-              >
-                Follow
-              </button>
-            </div>
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
+    //location.reload()
     console.log("posts", posts);
   }, [author]);
+
+  const getAuthorInfo = async () => {
+
+    let authUrl = "http://127.0.0.1:8000/api/author/" + author + "/username";
+
+    const authRes = await axios
+      .get(authUrl)
+      .then((authRes) => {
+        setAuthorInfo(authorInfo => authRes.data.Author);
+        setProfileHeader(
+          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
+            {/* User's Profile Picture */}
+            <img
+              src={
+                "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
+              }
+              alt={`${user.user.username}'s Profile`}
+              className="w-12 h-12 rounded-full object-cover mb-4"
+            />
+
+            {/* User's Name */}
+            <h2 className="text-xl font-semibold mb-2">
+              {author + "'s profile"}
+            </h2>
+
+            {/* Follow Button */}
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          </div>
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleLogout = async (event) => {
     event.preventDefault();
@@ -216,26 +218,52 @@ export default function ViewProfile({ user }) {
   const handleFollow = async (event) => {
     event.preventDefault();
 
-    let notifsUrl =
-      "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+    let authorUrl = 
+    "http://127.0.0.1:8000/api/author/" + author + "/username";
 
-    const data = {
-      author: author,
-      notification_author: user.user.user_id,
-      notif_author_pfp: "http://127.0.0.1:8000" + user.user.profile_picture,
-      notif_author_username: user.user.username,
-      message: "Requested to follow you",
-      is_follow_notification: true,
-      url: "",
-    };
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
 
-    try {
-      const res = await axios.post(notifsUrl, data).then((res) => {
-        console.log(res.data);
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const authReso = await axios
+      .get(authorUrl)
+      .then(async (authReso) => {
+      
+
+        const notifdata = {
+          author: author,
+          notification_author: user.user.user_id,
+          notif_author_pfp: "http://127.0.0.1:8000" + user.user.profile_picture,
+          notif_author_username: user.user.username,
+          message: "Requested to follow you",
+          is_follow_notification: true,
+          url: "",
+        };
+    
+        const requestdata = {
+          sender: user.user.user_id,
+          recipient: authReso.data.Author.user_id,
+          is_pending: true
+        }
+    
+        try {
+    
+          const res1 = await axios.post(notificationUrl, notifdata).then((res1) => {
+            console.log(res1.data);
+          });
+    
+          const res2 = await axios.post(followrequestUrl, requestdata).then((res2) => {
+            console.log(res2.data);
+          });
+    
+        } catch (err) {
+          console.log(err);
+        }
+
       });
-    } catch (err) {
-      console.log(err);
-    }
+
   };
 
   return (
