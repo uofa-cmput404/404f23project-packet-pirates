@@ -345,67 +345,18 @@ class InboxViews(APIView):
         post = Post.objects.filter(post_id = posts['post_id'])
 
         # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
-        if (len(post) != 0):
-            print(post[0])
-            inbox.posts.add(post[0])
-        elif (len(post) == 0):
-            found_author = AppAuthor.objects.get(user_id = posts['author']) # Check if author exists, otherwise create
+        # if (len(post) != 0):
+        #     print(post[0])
+        #     inbox.posts.add(post[0])
+        # elif (len(post) == 0):
+        #     found_author = AppAuthor.objects.get(user_id = posts['author']) # Check if author exists, otherwise create
 
-            new_post = Post.objects.create(post_id = posts['post_id'], title = posts['title'], is_private = posts['is_private'],
-                                                    url = posts['url'], likes_count = posts['likes_count'], content_type = posts['content_type'],
-                                                    content = posts['content'], source = posts['source'], origin = posts['origin'],
-                                                    date_time = posts['date_time'], image_file = posts['image_file'], image_url = ['image_url'],
-                                                    unlisted = posts['unlisted'], author = found_author)
-            inbox.posts.add(new_post)
-            print(new_post)
-
-        print(inbox.posts.all())
-
-        print("Request", post_comments)
-
-        print("COMMENT_ID", post_comments['comment_id'])
-
-        comment = Comment.objects.filter(comment_id = post_comments['comment_id'])
-
-        if (len(comment) != 0):
-            print(comment[0])
-            inbox.post_comments.add(comment[0])
-
-        elif (len(comment) == 0):
-            found_author = AppAuthor.objects.get(user_id = post_comments['author']) # Check if author exists, otherwise create
-
-            found_post = Post.objects.get(post_id = post_comments['post'])
-
-            new_comment = Comment.objects.create(comment_id = post_comments['comment_id'], post = found_post, author = found_author,
-                                                author_picture = post_comments['author_picture'], author_username = post_comments['author_username'],
-                                                text = post_comments['text'], date_time = post_comments['date_time'])
-            
-            inbox.post_comments.add(new_comment)
-            print(new_comment)
-
-        print("Request", post_likes)
-
-        like = PostLike.objects.filter(like_id = post_likes['like_id'])
-
-        if (len(like) != 0):
-            print(like[0])
-            inbox.post_likes.add(like[0])
-
-        elif (len(like) == 0):
-            found_author = AppAuthor.objects.get(user_id = post_comments['author']) # Check if author exists, otherwise create
-
-            found_post = Post.objects.get(post_id = post_likes['post'])
-
-            new_like = PostLike.objects.create(like_id = post_likes['like_id'], author = found_author, post_object = found_post)
-            
-            inbox.post_likes.add(new_like)
-            print(new_like)
-
-        print("Request", follow_requests)
-
-        print(new_inbox)
-        # serializer = InboxSerializer(inbox, data = new_inbox)
-
-        # if (serializer.is_valid(raise_exception=True)):
+        #     new_post = Post.objects.create(post_id = posts['post_id'], title = posts['title'], is_private = posts['is_private'],
+        #                                             url = posts['url'], likes_count = posts['likes_count'], content_type = posts['content_type'],
+        #                                             content = posts['content'], source = posts['source'], origin = posts['origin'],
+        #                                             date_time = posts['date_time'], image_file = posts['image_file'], image_url = ['image_url'],
+        #                                             unlisted = posts['unlisted'], author = found_author)
+        #     inbox.posts.add(new_post)
+        #     print(new_post)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
