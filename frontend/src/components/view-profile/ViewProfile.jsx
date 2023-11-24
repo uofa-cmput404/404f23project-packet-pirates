@@ -115,6 +115,8 @@ export default function ViewProfile({ user }) {
                     img_url={post.image_url}
                     likes={post.likes_count}
                     id={post.post_id}
+                    is_private={post.is_private}
+                    unlisted={post.unlisted}
                   />
                 );
               })
@@ -137,6 +139,8 @@ export default function ViewProfile({ user }) {
                     img_url={post.image_url}
                     likes={post.likes_count}
                     id={post.post_id}
+                    is_private={post.is_private}
+                    unlisted={post.unlisted}
                   />
                 );
               })
