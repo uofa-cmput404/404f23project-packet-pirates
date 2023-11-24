@@ -341,6 +341,21 @@ class InboxViews(APIView):
     Get, Post
     '''
 
+    @swagger_auto_schema(operation_description="Get an authors inbox",
+        operation_summary="Get an authors inbox",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],
+        manual_parameters=[
+            openapi.Parameter(
+                name='pk',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                description='Author ID', # Change this later.
+                required=True,
+                enum=[]
+            )
+        ])
+
     def get(self, request, pk): 
         '''
         Return the inbox of an author
@@ -350,6 +365,23 @@ class InboxViews(APIView):
         serializer = InboxSerializer(inbox)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+    
+    @swagger_auto_schema(operation_description="Updates an authors inbox",
+        operation_summary="Updates an authors inbox",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],
+        manual_parameters=[
+            openapi.Parameter(
+                name='pk',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                description='Author ID', # Change this later.
+                required=True,
+                enum=[]
+            )
+        ])
     
     def post(self, request, pk):
         '''
