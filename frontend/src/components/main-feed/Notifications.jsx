@@ -10,7 +10,7 @@ export default function Notifications({ notifications }) {
       <div className="notifications">
         <ul>
           {notifications.map((notification, index) => (
-            <FollowNotification
+            <Notification
               key={index}
               index={index}
               notification={notification}
@@ -22,7 +22,7 @@ export default function Notifications({ notifications }) {
   );
 }
 
-export function FollowNotification({ index, notification }) {
+export function Notification({ index, notification }) {
   const isFollowRequest = notification.is_follow_notification;
 
   return (
