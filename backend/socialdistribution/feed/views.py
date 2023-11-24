@@ -235,8 +235,24 @@ class GetTrueFriends(APIView):
 
 class FollowRequestViews(APIView):
     '''
-    Creates a Follow Request Object
+    Follow Request Object Views
+    Post, Delete
     '''
+
+    @swagger_auto_schema(operation_description="Create a follow request object",
+                operation_summary="Create a follow request object",
+                responses={200: FollowerRequestSerializer()},
+                tags=['Feed'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='pk',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Need both Sender Author ID and Recipient Author ID', # Change this later.
+                        required=True,
+                        enum=[]
+                    )
+                ])
 
     def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
                                   # Or request can have both.
@@ -249,8 +265,29 @@ class FollowRequestViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # def delete(self, request, pk):
+    @swagger_auto_schema(operation_description="Deletes a follow request object",
+            operation_summary="Deletes a follow request object",
+            responses={200: FollowerRequestSerializer()},
+            tags=['Feed'],
+            manual_parameters=[
+                openapi.Parameter(
+                    name='pk',
+                    in_=openapi.IN_PATH,
+                    type=openapi.TYPE_STRING,
+                    description='Need both Sender Author ID and Recipient Author ID', # Change this later.
+                    required=True,
+                    enum=[]
+                )
+            ])
+        
+    def delete(self, request, pk):
+        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
 
+        if (follow_request_obj):
+            follow_request_obj.delete()
+            return Response({"Message": "Follow Request Object Successfully Deleted"}, status=status.HTTP_200_OK)
+
+        return Response({"Message": "Error has occured when trying to delete follow request"}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendsViews(APIView):
     '''
@@ -288,7 +325,14 @@ class NotificationViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request, pk):
+    def delete(self, request, pk):
+        notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
+
+        if (notification_object):
+            notification_object.delete()
+            return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
+
+        return Response({"Message": "Error has occured when trying to delete notification"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InboxViews(APIView):
