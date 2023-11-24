@@ -83,7 +83,7 @@ export default function MainPage({ user }) {
       .then((notifsRes) => {
         console.log("NOTIFSRES", notifsRes.data.Notifications);
         setNotifications(
-          <Notifications notifications={notifsRes.data.Notifications} />
+          <Notifications notifications={notifsRes.data.Notifications} user = {user}/>
         );
       })
       .catch((error) => {

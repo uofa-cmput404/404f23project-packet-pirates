@@ -48,15 +48,15 @@ export function Notification({ user, index, notification }) {
       recipient : user.user.user_id
     }
 
-    const notifRes = await axios.delete(notificationUrl, notifData)
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
     .then((notifRes) => {
-      
+      window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error deleting notification:", err);
     })
 
-    const requestRes = await axios.delete(followrequestUrl, requestData)
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
     .then((requestRes) => {
       
     })
@@ -69,7 +69,40 @@ export function Notification({ user, index, notification }) {
   const requestAccepted = async (event) => {
     
     //Remove notif and request, create friend
-    await requestDeclined(event)
+    console.log("USERERERERE", user)
+
+    //Delete notif and request
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const notifData = {
+      notif_id : notification.notif_id
+    }
+
+    const requestData = {
+      sender :  notification.notification_author,
+      recipient : user.user.user_id
+    }
+
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
+    .then((notifRes) => {
+      // window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error deleting notification:", err);
+    })
+
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
+    .then((requestRes) => {
+      
+    })
+    .catch((err) => {
+      console.error("Error deleting follow request:", err);
+    })
+
 
     let friendUrl =
     "http://127.0.0.1:8000/api/" + user.user.user_id + "/friends";
@@ -81,9 +114,9 @@ export function Notification({ user, index, notification }) {
       friend_username : notification.notif_author_username
     }
 
-    const friendRes = await axios.delete(friendUrl, friendData)
+    const friendRes = await axios.post(friendUrl, friendData)
     .then((friendRes) => {
-      
+      window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error creating friend:", err);

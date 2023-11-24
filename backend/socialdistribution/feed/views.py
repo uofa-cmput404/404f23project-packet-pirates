@@ -238,6 +238,8 @@ class FollowRequestViews(APIView):
     Follow Request Object Views
     Post, Delete
     '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     @swagger_auto_schema(operation_description="Create a follow request object",
                 operation_summary="Create a follow request object",
@@ -281,6 +283,7 @@ class FollowRequestViews(APIView):
             ])
         
     def delete(self, request, pk):
+        print("FR DATA", request.data)
         follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
 
         if (follow_request_obj):
@@ -293,9 +296,11 @@ class FriendsViews(APIView):
     '''
     Creates a Friend Object
     '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def post (self, request, pk):
-
+        
         serializer = FriendsSerializer(data = request.data)
 
         if (serializer.is_valid(raise_exception=True)):
@@ -303,12 +308,18 @@ class FriendsViews(APIView):
             return Response({'message': 'Friend Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete (self, request, pk):
+
+        
     
 
 class NotificationViews(APIView):
     '''
     Creates a notification object
     '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def post(self, request, pk):
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
@@ -326,6 +337,8 @@ class NotificationViews(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
+        print("Notify DATA", request.data)
+
         notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
 
         if (notification_object):
