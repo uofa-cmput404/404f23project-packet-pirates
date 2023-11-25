@@ -41,6 +41,12 @@ export default function CreatePost({ user }) {
     console.log("Sent text is:", event.target.value);
   };
 
+  const [imageUrl, setImageUrl] = useState("")
+  const handleImageUrlTextChange = (event) => {
+    setImageUrl(event.target.value);
+    console.log("Sent Image URL is:", event.target.value);
+  }
+
   const handleImageUpload = (event) => {
     setImageFile(event.target.files[0]);
 
@@ -80,6 +86,7 @@ export default function CreatePost({ user }) {
     formData.append('unlisted', isUnlisted)
     formData.append('is_private', isPrivate)
     formData.append('image_file', imageFile)
+    formData.append('image_url', imageUrl)
     formData.append('visibility', visibility)
     formData.append('url', "")
 
@@ -140,6 +147,16 @@ export default function CreatePost({ user }) {
               placeholder="Anything you want to discuss?"
               className="border border-black rounded-lg p-2 h- mb-4"
               onChange={handleTextChange}
+            ></input>
+
+             {/* Post Body Input */}
+                      <input
+              id="content"
+              name="content"
+              type="text"
+              placeholder="Place an image URL in such as https://picsum.photos/200"
+              className="border border-black rounded-lg p-2 h- mb-4"
+              onChange={handleImageUrlTextChange}
             ></input>
           </form>
         </div>
