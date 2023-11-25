@@ -26,10 +26,10 @@ export default function Post({
 
   const config = {
     headers: {
-      "Content-Type": "application/json",
       "Authorization": 'Token ' + localStorage.getItem('access_token')
     }
   };
+  console.log(localStorage.getItem('access_token'))
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -49,7 +49,17 @@ export default function Post({
     try {
       if (newLikeState) {
         // If liking, make a POST request to add a like
-        await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config)
+        await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
+            data: {
+                post_object_id: id,
+                author: user,
+                like_count: newLikeCount,
+            },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": 'Token ' + localStorage.getItem('access_token'),
+            }
+          });
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
