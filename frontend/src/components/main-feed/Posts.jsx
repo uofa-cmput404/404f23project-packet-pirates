@@ -58,12 +58,10 @@ export default function Post({
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
-          data: {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
-          }
-        }, config, {
+          }, config, {
           withCredentials: true
         });
       }
