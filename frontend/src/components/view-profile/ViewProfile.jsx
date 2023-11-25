@@ -236,7 +236,7 @@ export default function ViewProfile({ user }) {
     "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/" + user.user.user_id + "/followrequest";
 
     const authReso = await axios
-      .get(authorUrl)
+      .get(authorUrl, config)
       .then(async (authReso) => {
       
 
