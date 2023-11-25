@@ -47,25 +47,24 @@ export default function Post({
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes",
-          {
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config, {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
           },
           {
             withCredentials: true,
-          },config);
+          });
       } else {
         // If unliking, make a DELETE request to remove the like
-        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
+        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config, {
           data: {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
           },
           withCredentials: true,
-        }, config);
+        });
       }
     } catch (error) {
       // If error found, revert any changes made
@@ -114,14 +113,14 @@ export default function Post({
     .get(authorUrl,config)
     .then(async (authorRes) => {
 
-      await axios.post(commentsUrl, 
+      await axios.post(commentsUrl, config, 
         { 
           text: commentText,
           author: user.user.user_id,
           author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
           author_username: authorRes.data.Author.username,
         
-      }, config)
+      })
       .then(() => {
 
         getComments()
