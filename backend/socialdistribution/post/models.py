@@ -12,7 +12,7 @@ class Post(models.Model):
 
     title = models.CharField(max_length=50)
 
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=True)
 
     url = models.CharField(max_length=200, blank = True, null= True)
 

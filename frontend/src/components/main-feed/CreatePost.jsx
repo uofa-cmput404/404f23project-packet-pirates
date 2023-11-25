@@ -9,12 +9,6 @@ export default function CreatePost({ user }) {
 
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
-
-  // Image variables
-  const [imageFile, setImageFile] = useState(null);
-  const [imageBase64, setImageBase64] = useState(null);
-  const [imageUID, setImageUID] = useState(null);
-
   const visibilityOptions = [
     { value: "Public", label: "Public" },
     { value: "Private", label: "Private" },
@@ -41,19 +35,9 @@ export default function CreatePost({ user }) {
     console.log("Sent text is:", event.target.value);
   };
 
-  const handleImageUpload = (event) => {
-    setImageFile(event.target.files[0]);
-
-    const file = new FileReader();
-    file.onloadend = () => {
-        setImageBase64(file.result);
-    };
-    file.readAsDataURL(event.target.files[0]);
-};
-
-  const handleContentTypeChange = (option) => {
-    setContentType(option.value);
-    console.log("Sent content type is:", option.value);
+  const handleContentTypeChange = (value) => {
+    setContentType(value['value']);
+    console.log("Sent content type is:", value['value']);
   };
 
   const handleVisibilityChange = (value) => {
@@ -68,29 +52,32 @@ export default function CreatePost({ user }) {
     console.log("Sent visibility is:", value);
   };
 
-  const handlePosting = (e) => {
+  const handleTextPosting = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('author', user.user.user_id);
-    formData.append('title', title);
-    formData.append('content_type', contentType);
-    formData.append('content', text);
-    formData.append('source', user.user.user_id)
-    formData.append('origin', user.user.user_id)
-    formData.append('unlisted', isUnlisted)
-    formData.append('is_private', isPrivate)
-    formData.append('image_file', imageFile)
-    formData.append('visibility', visibility)
-    formData.append('url', "")
+    const data = {
+      "title": title,
+      "content_type": contentType,
+      "url": '',
+      "content": text,
+      "author": user.user.user_id,
+      "source": user.user.user_id,
+      "origin": user.user.user_id,
+      "unlisted": isUnlisted,
+      "is_private" : isPrivate,
+      'image_url': "",
+      //"visibility": visibility
+    }
 
-    console.log("Data", formData);
+    console.log("Data", data);
 
     axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/postViews", formData, 
+    .post(
+      'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/postViews', 
+      data, 
       {
         headers: {
-          "Content-Type": "multipart/form-data",
-          //"Content-Type": "application/json",
+          // "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           'Authorization': 'Token ' + localStorage.getItem('access_token'),
         },
       })
@@ -143,33 +130,13 @@ export default function CreatePost({ user }) {
             ></input>
           </form>
         </div>
-        <div className="imgPreviewBox">
-            {/* show the image in a preview box */}
-            <div className="imgPreview">
-                {imageBase64 && (
-                    <div className="imgContainer">
-                        <img src={imageBase64} alt="Image Preview" />
-                    </div>
-                )}
-            </div>
-        </div>
         <div className="menu">
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row justify-between">
             <li>
-            <label htmlFor="select-image">
-              <div 
-                  className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
-                  Upload Image
-              </div>
-            </label>
-            <input
-                type="file"
-                accept="image/*"
-                id="select-image"
-                style={{ display: "none" }}
-                onChange={handleImageUpload}
-            />
+              <button className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700">
+                Upload Photo
+              </button>
             </li>
             <li>
               <div className="chooseVisibility">
@@ -192,7 +159,7 @@ export default function CreatePost({ user }) {
             <li>
               <button
                 className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
-                onClick={handlePosting}
+                onClick={handleTextPosting}
               >
                 Post
               </button>

@@ -17,9 +17,3 @@ class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notifications
         fields = "__all__"
-
-
-class InboxSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Inbox
-        fields = "__all__"

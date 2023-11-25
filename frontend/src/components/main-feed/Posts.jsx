@@ -9,11 +9,8 @@ export default function Post({
   title,
   description,
   img,
-  img_url,
   likes,
-  id,
-  is_private,
-  unlisted,
+  id
 }) {
 
   const [comments, setComments] = useState(null);
@@ -32,67 +29,24 @@ export default function Post({
     // Handle edit functionality
   };
 
-  
-  const handleLike = async () => {
-    const newLikeState = !hasLiked;
-
-    // Calculate the new like count based on the like state
-    const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
-  
-    // Update the like status
-    setLikeCount(newLikeCount);
-    setHasLiked(newLikeState);
-  
-    try {
-      if (newLikeState) {
-        // If liking, make a POST request to add a like
-        await axios.post(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes",
-          {
-            post_object_id: id,
-            author: user,
-            like_count: newLikeCount,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-      } else {
-        // If unliking, make a DELETE request to remove the like
-        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
-          data: {
-            post_object_id: id,
-            author: user,
-            like_count: newLikeCount,
-          },
-          withCredentials: true,
-        });
-      }
-    } catch (error) {
-      // If error found, revert any changes made
-      console.error("Error updating like status:", error);
-  
-      // Revert changes
-      setLikeCount(likeCount); // Reset like count
-      setHasLiked(!hasLiked); // Toggle like state back
+  const handleLike = () => {
+    if (!hasLiked) {
+      // Increment the like count and send a POST request to update it
+      const newLikeCount = likeCount + 1;
+      axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/editpost", { like_count: newLikeCount }, config, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        // Handle success
+        setLikeCount(newLikeCount);
+        setHasLiked(true);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Error updating like count:", error);
+      });
     }
   };
-
-  useEffect(() => {
-    // Check if the current user has liked the post
-    const checkLikeStatus = async () => {
-      try {
-        const response = await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes");
-        const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
-        setHasLiked(likedByCurrentUser);
-      } catch (error) {
-        console.error("Error checking like status:", error);
-      }
-    };
-
-    checkLikeStatus();
-  }, [id, user]);
-
 
   const handleShare = () => {
     // Handle share functionality
@@ -138,7 +92,6 @@ export default function Post({
 
   };
 
-  // console.log("IMG_file", img, "IMG_url", img_url)
 
   const getComments = async () => {
 
@@ -248,14 +201,8 @@ export default function Post({
                 </button>
               </div>
             </div>
+            
           </div>
-
-          <div className="privacy-status">
-            {is_private && <span className="privacy-private">Private</span>}
-            {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {!is_private && !unlisted && <span className="privacy-public">Public</span>}
-          </div>
-
           <div className="description-section flex justify-center items-center">
             <p>{description}</p>
           </div>
@@ -268,37 +215,20 @@ export default function Post({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
-          <button
-            onClick={handleLike}
-            className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
-          >
-            <img
-              src="/like-button.png"
-              alt="Like"
-              className="like-button-img"
-            />
-          </button>
-
             <button
-              onClick={() => setIsCommenting(!isCommenting)}
-              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full comment-button"
+              onClick={handleLike}
+              className={`border border-[#395B64] ${hasLiked ? 'liked-button' : 'not-liked-button'} w-fit pl-3 pr-3 text-white rounded-full`}
+              disabled={hasLiked}
             >
-              <img
-                src="/comment-button.png"
-                alt="Comment"
-                className="comment-button-img"
-              />
+              Like
             </button>
 
-            <button 
-              onClick={handleShare}
-              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
-              >
-              <img
-                src="/share-button.png"
-                alt="Share"
-                className="share-button-img"
-              />
+            <button onClick={() => setIsCommenting(!isCommenting)} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+              Comment
+            </button>
+
+            <button onClick={handleShare} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
+              Share
             </button>
           </div>
 

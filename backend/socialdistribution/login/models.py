@@ -41,13 +41,9 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
 
-    image_url = models.URLField(max_length=200, blank=True, null=True)
+    github = models.URLField(max_length=50, blank=True)
 
-    host = models.CharField(max_length=200, blank=True, null=True)
-
-    github = models.URLField(max_length=200, blank=True)
-
-    url = models.URLField(max_length=200, blank=True)
+    url = models.URLField(max_length=50, blank=True)
 
     is_active = models.BooleanField(default=True)
 
@@ -60,16 +56,6 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-    
-class Node(models.Model):
-    group_name = models.CharField(max_length=200, blank=True, null=True)
-    group_url = models.CharField(max_length=200, blank=True, null=True)
-
-    auth_username = models.CharField(max_length=200, blank=True, null=True)
-    auth_password = models.CharField(max_length=200, blank=True, null=True)
-
-
-
 
 # # Create your models here.
 # class Author(models.Model):
