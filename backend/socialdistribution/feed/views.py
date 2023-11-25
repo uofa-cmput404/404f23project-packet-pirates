@@ -535,6 +535,14 @@ class FollowersRemote(APIView):
                 description='Author ID', # Change this later.
                 required=True,
                 enum=[]
+            ),
+            openapi.Parameter(
+                name='foreign_pk',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                description='Foreign Author ID', # Change this later.
+                required=True,
+                enum=[]
             )
         ])
 
