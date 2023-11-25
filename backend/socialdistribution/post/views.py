@@ -544,8 +544,8 @@ class ImagesRemote(APIView):
     GET [local, remote] get the public post converted to binary as an iamge
     return 404 if not an image
     '''
-    @swagger_auto_schema(operation_description="Get the ",
-            operation_summary="Get the public posts created by author (paginated)",
+    @swagger_auto_schema(operation_description="Get the image of a post of an author if it exists",
+            operation_summary="Get the image of a post of an author if it exists",
             responses={200: PostSerializerRemote()},
             tags=['Remote'],)
 
@@ -554,11 +554,11 @@ class ImagesRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        post = Post.objects.filter(author_id = auth_id).filter(post_id = post_id)
+        post = Post.objects.filter(author_id = auth_id).filter(post_id = post_id)[0]
 
         image = None # If its None still then it means that its an imageless post
         if (post.image_file != ''):
-            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + post.image_file
+            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + str(post.image_file)
         elif (post.image_url != ''):
             image = post.image_url
         
