@@ -483,9 +483,24 @@ class LikedRemote(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
-    def get(self, request, pk):
+    @swagger_auto_schema(operation_description="Get All likes of a given author",
+                    operation_summary="Get All likes of a given author",
+                    responses={200: LikeSerializerRemote()},
+                    tags=['Remote'],
+                    manual_parameters=[
+                        openapi.Parameter(
+                            name='AUTHOR_ID',
+                            in_=openapi.IN_PATH,
+                            type=openapi.TYPE_STRING,
+                            description='Author ID',
+                            required=True,
+                            enum=[]
+                        )
+                    ])
 
-        auth_id = uuid.UUID(pk)
+    def get(self, request, author):
+
+        auth_id = uuid.UUID(author)
 
         likes = PostLike.objects.filter(author = auth_id)
 
@@ -507,6 +522,29 @@ class GetLikesOnPostRemote(APIView):
     
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
+
+    @swagger_auto_schema(operation_description="Get likes on AUTHOR_ID's post POST_ID",
+                operation_summary="Get likes on AUTHOR_ID's post POST_ID",
+                responses={200: LikeSerializerRemote()},
+                tags=['Remote'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='AUTHOR_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Author ID',
+                        required=True,
+                        enum=[]
+                    ),           
+                    openapi.Parameter(
+                        name='POST_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Post ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
 
     def get(self, request, author, post):
 
@@ -536,6 +574,30 @@ class CommentsRemote(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
+    
+    @swagger_auto_schema(operation_description="Get comments on AUTHOR_ID's post POST_ID",
+                operation_summary="Get comments on AUTHOR_ID's post POST_ID",
+                responses={200: CommentSerializerRemote()},
+                tags=['Remote'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='AUTHOR_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Author ID',
+                        required=True,
+                        enum=[]
+                    ),           
+                    openapi.Parameter(
+                        name='POST_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Post ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
+
     def get(self, request, author, post):
         
         auth_id = uuid.UUID(author)
@@ -563,6 +625,29 @@ class PostRemote(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
+    @swagger_auto_schema(operation_description="Get the public post whose id is POST_ID",
+                operation_summary="Get the public post whose id is POST_ID",
+                responses={200: PostSerializerRemote()},
+                tags=['Remote'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='AUTHOR_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Author ID',
+                        required=True,
+                        enum=[]
+                    ),           
+                    openapi.Parameter(
+                        name='POST_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Post ID',
+                        required=True,
+                        enum=[]
+                    )
+                ])
+
     def get(self, request, author, post):
         
         auth_id = uuid.UUID(author)
@@ -588,6 +673,21 @@ class AuthorPostsRemote(APIView):
 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
+
+    @swagger_auto_schema(operation_description="Get the public posts created by author (paginated)",
+                operation_summary="Get the public posts created by author (paginated)",
+                responses={200: PostSerializerRemote()},
+                tags=['Remote'],
+                manual_parameters=[
+                    openapi.Parameter(
+                        name='POST_ID',
+                        in_=openapi.IN_PATH,
+                        type=openapi.TYPE_STRING,
+                        description='Post ID',
+                        required=True,
+                        enum=[]
+                    ),
+                ])
     
     def get(self, request, author):
         
