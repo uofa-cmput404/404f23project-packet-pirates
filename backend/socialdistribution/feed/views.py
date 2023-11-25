@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model, login, logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import permissions, status
 from rest_framework import generics
 
@@ -479,8 +479,8 @@ class GetAuthorsFollowersRemote(APIView):
     GET [local, remote]: get a list of authors who are AUTHOR_ID’s followers
     '''
 
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
     
     @swagger_auto_schema(operation_description="Get a list of authors who are AUTHOR_ID’s followers",
         operation_summary="Get a list of authors who are AUTHOR_ID’s followers",
@@ -520,8 +520,8 @@ class FollowersRemote(APIView):
     GET [local, remote] check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID
     '''
 
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
         operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
@@ -564,8 +564,8 @@ class InboxViewsRemote(APIView):
     Inbox Post Remote
     '''
 
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Updates an authors inbox remotely",
         operation_summary="Updates an authors inbox remotely",
