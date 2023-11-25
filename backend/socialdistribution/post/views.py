@@ -261,7 +261,7 @@ class PostComments(APIView):
 
         if (post_author.user_id != notification_author.user_id):
             notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
-                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
+                            'notif_author_pfp': "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(notification_author.profile_picture),
                             'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
             notification_serializer = NotificationsSerializer(data = notification)
@@ -336,7 +336,7 @@ class PostLikeViews(APIView):
 
         if (post_author.user_id != notification_author.user_id):
             notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
-                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
+                            'notif_author_pfp': "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(notification_author.profile_picture),
                             'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
             notification_serializer = NotificationsSerializer(data = notification)
 
