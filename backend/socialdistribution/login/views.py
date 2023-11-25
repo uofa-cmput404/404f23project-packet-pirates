@@ -35,7 +35,7 @@ class AuthorRegistration(APIView):
     @swagger_auto_schema(operation_description="Registers an author", 
                          operation_summary="Register", 
                          responses={201: AuthorSerializer()}, 
-                         tags=['Login'])
+                         tags=['Login'],)
     
     def post(self, request):
         picture = request.data['profile_picture']
@@ -65,7 +65,11 @@ class AuthorLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     
-    @swagger_auto_schema(operation_description="Log in an author using their credentials", operation_summary="Login", responses={200: AuthorSerializer()}, tags=['Login'], manual_parameters=[])
+    @swagger_auto_schema(
+            operation_description="Log in an author using their credentials", 
+            operation_summary="Login", 
+            responses={200: AuthorSerializer()}, 
+            tags=['Login'],)
 
     def post(self, request):
         data = request.data
@@ -83,8 +87,7 @@ class AuthorLogout(APIView):
         operation_description="Logs out an author", 
         operation_summary="Logout", 
         responses={200: "OK"}, 
-        tags=['Login'], 
-            manual_parameters=[])
+        tags=['Login'],)
     
     def get(self, request):
         logout(request)
@@ -94,7 +97,11 @@ class AuthorView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    @swagger_auto_schema(operation_description="Get all authors", operation_summary="Get all authors", responses={200: AuthorSerializer(many=True)}, tags=['Login'], manual_parameters=[])
+    @swagger_auto_schema(
+            operation_description="Get all authors", 
+            operation_summary="Get all authors", 
+            responses={200: AuthorSerializer(many=True)}, 
+            tags=['Login'],)
 
     def get(self, request):
         serializer = AuthorSerializer(request.user)
@@ -111,17 +118,7 @@ class GetSingleAuthor(APIView):
     @swagger_auto_schema(operation_description="Get one single author",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
             responses={200: AuthorSerializer()},
-            tags=['Login'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='pk',
-                    in_=openapi.IN_PATH,
-                    type=openapi.TYPE_STRING,
-                    description='Author ID',
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Login'],)
 
 
     def get(self, request, pk):
@@ -157,17 +154,7 @@ class GetSingleAuthorByUsername(APIView):
     @swagger_auto_schema(operation_description="Get one single author by their username",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
             responses={200: AuthorSerializer()},
-            tags=['Login'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='pk',
-                    in_=openapi.IN_PATH,
-                    type=openapi.TYPE_STRING,
-                    description='Author username',
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Login'],)
 
 
     def get(self, request, pk):
@@ -212,17 +199,7 @@ class getSingleAuthorRemote(APIView):
     @swagger_auto_schema(operation_description="Get A Single Author Remote",
             operation_summary="Get a single author remote",
             responses={200: AuthorSerializer()},
-            tags=['Remote'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='AUTHOR_ID',
-                    in_=openapi.IN_PATH,
-                    type=openapi.TYPE_STRING,
-                    description='Author username',
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Remote'],)
     
     def get (self, request, author_id):
         author = AppAuthor.objects.get(user_id = author_id)

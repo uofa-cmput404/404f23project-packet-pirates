@@ -53,17 +53,7 @@ class GetAuthorsPosts(APIView):
     @swagger_auto_schema(operation_description="Get all posts from a specific author",
                     operation_summary="Get All Author's Posts",
                     responses={200: PostSerializer()},
-                    tags=['Post'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Post'],)
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
@@ -104,8 +94,7 @@ class GetFeedPostsByUsername(APIView):
     @swagger_auto_schema(operation_description="Get all posts made by a specific author",
                             operation_summary="Get posts",
                             responses={200: PostSerializer()},
-                            tags=['Post'],
-                            manual_parameters=[])
+                            tags=['Post'],)
     
     
     def get(self, request, pk):
@@ -139,17 +128,7 @@ class GetFeedPosts(APIView):
     @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
                 operation_summary="Get posts",
                 responses={200: PostSerializer()},
-                tags=['Post'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='pk',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Post'],)
 
     def get(self, request, pk):
         posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
@@ -175,17 +154,7 @@ class PostViews(APIView):
     @swagger_auto_schema(operation_description="Create a post for a specific author",
                 operation_summary="Create Author Post",
                 responses={201: PostSerializer()},
-                tags=['Post'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='pk',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Post'],)
 
     def post(self, request): # Create a post
         # print(request.data['post_id'])
@@ -233,17 +202,7 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     @swagger_auto_schema(operation_description="Edit Post of an Author",
                 operation_summary="Edit post",
                 responses={200: PostSerializer()},
-                tags=['Post'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='pk',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Post ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Post'],)
 
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -274,17 +233,7 @@ class PostComments(APIView):
     @swagger_auto_schema(operation_description="Get all comments of a post",
                             operation_summary="Get comments",
                             responses={200: CommentSerializer()},
-                            tags=['Post'],
-                            manual_parameters=[
-                                openapi.Parameter(
-                                    name='pk',
-                                    in_=openapi.IN_PATH,
-                                    type=openapi.TYPE_STRING,
-                                    description='Post ID',
-                                    required=True,
-                                    enum=[]
-                                )
-                            ])
+                            tags=['Post'],)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -296,17 +245,7 @@ class PostComments(APIView):
     @swagger_auto_schema(operation_description="Create comments for a specific post",
                         operation_summary="Create comment",
                         responses={201: CommentSerializer()},
-                        tags=['Post'],
-                        manual_parameters=[
-                            openapi.Parameter(
-                                name='pk',
-                                in_=openapi.IN_PATH,
-                                type=openapi.TYPE_STRING,
-                                description='Post ID',
-                                required=True,
-                                enum=[]
-                            )
-                        ])
+                        tags=['Post'],)
     
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -341,17 +280,7 @@ class PostComments(APIView):
     @swagger_auto_schema(operation_description="Delete comment for a specific post",
                     operation_summary="delete comments",
                     responses={200: CommentSerializer()},
-                    tags=['Post'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Post ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Post'],)
         
     def delete(self, request, pk):
         comment_id = request.data['comment_id']
@@ -377,17 +306,7 @@ class PostLikeViews(APIView):
     @swagger_auto_schema(operation_description="Get likes of a specific post",
                             operation_summary="post likes",
                             responses={200: LikeSerializer()},
-                            tags=['Post'],
-                            manual_parameters=[
-                                openapi.Parameter(
-                                    name='pk',
-                                    in_=openapi.IN_PATH,
-                                    type=openapi.TYPE_STRING,
-                                    description='Post ID',
-                                    required=True,
-                                    enum=[]
-                                )
-                            ])
+                            tags=['Post'],)
 
     def get(self, request, pk): # Get all likes
         post_id = uuid.UUID(pk) # pk needs to be post ID not author
@@ -401,17 +320,7 @@ class PostLikeViews(APIView):
     @swagger_auto_schema(operation_description="Creates likes of a specific post",
                         operation_summary="create post likes",
                         responses={201: LikeSerializer()},
-                        tags=['Post'],
-                        manual_parameters=[
-                            openapi.Parameter(
-                                name='pk',
-                                in_=openapi.IN_PATH,
-                                type=openapi.TYPE_STRING,
-                                description='Post ID',
-                                required=True,
-                                enum=[]
-                            )
-                        ])
+                        tags=['Post'],)
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
@@ -447,17 +356,7 @@ class PostLikeViews(APIView):
     @swagger_auto_schema(operation_description="delete a like of a specific post",
                         operation_summary="delete post like",
                         responses={200: LikeSerializer()},
-                        tags=['Post'],
-                        manual_parameters=[
-                            openapi.Parameter(
-                                name='pk',
-                                in_=openapi.IN_PATH,
-                                type=openapi.TYPE_STRING,
-                                description='Post ID',
-                                required=True,
-                                enum=[]
-                            )
-                        ])
+                        tags=['Post'])
 
     def delete(self, request, pk): # For unliking a post
         post_id = uuid.UUID(pk)
@@ -486,17 +385,7 @@ class LikedRemote(APIView):
     @swagger_auto_schema(operation_description="Get All likes of a given author",
                     operation_summary="Get All likes of a given author",
                     responses={200: LikeSerializerRemote()},
-                    tags=['Remote'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='AUTHOR_ID',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Remote'],)
 
     def get(self, request, author):
 
@@ -578,25 +467,7 @@ class CommentsRemote(APIView):
     @swagger_auto_schema(operation_description="Get comments on AUTHOR_ID's post POST_ID",
                 operation_summary="Get comments on AUTHOR_ID's post POST_ID",
                 responses={200: CommentSerializerRemote()},
-                tags=['Remote'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='AUTHOR_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    ),           
-                    openapi.Parameter(
-                        name='POST_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Post ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Remote'],)
 
     def get(self, request, author, post):
         
@@ -628,25 +499,7 @@ class PostRemote(APIView):
     @swagger_auto_schema(operation_description="Get the public post whose id is POST_ID",
                 operation_summary="Get the public post whose id is POST_ID",
                 responses={200: PostSerializerRemote()},
-                tags=['Remote'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='AUTHOR_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    ),           
-                    openapi.Parameter(
-                        name='POST_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Post ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Remote'],)
 
     def get(self, request, author, post):
         
@@ -677,17 +530,7 @@ class AuthorPostsRemote(APIView):
     @swagger_auto_schema(operation_description="Get the public posts created by author (paginated)",
                 operation_summary="Get the public posts created by author (paginated)",
                 responses={200: PostSerializerRemote()},
-                tags=['Remote'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='POST_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Post ID',
-                        required=True,
-                        enum=[]
-                    ),
-                ])
+                tags=['Remote'],)
     
     def get(self, request, author):
         

@@ -46,17 +46,7 @@ class GetAllNotifications(APIView):
     @swagger_auto_schema(operation_description="Get all notifications for a specific author",
                     operation_summary="Get All Author Notifications",
                     responses={200: NotificationsSerializer()},
-                    tags=['Feed'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Feed'],)
 
     def get(self, request, pk):
         notifications = Notifications.objects.filter(author_id = pk)
@@ -101,17 +91,7 @@ class GetAllAuthorFriends(APIView):
     @swagger_auto_schema(operation_description="Get all friends of a specific author",
                     operation_summary="Get Author's Friends",
                     responses={200: FriendsSerializer()},
-                    tags=['Feed'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Feed'],)
     
     def get(self, request, pk):
           
@@ -133,17 +113,7 @@ class GetAuthorFollowing(APIView):
     @swagger_auto_schema(operation_description="Get all authors that a specific author follows",
                     operation_summary="Get Authors That Author Follows",
                     responses={200: FriendsSerializer()},
-                    tags=['Feed'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Feed'],)
     
     def get(self, request, pk):
           
@@ -165,17 +135,7 @@ class GetAuthorFollowers(APIView):
     @swagger_auto_schema(operation_description="Get all authors that follow a speciifc author",
                     operation_summary="Get Authors That Follow An Author",
                     responses={200: FriendsSerializer()},
-                    tags=['Feed'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Feed'],)
     
     def get(self, request, pk):
 
@@ -196,17 +156,7 @@ class GetTrueFriends(APIView):
     @swagger_auto_schema(operation_description="Get all True Friends",
                     operation_summary="Get All True Friends",
                     responses={200: FriendsSerializer()},
-                    tags=['Feed'],
-                    manual_parameters=[
-                        openapi.Parameter(
-                            name='pk',
-                            in_=openapi.IN_PATH,
-                            type=openapi.TYPE_STRING,
-                            description='Author ID',
-                            required=True,
-                            enum=[]
-                        )
-                    ])
+                    tags=['Feed'],)
     
     def get(self, request, pk):
           
@@ -244,17 +194,7 @@ class FollowRequestViews(APIView):
     @swagger_auto_schema(operation_description="Create a follow request object",
                 operation_summary="Create a follow request object",
                 responses={200: FollowerRequestSerializer()},
-                tags=['Feed'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='pk',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Need both Sender Author ID and Recipient Author ID', # Change this later.
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Feed'],)
 
     def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
                                   # Or request can have both.
@@ -270,17 +210,7 @@ class FollowRequestViews(APIView):
     @swagger_auto_schema(operation_description="Deletes a follow request object",
             operation_summary="Deletes a follow request object",
             responses={200: FollowerRequestSerializer()},
-            tags=['Feed'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='pk',
-                    in_=openapi.IN_PATH,
-                    type=openapi.TYPE_STRING,
-                    description='Need both Sender Author ID and Recipient Author ID', # Change this later.
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Feed'],)
         
     def delete(self, request, pk):
         print("FR DATA", request.data)
@@ -357,17 +287,7 @@ class InboxViews(APIView):
     @swagger_auto_schema(operation_description="Get an authors inbox",
         operation_summary="Get an authors inbox",
         responses={200: FollowerRequestSerializer()},
-        tags=['Feed'],
-        manual_parameters=[
-            openapi.Parameter(
-                name='pk',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Author ID', # Change this later.
-                required=True,
-                enum=[]
-            )
-        ])
+        tags=['Feed'],)
 
     def get(self, request, pk): 
         '''
@@ -383,17 +303,7 @@ class InboxViews(APIView):
     @swagger_auto_schema(operation_description="Updates an authors inbox",
         operation_summary="Updates an authors inbox",
         responses={200: InboxSerializer()},
-        tags=['Feed'],
-        manual_parameters=[
-            openapi.Parameter(
-                name='pk',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Author ID', # Change this later.
-                required=True,
-                enum=[]
-            )
-        ])
+        tags=['Feed'],)
     
     def post(self, request, pk):
         '''
@@ -485,17 +395,7 @@ class GetAuthorsFollowersRemote(APIView):
     @swagger_auto_schema(operation_description="Get a list of authors who are AUTHOR_ID’s followers",
         operation_summary="Get a list of authors who are AUTHOR_ID’s followers",
         responses={200: AuthorSerializer()},
-        tags=['Remote'],
-        manual_parameters=[
-            openapi.Parameter(
-                name='AUTHOR_ID',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Author ID', # Change this later.
-                required=True,
-                enum=[]
-            )
-        ])
+        tags=['Remote'],)
     
     def get(self, request, author_id):
         friends = Friends.objects.filter(author_id = author_id)
@@ -526,25 +426,7 @@ class FollowersRemote(APIView):
     @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
         operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
         responses={200: FriendsSerializer()},
-        tags=['Remote'],
-        manual_parameters=[
-            openapi.Parameter(
-                name='AUTHOR_ID',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Author ID', # Change this later.
-                required=True,
-                enum=[]
-            ),
-            openapi.Parameter(
-                name='FOREIGN_AUTHOR_ID',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Foreign Author ID', # Change this later.
-                required=True,
-                enum=[]
-            )
-        ])
+        tags=['Remote'],)
 
     def get(self, request, author_id, foreign_author_id):
         
@@ -570,17 +452,7 @@ class InboxViewsRemote(APIView):
     @swagger_auto_schema(operation_description="Updates an authors inbox remotely",
         operation_summary="Updates an authors inbox remotely",
         responses={200: InboxSerializer()},
-        tags=['Remote'],
-        manual_parameters=[
-            openapi.Parameter(
-                name='AUTHOR_ID',
-                in_=openapi.IN_PATH,
-                type=openapi.TYPE_STRING,
-                description='Author ID', # Change this later.
-                required=True,
-                enum=[]
-            )
-        ])
+        tags=['Remote'],)
     
     def post(self, request, author_id):
         '''
