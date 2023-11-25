@@ -111,7 +111,7 @@ export default function Post({
     .get(authorUrl,config)
     .then(async (authorRes) => {
 
-      await axios.post(commentsUrl, { 
+      await axios.post(commentsUrl, config, { 
           text: commentText,
           author: user.user.user_id,
           author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
