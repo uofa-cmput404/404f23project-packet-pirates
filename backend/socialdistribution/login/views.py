@@ -184,7 +184,7 @@ class GetSingleAuthorByUsername(APIView):
             manual_parameters=[
                 openapi.Parameter(
                     name='Username',
-                    in_=openapi.IN_PATH,
+                    in_=openapi.IN_QUERY,
                     type=openapi.TYPE_STRING,
                     description='Author username',
                     required=True,
