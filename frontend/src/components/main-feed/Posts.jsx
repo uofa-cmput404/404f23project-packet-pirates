@@ -46,7 +46,7 @@ export default function Post({
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
-          },
+          }, config,
           {
             withCredentials: true,
           }
