@@ -54,6 +54,7 @@ export default function Post({
                 post_object_id: id,
                 author: user,
                 like_count: newLikeCount,
+                Authorization: 'Token ' + localStorage.getItem('access_token')
             },
           });
       } else {

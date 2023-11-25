@@ -298,10 +298,10 @@ class PostLikeViews(APIView):
     '''
     All likes of a post
     '''
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = ()
-    # permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (TokenAuthentication, )
+    # permission_classes = (permissions.AllowAny,)
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
 
         
     @swagger_auto_schema(operation_description="Get likes of a specific post",
