@@ -8,7 +8,7 @@ from django.core.files.images import ImageFile
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import permissions, status
 
 from post.models import Post, PostLike
@@ -471,3 +471,45 @@ class PostLikeViews(APIView):
             return Response({"message": "Like Model Successfully Deleted"}, status=status.HTTP_200_OK)
         
         return Response({"message": "Like Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
+
+class LikedRemote(APIView):
+    '''
+    All likes of a given author
+    URL: ://service/authors/{AUTHOR_ID}/liked
+    '''
+    # permission_classes = (permissions.AllowAny,)
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+
+    def get(self, request, pk):
+
+        auth_id = uuid.UUID(pk)
+
+        likes = PostLike.objects.filter(author = auth_id)
+
+        serializer = LikeSerializerRemote(data = likes, many = True)
+
+        return Response ({"items": serializer.data}, status=status.HTTP_200_OK)
+    
+class GetLikesOnPostRemote(APIView):
+    '''
+    Get likes on AUTHOR_ID's post POST_ID
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/likes
+    '''
+    # permission_classes = (permissions.AllowAny,)
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+
+    def post(self, request, author, post):
+
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        likes = PostLike.objects.filter(author = auth_id).filter(post_object = post)
+
+        serializer = LikeSerializerRemote(data = likes, many = True)
+
+        return Response ({"items": serializer.data}, status=status.HTTP_200_OK)
