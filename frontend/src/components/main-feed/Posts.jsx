@@ -58,11 +58,15 @@ export default function Post({
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
+          data: {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
-          }, config, {
-          withCredentials: true
+          },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Token ' + localStorage.getItem('access_token'),
+          }
         });
       }
     } catch (error) {
@@ -113,14 +117,14 @@ export default function Post({
     .then(async (authorRes) => {
 
       await axios.post(commentsUrl, { 
-          text: commentText,
-          author: user.user.user_id,
-          author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
-          author_username: authorRes.data.Author.username,
-        
-      }, config, {
-        withCredentials: true
-      })
+        text: commentText,
+        author: user.user.user_id,
+        author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
+        author_username: authorRes.data.Author.username,
+      
+    }, config, {
+      withCredentials: true
+    })
       .then(() => {
 
         getComments()
