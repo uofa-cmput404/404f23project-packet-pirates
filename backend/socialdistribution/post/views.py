@@ -21,6 +21,7 @@ from .serializer import *
 from login.models import AppAuthor
 
 from login.serializer import *
+from feed.serializer import *
 
 from post.validate import *
 
@@ -30,6 +31,15 @@ from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
 from drf_yasg import openapi
+
+class ViewPostByID(APIView): # FOR TESTING PURPOSES DELETE LATER
+
+    def get(self, request, pk):
+        post = Post.objects.get(post_id = pk)
+
+        serializer = PostSerializer(post)
+
+        return Response({"post": serializer.data}, status=status.HTTP_200_OK)
 
 class GetAuthorsPosts(APIView):
     '''
@@ -144,11 +154,12 @@ class GetFeedPosts(APIView):
         posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
         friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
-
         for friend in friends:
+            # print(friend.friend.user_id)
 
-            posts = posts | Post.objects.filter(author_id = friend.author_id).exclude(unlisted = True) # Add posts from each friend
-
+            posts = posts | Post.objects.filter(author_id = friend.friend.user_id).exclude(unlisted = True) # Add posts from each friend
+        # print("Friends", friends)
+        # print("Posts", posts)
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
@@ -181,23 +192,20 @@ class PostViews(APIView):
         # print(author.display_name)
         # authorSerializer = AuthorSerializer(author)
         # print(authorSerializer)
-        print(request)
-        print(request.data)
+        # print(request)
+        # print(request.data)
+        print(request.data['image_file'])
 
-        # data = request.data[0]
-        # print(data)
-    
-        # validated_data = custom_validation(request.data)
+        picture = request.data['image_file']
 
-        # picture = request.data['image_file']
-        # image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-        # request.data['image_file'] = image
+        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
 
-        request.data['image_url'] = 'https://picsum.photos/200'
+        request.data['image_file'] = image
 
         serializer = PostSerializer(data = request.data)
-        serializer.is_valid()
-        print(serializer.errors)
+        # serializer.is_valid()
+        # print(serializer)
+        # print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
@@ -234,17 +242,12 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
 
-        # validated_data = custom_validation(request.data)
         post = Post.objects.get(post_id = post_id)
         
-        # Update like count
-        new_like_count = request.data.get('like_count', None)
-        if new_like_count is not None:
-            post.likes = new_like_count
-            # post.save() 
-            return Response(status=status.HTTP_200_OK)
-        
+        print(request.data)
+
         serializer = PostSerializer(post, data = request.data)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({"message": "Post successfully updated"}, status=status.HTTP_200_OK)
@@ -276,9 +279,6 @@ class PostComments(APIView):
                                     enum=[]
                                 )
                             ])
-    
-    # permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (SessionAuthentication,)
 
     def get(self, request, pk):
         post_id = uuid.UUID(pk)
@@ -304,13 +304,30 @@ class PostComments(APIView):
     
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
+
         request.data['post'] = post_id
-        print(request)
+
+        post_data = Post.objects.get(post_id = post_id)
+        
+        post_author = post_data.author
+
+        notification_author = AppAuthor.objects.get(user_id = request.data['author'])
+
+        if (post_author.user_id != notification_author.user_id):
+            notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
+                            'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+           
+            notification_serializer = NotificationsSerializer(data = notification)
+
+            if (notification_serializer.is_valid(raise_exception=True)):
+                notification_serializer.save()
+
         serializer = CommentSerializer(data = request.data)
-        serializer.is_valid()
+
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
-            return Response({"message" : "Comment Model Created"}, status=status.HTTP_201_CREATED)
+            return Response({"Message" : "Comment & Notification Model Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
         
@@ -392,17 +409,35 @@ class PostLikeViews(APIView):
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
-        request.data['post_object_id'] = post_object_id
-        serializer = LikeSerializer(data = request.data)
+
+        post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
+
+        post_data = Post.objects.get(post_id = post_object_id)
+        
+        post_author = post_data.author
+        
+        notification_author = AppAuthor.objects.get(user_id = request.data['author']['user']['user_id'])
+
+        if (post_author.user_id != notification_author.user_id):
+            notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
+                            'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+            notification_serializer = NotificationsSerializer(data = notification)
+
+            if (notification_serializer.is_valid(raise_exception=True)):
+                notification_serializer.save()
+
+        like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
+
+        serializer = LikeSerializer(data = like_data)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
-            return Response({"message" : "Like Model Created"}, status=status.HTTP_201_CREATED)
+            return Response({"message" : "Like & Notification Model Successfully Created"}, status=status.HTTP_201_CREATED)
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
 
-        
     @swagger_auto_schema(operation_description="delete a like of a specific post",
                         operation_summary="delete post like",
                         responses={200: LikeSerializer()},
@@ -423,6 +458,8 @@ class PostLikeViews(APIView):
         author_id = request.user.user_id
 
         post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+
+        post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
         if post_liked:
             post_liked.delete()

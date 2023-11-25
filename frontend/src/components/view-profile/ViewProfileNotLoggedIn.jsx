@@ -50,17 +50,25 @@ export default function ViewProfileNotLogged() {
           // console.log("POSTSRES_FULL", postsRes.data.Posts);
           console.log("POSTSRES", postsRes.status);
           setPosts(
-            postsRes.data.Posts.map((post, index) => (
-              <Post
-                key={index}
-                user={fake_user}
-                title={post.title}
-                description={post.content}
-                img={post.image_url}
-                likes={post.likes_count}
-                id={post.post_id}
-              />
-            ))
+            postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => {
+              const image_conditions = post.image_url === null && post.image_file != null
+              // console.log("TESTING", image_conditions)
+              const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
+              // console.log("IMAGE", image)
+              return (
+                <Post
+                  key={index}
+                  user={fake_user}
+                  post_author={post.author}
+                  title={post.title}
+                  description={post.content}
+                  img={image}
+                  img_url={post.image_url}
+                  likes={post.likes_count}
+                  id={post.post_id}
+                />
+              );
+            })
           );
         })
         .catch((error) => {

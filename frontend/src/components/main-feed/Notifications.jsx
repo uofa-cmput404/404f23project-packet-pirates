@@ -1,4 +1,6 @@
-export default function Notifications({ notifications }) {
+import axios from "axios";
+
+export default function Notifications({ notifications , user}) {
   return (
     <button
       className="notifications-container flex flex-col justify-start items-start w-fit h-full bg-white border border-gray-300 p-4 rounded-lg divide-y"
@@ -10,29 +12,156 @@ export default function Notifications({ notifications }) {
       <div className="notifications">
         <ul>
           {notifications.map((notification, index) => (
-            <li
+            <Notification
               key={index}
-              className="notification flex flex-row list-image-none justify-start items-center py-4 w-full"
-            >
-              <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                <img
-                  src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + notification.notif_author_pfp}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="notification-content flex flex-col ml-5">
-                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full whitespace-nowrap">
-                  {notification.notif_author_username}
-                </span>
-                <span className="mt-1 text-sm text-gray-500 whitespace-nowrap">
-                  {notification.message}
-                </span>
-              </div>
-            </li>
+              user = {user}
+              index={index}
+              notification={notification}
+            />
           ))}
         </ul>
       </div>
     </button>
+  );
+}
+
+export function Notification({ user, index, notification }) {
+  const isFollowRequest = notification.is_follow_notification;
+
+  const requestDeclined = async (event) => {
+
+    console.log("USERERERERE", user)
+
+    //Delete notif and request
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const notifData = {
+      notif_id : notification.notif_id
+    }
+
+    const requestData = {
+      sender :  notification.notification_author,
+      recipient : user.user.user_id
+    }
+
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
+    .then((notifRes) => {
+      window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error deleting notification:", err);
+    })
+
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
+    .then((requestRes) => {
+      
+    })
+    .catch((err) => {
+      console.error("Error deleting follow request:", err);
+    })
+
+  }
+
+  const requestAccepted = async (event) => {
+    
+    //Remove notif and request, create friend
+    console.log("USERERERERE", user)
+
+    //Delete notif and request
+    let notificationUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+
+    const notifData = {
+      notif_id : notification.notif_id
+    }
+
+    const requestData = {
+      sender :  notification.notification_author,
+      recipient : user.user.user_id
+    }
+
+    const notifRes = await axios.delete(notificationUrl, {data: notifData})
+    .then((notifRes) => {
+      // window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error deleting notification:", err);
+    })
+
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData})
+    .then((requestRes) => {
+      
+    })
+    .catch((err) => {
+      console.error("Error deleting follow request:", err);
+    })
+
+
+    let friendUrl =
+    "http://127.0.0.1:8000/api/" + user.user.user_id + "/friends";
+
+    const friendData = {
+      author : user.user.user_id,
+      friend : notification.notification_author,
+      friend_pfp : notification.notif_author_pfp,
+      friend_username : notification.notif_author_username
+    }
+
+    const friendRes = await axios.post(friendUrl, friendData)
+    .then((friendRes) => {
+      window.location.reload(false);
+    })
+    .catch((err) => {
+      console.error("Error creating friend:", err);
+    })
+
+  }
+
+
+  return (
+    <li
+      key={index}
+      className="notification flex flex-row list-image-none justify-start items-center py-4 w-full"
+    >
+      <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+        <img
+          src={notification.notif_author_pfp}
+          alt="Profile"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="notification-content flex flex-col ml-5">
+        <div className="top flex flex-row justify-between items-center">
+          <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full whitespace-nowrap">
+            {notification.notif_author_username}
+          </span>
+          {isFollowRequest && (
+            <div className="buttons flex flex-row">
+              <button 
+              className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+              onClick = {requestAccepted}
+              >
+                ✔️
+              </button>
+              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+              onClick = {requestDeclined}
+              >
+                ❌
+              </button>
+            </div>
+          )}
+        </div>
+        <span className="mt-1 text-sm text-gray-500 whitespace-nowrap">
+          {notification.message}
+        </span>
+      </div>
+    </li>
   );
 }

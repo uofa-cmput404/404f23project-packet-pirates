@@ -23,6 +23,8 @@ export default function ViewProfile({ user }) {
   const [postauthor, setPostauthor] = useState(null);
   const [friends, setFriends] = useState(null);
   const [notifications, setNotifications] = useState(null);
+  const [authorInfo, setAuthorInfo] = useState(null);
+  const [profileHeader, setProfileHeader] = useState(null);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -82,7 +84,7 @@ export default function ViewProfile({ user }) {
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
-            <Notifications notifications={notifsRes.data.Notifications} />
+            <Notifications notifications={notifsRes.data.Notifications} user = {user} />
           );
         })
         .catch((error) => {
@@ -97,23 +99,57 @@ export default function ViewProfile({ user }) {
       const postsRes = await axios
         .get(postsUrl,config)
         .then((postsRes) => {
-          //Result of post query
-          // console.log("POSTSRES", postsRes.data.Posts[0]);
-          // console.log("POSTSRES_FULL", postsRes.data.Posts);
           console.log("POSTSRES", postsRes.status);
-          setPosts(
-            postsRes.data.Posts.map((post, index) => (
-              <Post
-                key={index}
-                user={user}
-                title={post.title}
-                description={post.content}
-                img={post.image_url}
-                likes={post.likes_count}
-                id={post.post_id}
-              />
-            ))
-          );
+          console.log("posts", postsRes.data.Posts);
+          if (author === user.user.username) {
+            setPosts(
+              postsRes.data.Posts.map((post, index) => { // As the user, want to be able to see your all your posts.
+                const image_conditions = post.image_url === null && post.image_file != null
+                // console.log("TESTING", image_conditions)
+                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+                // console.log("IMAGE", image)
+                return (
+                  <Post
+                    key={index}
+                    user={user}
+                    post_author={post.author}
+                    title={post.title}
+                    description={post.content}
+                    img={image}
+                    img_url={post.image_url}
+                    likes={post.likes_count}
+                    id={post.post_id}
+                    is_private={post.is_private}
+                    unlisted={post.unlisted}
+                  />
+                );
+              })
+            );
+          } else {
+            setPosts(
+              postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => { // Swap !post.is_private to our boolean checker to see if they are friends
+                const image_conditions = post.image_url === null && post.image_file != null
+                // console.log("TESTING", image_conditions)
+                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+                // console.log("IMAGE", image)
+                return (
+                  <Post
+                    key={index}
+                    user={user}
+                    post_author={post.author}
+                    title={post.title}
+                    description={post.content}
+                    img={image}
+                    img_url={post.image_url}
+                    likes={post.likes_count}
+                    id={post.post_id}
+                    is_private={post.is_private}
+                    unlisted={post.unlisted}
+                  />
+                );
+              })
+            );
+          }
         })
         .catch((error) => {
           console.error("Error getting posts:", error);
@@ -129,8 +165,49 @@ export default function ViewProfile({ user }) {
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
+    getAuthorInfo();
+    //location.reload()
     console.log("posts", posts);
   }, [author]);
+
+  const getAuthorInfo = async () => {
+
+    let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/username";
+
+    const authRes = await axios
+      .get(authUrl)
+      .then((authRes) => {
+        setAuthorInfo(authorInfo => authRes.data.Author);
+        setProfileHeader(
+          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
+            {/* User's Profile Picture */}
+            <img
+              src={
+                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authRes.data.Author.profile_picture
+              }
+              alt={`${user.user.username}'s Profile`}
+              className="w-12 h-12 rounded-full object-cover mb-4"
+            />
+
+            {/* User's Name */}
+            <h2 className="text-xl font-semibold mb-2">
+              {author + "'s profile"}
+            </h2>
+
+            {/* Follow Button */}
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          </div>
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleLogout = async (event) => {
     event.preventDefault();
@@ -144,47 +221,115 @@ export default function ViewProfile({ user }) {
     }
   };
 
+  // console.log("AUTHOR INFO", authorInfo)
+
+  const handleFollow = async (event) => {
+    event.preventDefault();
+
+    let authorUrl = 
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/username";
+
+    let notificationUrl =
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/" + user.user.user_id + "/createnotif";
+
+    let followrequestUrl =
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/" + user.user.user_id + "/followrequest";
+
+    const authReso = await axios
+      .get(authorUrl)
+      .then(async (authReso) => {
+      
+
+        const notifdata = {
+          author: author,
+          notification_author: user.user.user_id,
+          notif_author_pfp: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture,
+          notif_author_username: user.user.username,
+          message: "Requested to follow you",
+          is_follow_notification: true,
+          url: "",
+        };
+    
+        const requestdata = {
+          sender: user.user.user_id,
+          recipient: authReso.data.Author.user_id,
+          is_pending: true
+        }
+    
+        try {
+    
+          const res1 = await axios.post(notificationUrl, notifdata).then((res1) => {
+            console.log(res1.data);
+          });
+    
+          const res2 = await axios.post(followrequestUrl, requestdata).then((res2) => {
+            console.log(res2.data);
+          });
+    
+        } catch (err) {
+          console.log(err);
+        }
+
+      });
+
+  };
+
   return (
     <>
       <div className="flex justify-center items-center w-screen">
-        <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
-          <div
-            className="profile h-fit mx-auto"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            {/* <Profile friends={friends} username={user.user.username} /> */}
-            {friends}
-          </div>
-          <div className="feed flex flex-col ml-5 w-full mx-auto">
-            <div className="flex items-center justify-center">
-              You are looking at {author}'s profile
+        <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
+          {/* Spacer to push down content
+          <div className="invisible h-16"></div> */}
+
+          {/* Visible Box at the Top */}
+          {/* {profileHeader} */}
+
+          <div>
+            {/* Profile Header Section */}
+            {profile && (
+              <div className="profile-header mt-4 p-4 border border-gray-300 rounded-md text-center">
+                <img
+                  src={profile.profile_picture}
+                  alt={`${profile.username}'s Profile`}
+                  className="w-16 h-16 rounded-full object-cover mb-2"
+                />
+                <h2 className="text-xl font-semibold">{profile.username}</h2>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
+                  Follow
+                </button>
+              </div>
+            )}
+            <div className="flex flex-row w-full mx-auto">
+              <div
+                className="profile h-fit mx-auto"
+                style={{ position: "sticky", top: "20px" }}
+              >
+                {friends}
+              </div>
+              <div className="feed flex flex-col ml-5 w-full mx-auto">
+                <div className="feed_content mt-[-20px]">
+                  {profileHeader}
+                  <ul>{posts}</ul>
+                </div>
+              </div>
+              <div className="flex-col justify-center mx-4">
+                <div className="search-bar">
+                  <SearchBar />
+                </div>
+                <div
+                  className="notifications h-fit mx-auto"
+                  style={{ position: "sticky", top: "20px" }}
+                >
+                  {notifications}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
-            <div className="feed_content mt-5">
-              <ul>{posts}</ul>
-            </div>
-          </div>
-          {/* <div
-            className="notifications h-fit mx-auto ml-5"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            {notifications}
-          </div> */}
-          <div className="flex-col justify-center mx-4">
-            <div className="search-bar">
-              <SearchBar />
-            </div>
-            <div
-              className="notifications h-fit mx-auto"
-              style={{ position: "sticky", top: "20px" }}
-            >
-              {notifications}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
-            >
-              Logout
-            </button>
           </div>
         </div>
       </div>

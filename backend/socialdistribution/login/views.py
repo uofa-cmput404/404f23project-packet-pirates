@@ -19,6 +19,8 @@ from .validate import *
 from .serializer import *
 
 
+from feed.serializer import InboxSerializer
+
 from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
 from django.core.files.base import ContentFile
 from django.core.files.storage import DefaultStorage, FileSystemStorage
@@ -52,9 +54,16 @@ class AuthorRegistration(APIView):
 
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
-            print("AUTHOR", author.profile_picture)
-            if author:
-                return Response(serializer.data, {'message': 'account has been created'}, status=status.HTTP_201_CREATED)
+
+            inbox_data = {'author': author.user_id}
+            
+            inbox_serializer = InboxSerializer(data = inbox_data)
+
+            if (inbox_serializer.is_valid(raise_exception=True)):
+                inbox_serializer.save()
+
+                if author:
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
@@ -114,7 +123,8 @@ class AuthorView(APIView):
 
     def get(self, request):
         serializer = AuthorSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK) # CHANGE LATER NO MORE JSON, REMOVE
+        # return Response(serializer.data, status=status.HTTP_200_OK) # TO THIS
 
 
 class GetSingleAuthor(APIView):
@@ -163,3 +173,31 @@ class GetSimpleAuthor(APIView):
         serializer = SimpleAuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
 
+class GetSingleAuthorByUsername(APIView):
+    '''
+    Get one single author by their username
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    @swagger_auto_schema(operation_description="Get one single author by their username",
+            operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
+            responses={200: AuthorSerializer()},
+            tags=['Login'],
+            manual_parameters=[
+                openapi.Parameter(
+                    name='pk',
+                    in_=openapi.IN_PATH,
+                    type=openapi.TYPE_STRING,
+                    description='Author username',
+                    required=True,
+                    enum=[]
+                )
+            ])
+
+
+    def get(self, request, pk):
+        author = AppAuthor.objects.get(username = pk) # Find posts that the specific author has posted
+        # posts = Post.objects.all()
+        serializer = AuthorSerializer(author)
+        return Response({"Author": serializer.data}, status=status.HTTP_200_OK)

@@ -15,8 +15,8 @@
 
 /* Basic body styles */
 body {
-  background-color: #f0f0f0; /* Adjust to your preferred background color */
-  font-family: Arial, sans-serif; /* Choose your preferred font family */
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
 }
 
 /* Style main sections */
@@ -43,7 +43,7 @@ h1 {
 .make-post button {
   width: 100%;
   padding: 10px;
-  background-color: #007bff; /* Adjust to your preferred button color */
+  background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -83,7 +83,7 @@ h1 {
 }
 
 .not-liked-button {
-  background-color: #395B64;
+  background-color: rgba(0, 0, 0, 0);
   color: #fff;
   cursor: pointer;
 }
@@ -91,5 +91,53 @@ h1 {
 .liked-button {
   background-color: #33e7ff;
   color: #fff;
-  cursor: not-allowed; /* Make the button unclickable when liked */
+}
+
+.comment-button {
+  background-color: rgba(0, 0, 0, 0);
+  color: #fff;
+}
+
+.share-button {
+  background-color: rgba(0, 0, 0, 0);
+  color: #fff;
+}
+
+.not-liked-button,
+.liked-button,
+.comment-button,
+.share-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.post-container {
+  position: relative;
+}
+
+.privacy-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.privacy-private {
+  color: #000;
+}
+
+.privacy-unlisted {
+  color: #000;
+}
+
+.privacy-public {
+  color: #000;
 }
