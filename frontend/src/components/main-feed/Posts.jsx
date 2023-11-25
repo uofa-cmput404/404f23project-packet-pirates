@@ -56,8 +56,8 @@ export default function Post({
                 author: user,
                 like_count: newLikeCount,
             },
-            header: {
-              Authorization: 'Token ' + localStorage.getItem('access_token'),
+            headers: {
+              Authorization: 'Token ' + localStorage.getItem('access_token'), 
               withCredentials: true
             }
           });
@@ -69,7 +69,7 @@ export default function Post({
             author: user,
             like_count: newLikeCount,
           },
-          header: {
+          headers: {
             Authorization: 'Token ' + localStorage.getItem('access_token'),
             withCredentials: true,
           }
@@ -122,14 +122,13 @@ export default function Post({
     .get(authorUrl,config)
     .then(async (authorRes) => {
 
-      await axios.post(commentsUrl, config, 
-        { 
+      await axios.post(commentsUrl, { 
           text: commentText,
           author: user.user.user_id,
           author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
           author_username: authorRes.data.Author.username,
         
-      })
+      },)
       .then(() => {
 
         getComments()

@@ -32,7 +32,10 @@ export default function ViewProfile({ user }) {
   };
 
   const config = {
-    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    headers: {
+      Authorization: 'Token ' + localStorage.getItem('access_token'),
+      withCredentials: true
+    }
   };
 
   useEffect(() => {
