@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model, login, logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import permissions, status
 
 from .validate import *
@@ -175,3 +175,39 @@ class GetSingleAuthorByUsername(APIView):
         # posts = Post.objects.all()
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
+    
+
+# REMOTE VIEWS
+class getAllAuthorsRemote(APIView):
+    '''
+    URL: ://service/authors/
+        GET [local, remote]: retrieve all profiles on the server (paginated)
+        page: how many pages
+        size: how big is a page
+    '''
+
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
+
+    def get(self, request):
+        all_authors = AppAuthor.objects.all()
+        
+        serializer = AuthorSerializer(all_authors, many = True)
+
+        return Response({"items": serializer.data}, status=status.HTTP_200_OK)
+
+class getSingleAuthorRemote(APIView):
+    '''
+    URL: ://service/authors/{AUTHOR_ID}/
+    GET [local, remote]: retrieve AUTHOR_ID’s profile
+    '''
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
+
+    def get (self, request, pk):
+        author = AppAuthor.objects.get(user_id = pk)
+
+        serializer = AuthorSerializer(author)
+
+        return Response (serializer.data, status=status.HTTP_200_OK)
+    

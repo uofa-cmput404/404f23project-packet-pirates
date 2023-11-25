@@ -472,3 +472,122 @@ class InboxViews(APIView):
             return Response({'message':"Inbox Successfully Updated"}, status = status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+# REMOTE VIEWS
+class GetAuthorsFollowersRemote(APIView):
+    '''
+    URL: ://service/authors/{AUTHOR_ID}/followers
+    GET [local, remote]: get a list of authors who are AUTHOR_ID’s followers
+    '''
+
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
+
+    def get(self, request, pk):
+        friends = Friends.objects.filter(author_id = pk)
+
+        friend_list = []
+        for friend in friends:
+            friend_list.append(friend.friend.user_id)
+
+        authors = AppAuthor.objects.filter(user_id__in = friend_list)
+
+        serializer = AuthorSerializer(authors, many = True)
+
+        # serializer = FriendsSerializer(friends, many=True)
+    
+
+        return Response({"items": serializer.data}, status=status.HTTP_200_OK)
+
+
+class FollowersRemote(APIView):
+    '''
+    URL: ://service/authors/{AUTHOR_ID}/followers/{FOREIGN_AUTHOR_ID}
+    GET [local, remote] check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID
+    '''
+
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
+
+    def get(self, request, pk, foreign_pk):
+        
+        friend = Friends.objects.filter(author = pk).filter(friend = foreign_pk)
+
+        serializer = FriendsSerializer(friend, many = True)
+
+        if (len(serializer.data) == 0):
+
+            return Response(False, status = status.HTTP_200_OK)
+        
+        return Response (True, status = status.HTTP_200_OK)
+
+
+class InboxViewsRemote(APIView):
+    '''
+    Inbox Post Remote
+    '''
+
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
+
+    @swagger_auto_schema(operation_description="Updates an authors inbox remotely",
+        operation_summary="Updates an authors inbox remotely",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],
+        manual_parameters=[
+            openapi.Parameter(
+                name='pk',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                description='Author ID', # Change this later.
+                required=True,
+                enum=[]
+            )
+        ])
+    
+    def post(self, request, pk):
+        '''
+        Update the inbox of an author remotely
+        '''
+
+        inbox = Inbox.objects.get(author = request.data['author'])
+
+        author = request.data['author']
+
+        posts = request.data['posts']
+
+        post_comments = request.data['post_comments']
+
+        post_likes = request.data['post_likes']
+
+        follow_requests = request.data['follow_requests']
+
+        new_inbox = None
+        
+        key = list(posts.keys())[0]
+        inbox.posts[key] = posts[key]
+        print("APPENDED", inbox.posts)
+
+        key = list(post_comments.keys())[0]
+        inbox.post_comments[key] = post_comments[key]
+        print("APPENDED", inbox.post_comments)
+
+        key = list(post_likes.keys())[0]
+        inbox.post_likes[key] = post_likes[key]
+        print("APPENDED", inbox.post_likes)
+
+        key = list(follow_requests.keys())[0]
+        inbox.follow_requests[key] = follow_requests[key]
+        print("APPENDED", inbox.follow_requests)
+        
+        new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
+                     'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
+
+        serializer = InboxSerializer(inbox, new_inbox)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({'message':"Inbox Successfully Updated"}, status = status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
