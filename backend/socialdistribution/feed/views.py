@@ -214,7 +214,7 @@ class FollowRequestViews(APIView):
         
     def delete(self, request, pk):
         print("FR DATA", request.data)
-        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
+        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
 
         if (follow_request_obj):
             follow_request_obj.delete()
@@ -269,7 +269,7 @@ class NotificationViews(APIView):
     def delete(self, request, pk):
         print("Notify DATA", request.data)
 
-        notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
+        notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
         if (notification_object):
             notification_object.delete()
