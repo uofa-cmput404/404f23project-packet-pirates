@@ -488,7 +488,7 @@ class GetAuthorsFollowersRemote(APIView):
         tags=['Remote'],
         manual_parameters=[
             openapi.Parameter(
-                name='pk',
+                name='AUTHOR_ID',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
                 description='Author ID', # Change this later.
@@ -497,8 +497,8 @@ class GetAuthorsFollowersRemote(APIView):
             )
         ])
     
-    def get(self, request, pk):
-        friends = Friends.objects.filter(author_id = pk)
+    def get(self, request, author_id):
+        friends = Friends.objects.filter(author_id = author_id)
 
         friend_list = []
         for friend in friends:
@@ -529,7 +529,7 @@ class FollowersRemote(APIView):
         tags=['Remote'],
         manual_parameters=[
             openapi.Parameter(
-                name='pk',
+                name='AUTHOR_ID',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
                 description='Author ID', # Change this later.
@@ -537,7 +537,7 @@ class FollowersRemote(APIView):
                 enum=[]
             ),
             openapi.Parameter(
-                name='foreign_pk',
+                name='FOREIGN_AUTHOR_ID',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
                 description='Foreign Author ID', # Change this later.
@@ -546,9 +546,9 @@ class FollowersRemote(APIView):
             )
         ])
 
-    def get(self, request, pk, foreign_pk):
+    def get(self, request, author_id, foreign_author_id):
         
-        friend = Friends.objects.filter(author = pk).filter(friend = foreign_pk)
+        friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
 
         serializer = FriendsSerializer(friend, many = True)
 
@@ -573,7 +573,7 @@ class InboxViewsRemote(APIView):
         tags=['Remote'],
         manual_parameters=[
             openapi.Parameter(
-                name='pk',
+                name='AUTHOR_ID',
                 in_=openapi.IN_PATH,
                 type=openapi.TYPE_STRING,
                 description='Author ID', # Change this later.
@@ -582,12 +582,13 @@ class InboxViewsRemote(APIView):
             )
         ])
     
-    def post(self, request, pk):
+    def post(self, request, author_id):
         '''
         Update the inbox of an author remotely
         '''
+        inbox = Inbox.objects.get(author_id = author_id) # We need to test this
 
-        inbox = Inbox.objects.get(author = request.data['author'])
+        # inbox = Inbox.objects.get(author = request.data['author'])
 
         author = request.data['author']
 

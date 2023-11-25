@@ -15,5 +15,5 @@ urlpatterns = [
 
     # Remote URLS
     path('authors', views.getAllAuthorsRemote.as_view(), name = "All Authors Remote"),
-    path('authors/<str:pk>', views.getSingleAuthorRemote.as_view(), name = "All Authors Remote")
+    path('authors/<str:author_id>', views.getSingleAuthorRemote.as_view(), name = "All Authors Remote")
 ]

@@ -215,7 +215,7 @@ class getSingleAuthorRemote(APIView):
             tags=['Remote'],
             manual_parameters=[
                 openapi.Parameter(
-                    name='pk',
+                    name='AUTHOR_ID',
                     in_=openapi.IN_PATH,
                     type=openapi.TYPE_STRING,
                     description='Author username',
@@ -224,8 +224,8 @@ class getSingleAuthorRemote(APIView):
                 )
             ])
     
-    def get (self, request, pk):
-        author = AppAuthor.objects.get(user_id = pk)
+    def get (self, request, author_id):
+        author = AppAuthor.objects.get(user_id = author_id)
 
         serializer = AuthorSerializer(author)
 
