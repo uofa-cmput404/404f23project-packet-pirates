@@ -52,23 +52,18 @@ export default function Post({
           post_object_id: id,
           author: user,
           like_count: newLikeCount,
-        }, config,
-        {
+        }, config, {
           withCredentials: true,
         });
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
-          data: {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
-          },
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": 'Token ' + localStorage.getItem('access_token'),
-          }
-        });
+      }, config, {
+        withCredentials: true,
+      });
       }
     } catch (error) {
       // If error found, revert any changes made
