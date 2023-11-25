@@ -171,6 +171,7 @@ class PostViews(APIView):
         if (picture != "null"):
             image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
             request.data['image_file'] = image
+            request.data['image_url'] = ''
             serializer = PostSerializer(data = request.data)
         else:
             new_request_data = request.data.copy()

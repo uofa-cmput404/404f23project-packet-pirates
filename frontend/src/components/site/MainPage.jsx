@@ -34,7 +34,7 @@ export default function MainPage({ user }) {
 
         setPosts(
           postsRes.data.Posts.map((post, index) => {
-              const image_conditions = post.image_url === null && post.image_file != null
+              const image_conditions = post.image_url === '' && post.image_file != ''
               // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/' + post.image_file : post.image_url
               // console.log("IMAGE", image)

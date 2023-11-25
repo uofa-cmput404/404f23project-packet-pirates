@@ -51,7 +51,7 @@ export default function ViewProfileNotLogged() {
           console.log("POSTSRES", postsRes.status);
           setPosts(
             postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => {
-              const image_conditions = post.image_url === null && post.image_file != null
+              const image_conditions = post.image_url === '' && post.image_file != ''
               // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
               // console.log("IMAGE", image)
