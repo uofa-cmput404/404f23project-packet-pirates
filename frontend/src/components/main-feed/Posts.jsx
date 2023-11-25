@@ -25,10 +25,9 @@ export default function Post({
   const [postAuthor, setPostAuthor] = useState('');
 
   const config = {
-    headers: {
-      "Authorization": 'Token ' + localStorage.getItem('access_token')
-    }
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
+
   console.log(localStorage.getItem('access_token'))
 
   const handleEdit = () => {
@@ -53,7 +52,7 @@ export default function Post({
           post_object_id: id,
           author: user,
           like_count: newLikeCount,
-        },
+        }, config,
         {
           withCredentials: true,
         });
