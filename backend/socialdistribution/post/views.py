@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.files.images import ImageFile
+from django.core.paginator import Paginator
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -490,7 +491,12 @@ class LikedRemote(APIView):
 
         serializer = LikeSerializerRemote(data = likes, many = True)
 
-        return Response ({"items": serializer.data}, status=status.HTTP_200_OK)
+        if likes:
+
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Likes do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
     
 class GetLikesOnPostRemote(APIView):
     '''
@@ -502,14 +508,103 @@ class GetLikesOnPostRemote(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
-    def post(self, request, author, post):
+    def get(self, request, author, post):
 
         auth_id = uuid.UUID(author)
         
         post_id = uuid.UUID(post)
 
-        likes = PostLike.objects.filter(author = auth_id).filter(post_object = post)
+        likes = PostLike.objects.filter(author = auth_id).filter(post_object = post_id)
 
         serializer = LikeSerializerRemote(data = likes, many = True)
 
-        return Response ({"items": serializer.data}, status=status.HTTP_200_OK)
+        if likes:
+
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Likes do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    
+
+class CommentsRemote(APIView):
+    '''
+    Get comments on AUTHOR_ID's post POST_ID
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/comments
+    '''
+    # permission_classes = (permissions.AllowAny,)
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+
+    def get(self, request, author, post):
+        
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        comments = Comment.objects.filter(author = auth_id).filter(post = post_id)
+
+        serializer = CommentSerializerRemote(data = comments, many = True)
+
+        if comments:
+
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    
+class PostRemote(APIView):
+    '''
+    Get the public post whose id is POST_ID
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}
+    '''
+    # permission_classes = (permissions.AllowAny,)
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+
+    def get(self, request, author, post):
+        
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        post = Post.objects.filter(author = auth_id).filter(post_id = post_id)
+
+        serializer = PostSerializerRemote(data = post)
+
+        if post:
+
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+class AuthorPostsRemote(APIView):
+    '''
+    Get the public posts created by author (paginated)
+    URL ://service/authors/{AUTHOR_ID}/posts/
+    '''
+    # permission_classes = (permissions.AllowAny,)
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+    
+    def get(self, request, author):
+        
+        auth_id = uuid.UUID(author)
+
+        posts = Post.objects.filter(author = auth_id)
+
+        #posts = Post.objects.filter(author = auth_id).order_by('date_time')
+
+        #Extract num from query 
+        # page = Paginator(posts, num)
+
+        serializer = PostSerializerRemote(data = posts, many = True)
+
+        if posts:
+
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+

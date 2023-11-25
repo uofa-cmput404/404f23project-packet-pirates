@@ -18,4 +18,13 @@ urlpatterns = [
     path('<str:pk>/viewpost', views.ViewPostByID.as_view(), name = "View_post"), # For testing purposes, delete later
 
     path('api/posts/<str:pk>/editpost', views.EditPost.as_view(), name='edit_post'),
+
+    #REMOTE URLS
+    path('authors/<str:author>/liked', views.LikedRemote.as_view(), name = 'liked_remote'),
+    path('authors/<str:author>/posts/<str:post>/likes', views.GetLikesOnPostRemote.as_view(), name = 'likes_remote'),
+    path('authors/<str:author>/posts/<str:post>/comments', views.CommentsRemote.as_view(), name = 'comments_remote'),
+    path('authors/<str:author>/posts/<str:post>', views.PostRemote.as_view(), name = 'post_remote'),
+    path('authors/<str:author>/posts', views.AuthorPostsRemote.as_view(), name = 'author_posts_remote'),
+
+
 ]
