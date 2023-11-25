@@ -51,11 +51,11 @@ export default function Post({
         // If liking, make a POST request to add a like
         await axios.post(
           "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
-            data: {
-                post_object_id: id,
-                author: user,
-                like_count: newLikeCount,
-            },
+            // data: {
+            //     post_object_id: id,
+            //     author: user,
+            //     like_count: newLikeCount,
+            // },
             headers: {
               "Content-Type": "application/json",
               "Authorization": 'Token ' + localStorage.getItem('access_token'),
