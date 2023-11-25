@@ -406,12 +406,11 @@ class GetAuthorsFollowersRemote(APIView):
 
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
-        serializer = AuthorSerializer(authors, many = True)
+        serializer = AuthorSerializerRemote(authors, many = True)
 
         # serializer = FriendsSerializer(friends, many=True)
     
-
-        return Response({"items": serializer.data}, status=status.HTTP_200_OK)
+        return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
 
 
 class FollowersRemote(APIView):
