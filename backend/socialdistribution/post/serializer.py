@@ -41,5 +41,5 @@ class LikeSerializerRemote(serializers.ModelSerializer):
 class CommentSerializerRemote(serializers.ModelSerializer):
     author = AuthorSerializer()
     class Meta:
-        model = PostLike
+        model = Comment
         fields = "__all__"

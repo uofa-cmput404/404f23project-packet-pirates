@@ -393,7 +393,7 @@ class LikedRemote(APIView):
 
         likes = PostLike.objects.filter(author = auth_id)
 
-        serializer = LikeSerializerRemote(data = likes, many = True)
+        serializer = LikeSerializerRemote(likes, many = True)
 
         if likes:
 
@@ -415,25 +415,7 @@ class GetLikesOnPostRemote(APIView):
     @swagger_auto_schema(operation_description="Get likes on AUTHOR_ID's post POST_ID",
                 operation_summary="Get likes on AUTHOR_ID's post POST_ID",
                 responses={200: LikeSerializerRemote()},
-                tags=['Remote'],
-                manual_parameters=[
-                    openapi.Parameter(
-                        name='AUTHOR_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Author ID',
-                        required=True,
-                        enum=[]
-                    ),           
-                    openapi.Parameter(
-                        name='POST_ID',
-                        in_=openapi.IN_PATH,
-                        type=openapi.TYPE_STRING,
-                        description='Post ID',
-                        required=True,
-                        enum=[]
-                    )
-                ])
+                tags=['Remote'],)
 
     def get(self, request, author, post):
 
@@ -443,7 +425,7 @@ class GetLikesOnPostRemote(APIView):
 
         likes = PostLike.objects.filter(author = auth_id).filter(post_object = post_id)
 
-        serializer = LikeSerializerRemote(data = likes, many = True)
+        serializer = LikeSerializerRemote(likes, many = True)
 
         if likes:
 
@@ -475,9 +457,11 @@ class CommentsRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        comments = Comment.objects.filter(author = auth_id).filter(post = post_id)
+        comments = Comment.objects.filter(author_id = auth_id).filter(post_id = post_id)
 
-        serializer = CommentSerializerRemote(data = comments, many = True)
+        print(comments[0])
+
+        serializer = CommentSerializerRemote(comments, many = True)
 
         if comments:
 
@@ -507,9 +491,9 @@ class PostRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        post = Post.objects.filter(author = auth_id).filter(post_id = post_id)
+        post = Post.objects.filter(author_id = auth_id).filter(post_id = post_id)
 
-        serializer = PostSerializerRemote(data = post)
+        serializer = PostSerializerRemote(post, many = True)
 
         if post:
 
@@ -536,14 +520,14 @@ class AuthorPostsRemote(APIView):
         
         auth_id = uuid.UUID(author)
 
-        posts = Post.objects.filter(author = auth_id)
+        posts = Post.objects.filter(author_id = auth_id)
 
         #posts = Post.objects.filter(author = auth_id).order_by('date_time')
 
         #Extract num from query 
         # page = Paginator(posts, num)
 
-        serializer = PostSerializerRemote(data = posts, many = True)
+        serializer = PostSerializerRemote(posts, many = True)
 
         if posts:
 
