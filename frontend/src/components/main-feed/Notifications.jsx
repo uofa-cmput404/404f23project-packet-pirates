@@ -26,7 +26,10 @@ export default function Notifications({ notifications , user}) {
 }
 
 const config = {
-  headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
+  headers: {
+    "Content-Type": "application/json",
+    'Authorization': 'Token ' + localStorage.getItem('access_token')
+  }
 };
 
 export function Notification({ user, index, notification }) {
