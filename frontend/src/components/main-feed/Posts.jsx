@@ -26,8 +26,8 @@ export default function Post({
 
   const config = {
     headers: {
-      Authorization: 'Token ' + localStorage.getItem('access_token'),
-      withCredentials: true
+      "Content-Type": "application/json",
+      "Authorization": 'Token ' + localStorage.getItem('access_token')
     }
   };
 

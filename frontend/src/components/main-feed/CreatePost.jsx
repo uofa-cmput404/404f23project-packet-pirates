@@ -93,8 +93,7 @@ export default function CreatePost({ user }) {
     console.log("Data", formData);
 
     axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/postViews", formData, 
-      {
+      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/postViews", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           //"Content-Type": "application/json",
