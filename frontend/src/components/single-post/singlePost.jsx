@@ -126,8 +126,8 @@ export default function SinglePost({ user }) {
               >
                 {friends}
               </div>
-              <div className="feed flex flex-col ml-5 w-full mx-auto">
-                <div className="feed_content mt-[-20px]">
+              <div className="feed flex flex-col ml-5 w-full min-w-[325px] mx-auto">
+                <div className="feed_content">
                   <div>{post}</div>
                 </div>
               </div>
