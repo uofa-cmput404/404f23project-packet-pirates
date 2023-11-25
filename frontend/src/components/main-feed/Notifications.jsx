@@ -52,7 +52,15 @@ export function Notification({ user, index, notification }) {
       recipient : user.user.user_id
     }
 
-    const notifRes = await axios.delete(notificationUrl, {headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}, data: notifData})
+    const notifRes = await axios.delete(notificationUrl, {
+      data: {
+        data: notifData
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }
+    })
     .then((notifRes) => {
       window.location.reload(false);
     })
@@ -60,7 +68,15 @@ export function Notification({ user, index, notification }) {
       console.error("Error deleting notification:", err);
     })
 
-    const requestRes = await axios.delete(followrequestUrl, {headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}, data: requestData})
+    const requestRes = await axios.delete(followrequestUrl, {
+      data: {
+        data: requestRes
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }
+    })
     .then((requestRes) => {
       
     })
