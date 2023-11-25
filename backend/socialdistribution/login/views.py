@@ -192,17 +192,7 @@ class getAllAuthorsRemote(APIView):
     @swagger_auto_schema(operation_description="Get All Authors Remote",
             operation_summary="Get All Authors Remote",
             responses={200: AuthorSerializer()},
-            tags=['Remote'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='pk',
-                    in_=openapi.IN_PATH,
-                    type=openapi.TYPE_STRING,
-                    description='Author username',
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Remote'],)
     
     def get(self, request):
         all_authors = AppAuthor.objects.all()
