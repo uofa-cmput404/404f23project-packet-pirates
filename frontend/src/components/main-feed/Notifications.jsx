@@ -52,31 +52,15 @@ export function Notification({ user, index, notification }) {
       recipient : user.user.user_id
     }
 
-    const notifRes = await axios.delete(notificationUrl, {
-      data: {
-        data: notifData
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }
-    })
+    const notifRes = await axios.delete(notificationUrl, {data: notifData}, {config})
     .then((notifRes) => {
       window.location.reload(false);
     })
-    .catch((err) => { 
+    .catch((err) => {
       console.error("Error deleting notification:", err);
     })
 
-    const requestRes = await axios.delete(followrequestUrl, {
-      data: {
-        data: requestRes
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }
-    })
+    const requestRes = await axios.delete(followrequestUrl, {data: requestData}, {config})
     .then((requestRes) => {
       
     })
