@@ -180,17 +180,7 @@ class GetSingleAuthorByUsername(APIView):
     @swagger_auto_schema(operation_description="Get one single author by their username",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
             responses={200: AuthorSerializer()},
-            tags=['Login'],
-            manual_parameters=[
-                openapi.Parameter(
-                    name='Username',
-                    in_=openapi.IN_QUERY,
-                    type=openapi.TYPE_STRING,
-                    description='Author username',
-                    required=True,
-                    enum=[]
-                )
-            ])
+            tags=['Login'],)
 
 
     def get(self, request, pk):
