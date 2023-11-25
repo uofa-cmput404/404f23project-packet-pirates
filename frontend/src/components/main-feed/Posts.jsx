@@ -49,14 +49,7 @@ export default function Post({
     try {
       if (newLikeState) {
         // If liking, make a POST request to add a like
-        await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
-            data: {
-                post_object_id: id,
-                author: user,
-                like_count: newLikeCount,
-                Authorization: 'Token ' + localStorage.getItem('access_token')
-            },
-          });
+        await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config);
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
