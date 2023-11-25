@@ -11,7 +11,7 @@ export default function SearchBar() {
   const handleInputChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
-    let url = "http://127.0.0.1:8000/api/author/search?q=" + value;
+    let url = "http://127.0.0.1:8000/author/search?q=" + value;
 
     axios.get(url).then((res) => {
       //   console.log("res", res);
