@@ -55,10 +55,6 @@ export default function Post({
                 author: user,
                 like_count: newLikeCount,
             },
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": 'Token ' + localStorage.getItem('access_token'),
-            }
           });
       } else {
         // If unliking, make a DELETE request to remove the like
