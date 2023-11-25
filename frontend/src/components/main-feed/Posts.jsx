@@ -52,6 +52,7 @@ export default function Post({
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
+            Authorization: 'Token ' + localStorage.getItem('access_token')
           },
           {
             withCredentials: true,
@@ -64,6 +65,7 @@ export default function Post({
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
+            Authorization: 'Token ' + localStorage.getItem('access_token')
           },
           withCredentials: true,
         });
@@ -82,7 +84,7 @@ export default function Post({
     // Check if the current user has liked the post
     const checkLikeStatus = async () => {
       try {
-        const response = await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes");
+        const response = await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config);
         const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
         setHasLiked(likedByCurrentUser);
       } catch (error) {
