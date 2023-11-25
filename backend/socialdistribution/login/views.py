@@ -209,6 +209,5 @@ class getSingleAuthorRemote(APIView):
         author = AppAuthor.objects.get(user_id = author_id)
 
         serializer = AuthorSerializerRemote(author)
-        print("made it")
         return Response (serializer.data, status=status.HTTP_200_OK)
     
