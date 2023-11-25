@@ -57,8 +57,8 @@ export default function Post({
                 like_count: newLikeCount,
             },
             headers: {
-              Authorization: 'Token ' + localStorage.getItem('access_token'), 
-              withCredentials: true
+              "Content-Type": "application/json",
+              "Authorization": 'Token ' + localStorage.getItem('access_token'),
             }
           });
       } else {
@@ -70,8 +70,8 @@ export default function Post({
             like_count: newLikeCount,
           },
           headers: {
-            Authorization: 'Token ' + localStorage.getItem('access_token'),
-            withCredentials: true,
+            "Content-Type": "application/json",
+            "Authorization": 'Token ' + localStorage.getItem('access_token'),
           }
         });
       }
