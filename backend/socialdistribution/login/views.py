@@ -175,7 +175,7 @@ class GetSingleAuthorByUsername(APIView):
     Get one single author by their username
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(operation_description="Get one single author by their username",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",

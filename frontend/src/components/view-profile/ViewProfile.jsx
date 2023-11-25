@@ -66,7 +66,7 @@ export default function ViewProfile({ user }) {
     const getProfile = async () => {
       try {
         const profileUrl = `${getUrl}/user/${author}`;
-        const profileRes = await axios.get(profileUrl);
+        const profileRes = await axios.get(profileUrl, config);
         setProfile(profileRes.data);
       } catch (error) {
         console.error("Error getting profile:", error);
@@ -258,11 +258,11 @@ export default function ViewProfile({ user }) {
     
         try {
     
-          const res1 = await axios.post(notificationUrl, notifdata).then((res1) => {
+          const res1 = await axios.post(notificationUrl, notifdata, config).then((res1) => {
             console.log(res1.data);
           });
     
-          const res2 = await axios.post(followrequestUrl, requestdata).then((res2) => {
+          const res2 = await axios.post(followrequestUrl, requestdata, config).then((res2) => {
             console.log(res2.data);
           });
     

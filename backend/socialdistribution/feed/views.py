@@ -189,7 +189,7 @@ class FollowRequestViews(APIView):
     Post, Delete
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Create a follow request object",
                 operation_summary="Create a follow request object",
@@ -227,7 +227,7 @@ class FriendsViews(APIView):
     Creates a Friend Object
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def post (self, request, pk):
         
@@ -249,7 +249,7 @@ class NotificationViews(APIView):
     Creates a notification object
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request, pk):
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
