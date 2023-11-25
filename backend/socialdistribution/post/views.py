@@ -325,6 +325,8 @@ class PostLikeViews(APIView):
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
+        
+        print(request.data['like_count'])
 
         post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
 

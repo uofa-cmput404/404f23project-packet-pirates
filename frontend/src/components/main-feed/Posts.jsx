@@ -25,7 +25,10 @@ export default function Post({
   const [postAuthor, setPostAuthor] = useState('');
 
   const config = {
-    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    headers: {
+      Authorization: 'Token ' + localStorage.getItem('access_token'),
+      withCredentials: true
+    }
   };
 
   const handleEdit = () => {
@@ -47,23 +50,29 @@ export default function Post({
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config, {
-            post_object_id: id,
-            author: user,
-            like_count: newLikeCount,
-          },
-          {
-            withCredentials: true,
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
+            body: {
+                post_object_id: id,
+                author: user,
+                like_count: newLikeCount,
+            },
+            header: {
+              Authorization: 'Token ' + localStorage.getItem('access_token'),
+              withCredentials: true
+            }
           });
       } else {
         // If unliking, make a DELETE request to remove the like
-        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", config, {
+        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + id + "/postlikes", {
           data: {
             post_object_id: id,
             author: user,
             like_count: newLikeCount,
           },
-          withCredentials: true,
+          header: {
+            Authorization: 'Token ' + localStorage.getItem('access_token'),
+            withCredentials: true,
+          }
         });
       }
     } catch (error) {
