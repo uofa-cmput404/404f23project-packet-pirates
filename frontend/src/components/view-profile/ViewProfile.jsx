@@ -175,7 +175,7 @@ export default function ViewProfile({ user }) {
     let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/username";
 
     const authRes = await axios
-      .get(authUrl)
+      .get(authUrl, config)
       .then((authRes) => {
         setAuthorInfo(authorInfo => authRes.data.Author);
         setProfileHeader(
