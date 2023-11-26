@@ -53,14 +53,14 @@ class Inbox(models.Model):
     notifications = models.ManyToManyField(Notifications, symmetrical=False, blank=True)
 
     # posts = models.ManyToManyField(Post, symmetrical=False, blank = True)
-    posts = models.JSONField(blank=True)
+    posts = models.JSONField(blank=True, null=True)
 
     # post_comments = models.ManyToManyField(Comment, symmetrical=False, blank = True)
-    post_comments = models.JSONField(blank=True)
+    post_comments = models.JSONField(blank=True, null=True)
 
     # post_likes = models.ManyToManyField(PostLike, symmetrical=False, blank = True)
-    post_likes = models.JSONField(blank=True)
+    post_likes = models.JSONField(blank=True, null=True)
 
     # follow_requests = models.ManyToManyField(FollowerRequest, symmetrical=False, blank = True)
-    follow_requests = models.JSONField(blank=True)
+    follow_requests = models.JSONField(blank=True, null=True)
 
