@@ -23,6 +23,7 @@ export default function Post({
   const [commentText, setCommentText] = useState('');
   const [postAuthor, setPostAuthor] = useState('');
   const navigate = useNavigate();
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -91,8 +92,7 @@ export default function Post({
 
 
   const handleShare = () => {
-    // Handle share functionality
-    // Want a pop out window
+    setShowShareOptions((prev) => !prev);
   };
 
   const handleView = () => {
@@ -298,10 +298,10 @@ export default function Post({
               />
             </button>
 
-            <button 
+            <button
               onClick={handleShare}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
-              >
+            >
               <img
                 src="/share-button.png"
                 alt="Share"
@@ -309,6 +309,24 @@ export default function Post({
               />
             </button>
           </div>
+
+          {showShareOptions && (
+            <div className="share-options-box">
+              <button
+                className="share-option-button send-post"
+                onClick={() => { /* handle send post */ }}
+              >
+                Send Post
+              </button>
+              <button
+                className="share-option-button copy-link"
+                onClick={() => { /* handle copy link */ }}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
+          
 
           {isCommenting && (
             <div className="comment-input" style={{ display: "flex", alignItems: "center" }}>
