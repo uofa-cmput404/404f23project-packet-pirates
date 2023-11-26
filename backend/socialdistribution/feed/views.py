@@ -159,7 +159,8 @@ class GetTrueFriends(APIView):
                     tags=['Feed'],)
     
     def get(self, request, pk):
-          
+        pk = uuid.UUID(pk)
+        
         followers = Friends.objects.filter(author = pk)
 
         following = Friends.objects.filter(friend = pk)
@@ -266,6 +267,7 @@ class NotificationViews(APIView):
         tags=['Notifications'],)
 
     def post(self, request, pk):
+        
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
                                                                   # that are affected by the action
 
@@ -313,11 +315,13 @@ class InboxViews(APIView):
         '''
         Return the inbox of an author
         '''
+        pk = uuid.UUID(pk)
+
         inbox = Inbox.objects.get(author = pk)
 
         serializer = InboxSerializer(inbox)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
     @swagger_auto_schema(operation_description="Updates an authors inbox",
@@ -437,11 +441,16 @@ class GetAuthorsFollowersRemote(APIView):
         tags=['Remote'],)
     
     def get(self, request, author_id):
-        friends = Friends.objects.filter(author_id = author_id)
+
+        author_id = uuid.UUID(author_id)
+
+        friends = Friends.objects.filter(author = author_id)
 
         friend_list = []
+        
         for friend in friends:
-            friend_list.append(friend.friend.user_id)
+
+            friend_list.append(uuid.UUID(friend.friend))
 
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
@@ -471,7 +480,10 @@ class FollowersRemote(APIView):
         tags=['Remote'],)
 
     def get(self, request, author_id, foreign_author_id):
-        
+        author_id = uuid.UUID(author_id)
+
+        foreign_author_id = uuid.UUID(foreign_author_id)
+
         friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
 
         serializer = FriendsSerializer(friend, many = True)
@@ -500,6 +512,8 @@ class InboxViewsRemote(APIView):
         '''
         Update the inbox of an author remotely
         '''
+        author_id = uuid.UUID(author_id)
+        
         inbox = Inbox.objects.get(author_id = author_id) # We need to test this
 
         # inbox = Inbox.objects.get(author = request.data['author'])

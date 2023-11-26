@@ -103,10 +103,15 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     object = serializers.SerializerMethodField()
 
-    author = AuthorSerializerRemote()
+    author = serializers.SerializerMethodField()
 
     def get_type(self,instance):
         return "Like"
+    
+    def get_author(self,instance):
+        author = AppAuthor.objects.get(user_id = instance.author)
+        serializer = AuthorSerializerRemote(author)
+        return serializer.data
     
     def get_summary(self,instance):
         return ''
@@ -116,9 +121,10 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        author = AppAuthor.objects.get(user_id = instance.author)
 
         representation['@context'] = "https://www.w3.org/ns/activitystreams"
-        representation['summary'] = instance.author.username + " liked your post"
+        representation['summary'] = author.username + " liked your post"
         representation['object'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_object.post_id)
         return representation
     
