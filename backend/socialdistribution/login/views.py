@@ -203,8 +203,8 @@ class getAllAuthorsRemote(APIView):
         size: how big is a page
     '''
 
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get All Authors Remote",
             operation_summary="Get All Authors Remote",
@@ -226,8 +226,8 @@ class getSingleAuthorRemote(APIView):
     URL: ://service/authors/{AUTHOR_ID}/
     GET [local, remote]: retrieve AUTHOR_ID’s profile
     '''
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get A Single Author Remote",
             operation_summary="Get a single author remote",
