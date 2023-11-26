@@ -151,8 +151,8 @@ class PostViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    @swagger_auto_schema(operation_description="Create a post for a specific author",
-                operation_summary="Create Author Post",
+    @swagger_auto_schema(operation_description="Create/delete a post for a specific author",
+                operation_summary="Create/delete Author Post",
                 responses={201: PostSerializer()},
                 tags=['Post'],)
 
