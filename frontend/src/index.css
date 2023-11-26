@@ -174,11 +174,13 @@ h1 {
 
 .share-options-box {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
+  align-items: center;
 }
 
 .share-option-button {
+  flex: 1;
   background-color: #395B64;
   color: white;
   border: none;
