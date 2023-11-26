@@ -251,6 +251,11 @@ class NotificationViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @swagger_auto_schema(operation_description="Creates a notification object",
+        operation_summary="Creates a notification object",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+
     def post(self, request, pk):
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
                                                                   # that are affected by the action
@@ -265,6 +270,12 @@ class NotificationViews(APIView):
             return Response({'message': 'Notification Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(operation_description="Delete a notification object",
+        operation_summary="Delete a notification object",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
     
     def delete(self, request, pk):
         print("Notify DATA", request.data)
