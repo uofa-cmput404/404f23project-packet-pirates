@@ -273,10 +273,10 @@ class PostComments(APIView):
 
         notification_author = AppAuthor.objects.get(user_id = request.data['author'])
 
-        if (post_author != notification_author.user_id):
+        if (post_author != str(notification_author.user_id)):
             notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
                             'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
-                            'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+                            'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
             notification_serializer = NotificationsSerializer(data = notification)
 
@@ -348,19 +348,25 @@ class PostLikeViews(APIView):
         
         notification_author = AppAuthor.objects.get(user_id = request.data['author']['user']['user_id'])
 
-        if (post_author != notification_author.user_id):
-            notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
-                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
-                            'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+        if (post_author != str(notification_author.user_id)):
+            notification = {'author':post_author, 'notification_author': str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture), 
+                            'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
             notification_serializer = NotificationsSerializer(data = notification)
-
+            
+            notification_serializer.is_valid()
+            print(notification_serializer.errors)
+            
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
 
         like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
 
         serializer = LikeSerializer(data = like_data)
+
+        serializer.is_valid()
+        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -378,7 +384,7 @@ class PostLikeViews(APIView):
         post_id = uuid.UUID(pk)
         author_id = request.user.user_id
 
-        post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+        post_liked = PostLike.objects.filter(author = author_id).filter(post_object_id = post_id)
 
         post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
@@ -474,8 +480,6 @@ class CommentsRemote(APIView):
         post_id = uuid.UUID(post)
 
         comments = Comment.objects.filter(author = auth_id).filter(post_id = post_id)
-
-        print(comments[0])
 
         serializer = CommentSerializerRemote(comments, many = True)
 

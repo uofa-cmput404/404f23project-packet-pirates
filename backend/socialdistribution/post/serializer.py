@@ -139,6 +139,7 @@ class CommentSerializerRemote(serializers.ModelSerializer):
         return 'comment'
     
     def get_author(self,instance):
+        print(instance.author)
         author = AppAuthor.objects.get(user_id = instance.author)
         serializer = AuthorSerializerRemote(author)
         return serializer.data
