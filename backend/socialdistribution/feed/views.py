@@ -49,7 +49,7 @@ class GetAllNotifications(APIView):
                     tags=['Feed'],)
 
     def get(self, request, pk):
-        notifications = Notifications.objects.filter(author_id = pk)
+        notifications = Notifications.objects.filter(author = pk)
 
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
@@ -159,10 +159,11 @@ class GetTrueFriends(APIView):
                     tags=['Feed'],)
     
     def get(self, request, pk):
-          
-        followers = Friends.objects.filter(author_id = pk)
+        pk = uuid.UUID(pk)
+        
+        followers = Friends.objects.filter(author = pk)
 
-        following = Friends.objects.filter(friend_id = pk)
+        following = Friends.objects.filter(friend = pk)
 
         # Empty queryset
         true_friends = Friends.objects.none() 
@@ -171,7 +172,7 @@ class GetTrueFriends(APIView):
 
             #follow: auth id them friend id me
 
-            friend  =  followers.filter(friend_id = follow.author)
+            friend  =  followers.filter(friend = follow.author)
 
             if friend.exists():
 
@@ -200,6 +201,9 @@ class FollowRequestViews(APIView):
                                   # Or request can have both.
 
         serializer = FollowerRequestSerializer(data = request.data)
+        
+        print(serializer.is_valid())
+        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -214,7 +218,7 @@ class FollowRequestViews(APIView):
         
     def delete(self, request, pk):
         print("FR DATA", request.data)
-        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
+        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
 
         if (follow_request_obj):
             follow_request_obj.delete()
@@ -223,12 +227,18 @@ class FollowRequestViews(APIView):
         return Response({"Message": "Error has occured when trying to delete follow request"}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendsViews(APIView):
+
     '''
     Creates a Friend Object
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @swagger_auto_schema(operation_description="Creates a friend object",
+        operation_summary="Creates a friend object",
+        responses={200: FriendsSerializer()},
+        tags=['Feed'],)
+    
     def post (self, request, pk):
         
         serializer = FriendsSerializer(data = request.data)
@@ -251,12 +261,18 @@ class NotificationViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @swagger_auto_schema(operation_description="Creates a notification object",
+        operation_summary="Creates a notification object",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+
     def post(self, request, pk):
+        
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
                                                                   # that are affected by the action
 
         author = AppAuthor.objects.get(username = request.data['author'])
-        request.data['author'] = author.user_id
+        request.data['author'] = str(author.user_id)
 
         serializer.is_valid()
         print(serializer.errors)
@@ -265,11 +281,17 @@ class NotificationViews(APIView):
             return Response({'message': 'Notification Object Successfully Created'}, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    @swagger_auto_schema(operation_description="Delete a notification object",
+        operation_summary="Delete a notification object",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
     
     def delete(self, request, pk):
         print("Notify DATA", request.data)
 
-        notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
+        notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
         if (notification_object):
             notification_object.delete()
@@ -293,11 +315,13 @@ class InboxViews(APIView):
         '''
         Return the inbox of an author
         '''
+        pk = uuid.UUID(pk)
+
         inbox = Inbox.objects.get(author = pk)
 
         serializer = InboxSerializer(inbox)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
     @swagger_auto_schema(operation_description="Updates an authors inbox",
@@ -309,10 +333,10 @@ class InboxViews(APIView):
         '''
         Update the inbox of an author
         '''
-        # inbox = Inbox.objects.get(author = pk)
+        inbox = Inbox.objects.get(author = pk)
 
-        inbox = Inbox.objects.get(author = request.data['author'])
-
+        # inbox = Inbox.objects.get(author = request.data['author'])
+        print(inbox.posts)
         # print("Inbox", inbox.author.user_id)
 
         # print("Inbox", dict(inbox.posts))
@@ -325,30 +349,49 @@ class InboxViews(APIView):
 
         author = request.data['author']
 
-        posts = request.data['posts']
+        posts = request.data.get('posts')
 
-        post_comments = request.data['post_comments']
+        post_comments = request.data.get('post_comments')
 
-        post_likes = request.data['post_likes']
+        post_likes = request.data.get('post_likes')
 
-        follow_requests = request.data['follow_requests']
+        follow_requests = request.data.get('follow_requests')
 
-        
-        key = list(posts.keys())[0]
-        inbox.posts[key] = posts[key]
-        print("APPENDED", inbox.posts)
+        if (posts is not None):
+            key = list(posts.keys())[0]
+            if(inbox.posts == None):
+                inbox.posts = {key:posts[key]}
+                print("New object", inbox.posts)
+            else:
+                inbox.posts[key] = posts[key]
+                print("APPENDED", inbox.posts)
 
-        key = list(post_comments.keys())[0]
-        inbox.post_comments[key] = post_comments[key]
-        print("APPENDED", inbox.post_comments)
+        if (post_comments is not None):
+            key = list(post_comments.keys())[0]
+            if(inbox.post_comments == None):
+                inbox.post_comments = {key:post_comments[key]}
+                print("New object", inbox.post_comments)
+            else:
+                inbox.post_comments[key] = post_comments[key]
+                print("APPENDED", inbox.post_comments)
 
-        key = list(post_likes.keys())[0]
-        inbox.post_likes[key] = post_likes[key]
-        print("APPENDED", inbox.post_likes)
+        if (post_likes is not None):
+            key = list(post_likes.keys())[0]
+            if(inbox.post_likes == None):
+                inbox.post_likes = {key:post_likes[key]}
+                print("New object", inbox.post_likes)
+            else:
+                inbox.post_likes[key] = post_likes[key]
+                print("APPENDED", inbox.post_likes)
 
-        key = list(follow_requests.keys())[0]
-        inbox.follow_requests[key] = follow_requests[key]
-        print("APPENDED", inbox.follow_requests)
+        if (follow_requests is not None):
+            key = list(follow_requests.keys())[0]
+            if(inbox.follow_requests == None):
+                inbox.follow_requests = {key:follow_requests[key]}
+                print("New object", inbox.follow_requests)
+            else:
+                inbox.follow_requests[key] = follow_requests[key]
+                print("APPENDED", inbox.follow_requests)
 
         # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
         # if (len(post) != 0):
@@ -398,20 +441,28 @@ class GetAuthorsFollowersRemote(APIView):
         tags=['Remote'],)
     
     def get(self, request, author_id):
-        friends = Friends.objects.filter(author_id = author_id)
+
+        author_id = uuid.UUID(author_id)
+
+        friends = Friends.objects.filter(author = author_id)
 
         friend_list = []
+        
         for friend in friends:
-            friend_list.append(friend.friend.user_id)
+
+            friend_list.append(uuid.UUID(friend.friend))
 
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
-        serializer = AuthorSerializer(authors, many = True)
+        serializer = AuthorSerializerRemote(authors, many = True)
 
         # serializer = FriendsSerializer(friends, many=True)
-    
 
-        return Response({"items": serializer.data}, status=status.HTTP_200_OK)
+        if (authors):
+            return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Author's Followers do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class FollowersRemote(APIView):
@@ -429,7 +480,10 @@ class FollowersRemote(APIView):
         tags=['Remote'],)
 
     def get(self, request, author_id, foreign_author_id):
-        
+        author_id = uuid.UUID(author_id)
+
+        foreign_author_id = uuid.UUID(foreign_author_id)
+
         friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
 
         serializer = FriendsSerializer(friend, many = True)
@@ -458,6 +512,8 @@ class InboxViewsRemote(APIView):
         '''
         Update the inbox of an author remotely
         '''
+        author_id = uuid.UUID(author_id)
+        
         inbox = Inbox.objects.get(author_id = author_id) # We need to test this
 
         # inbox = Inbox.objects.get(author = request.data['author'])
@@ -472,21 +528,41 @@ class InboxViewsRemote(APIView):
 
         follow_requests = request.data['follow_requests']
         
-        key = list(posts.keys())[0]
-        inbox.posts[key] = posts[key]
-        print("APPENDED", inbox.posts)
+        if (posts is not None):
+            key = list(posts.keys())[0]
+            if(inbox.posts == None):
+                inbox.posts = {key:posts[key]}
+                print("New object", inbox.posts)
+            else:
+                inbox.posts[key] = posts[key]
+                print("APPENDED", inbox.posts)
 
-        key = list(post_comments.keys())[0]
-        inbox.post_comments[key] = post_comments[key]
-        print("APPENDED", inbox.post_comments)
+        if (post_comments is not None):
+            key = list(post_comments.keys())[0]
+            if(inbox.post_comments == None):
+                inbox.post_comments = {key:post_comments[key]}
+                print("New object", inbox.post_comments)
+            else:
+                inbox.post_comments[key] = post_comments[key]
+                print("APPENDED", inbox.post_comments)
 
-        key = list(post_likes.keys())[0]
-        inbox.post_likes[key] = post_likes[key]
-        print("APPENDED", inbox.post_likes)
+        if (post_likes is not None):
+            key = list(post_likes.keys())[0]
+            if(inbox.post_likes == None):
+                inbox.post_likes = {key:post_likes[key]}
+                print("New object", inbox.post_likes)
+            else:
+                inbox.post_likes[key] = post_likes[key]
+                print("APPENDED", inbox.post_likes)
 
-        key = list(follow_requests.keys())[0]
-        inbox.follow_requests[key] = follow_requests[key]
-        print("APPENDED", inbox.follow_requests)
+        if (follow_requests is not None):
+            key = list(follow_requests.keys())[0]
+            if(inbox.follow_requests == None):
+                inbox.follow_requests = {key:follow_requests[key]}
+                print("New object", inbox.follow_requests)
+            else:
+                inbox.follow_requests[key] = follow_requests[key]
+                print("APPENDED", inbox.follow_requests)
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                      'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}

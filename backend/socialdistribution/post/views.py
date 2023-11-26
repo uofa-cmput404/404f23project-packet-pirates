@@ -100,7 +100,7 @@ class GetFeedPostsByUsername(APIView):
     def get(self, request, pk):
         author = AppAuthor.objects.get(username = pk)
         # is_private = false
-        posts = Post.objects.filter(author_id=author.user_id) # Find posts that the specific author has posted
+        posts = Post.objects.filter(author = author.user_id) # Find posts that the specific author has posted
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
@@ -131,13 +131,14 @@ class GetFeedPosts(APIView):
                 tags=['Post'],)
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
+        posts = Post.objects.filter(author = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
+        
         friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
-        for friend in friends:
-            # print(friend.friend.user_id)
 
-            posts = posts | Post.objects.filter(author_id = friend.friend.user_id).exclude(unlisted = True) # Add posts from each friend
+        for friend in friends:
+            posts = posts | Post.objects.filter(author = friend.friend).exclude(unlisted = True) # Add posts from each friend
+
         # print("Friends", friends)
         # print("Posts", posts)
         serializer = PostSerializer(posts, many = True)
@@ -167,17 +168,24 @@ class PostViews(APIView):
         print(request.data['image_file'])
 
         picture = request.data['image_file']
+        
+        new_request_data = request.data.copy()
 
+        new_request_data['post_id'] = uuid.uuid4()
+        
+        new_request_data['origin'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + request.data['author']  + "/posts/" + str(new_request_data['post_id'])
+
+        print("TEST", test)
         if (picture != "null"):
             image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-            request.data['image_file'] = image
-            request.data['image_url'] = ''
-            serializer = PostSerializer(data = request.data)
+            new_request_data['image_file'] = image
+            new_request_data['image_url'] = ''
+            serializer = PostSerializer(data = new_request_data)
         else:
-            new_request_data = request.data.copy()
             new_request_data['image_file'] = ''
             serializer = PostSerializer(data = new_request_data)
 
+        print(request.data)
 
         serializer.is_valid()
         print(serializer)
@@ -188,9 +196,22 @@ class PostViews(APIView):
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request):
 
-    
+    @swagger_auto_schema(operation_description="Delete a post for a specific author",
+            operation_summary="Delete Author Post",
+            responses={201: PostSerializer()},
+            tags=['Post'],)
+        
+    def delete(self, request, pk):
+        post_id = uuid.UUID(pk)
+
+        post = Post.objects.filter(post_id = post_id)
+
+        if post:
+            post.delete()
+            return Response({"message": "Post Model Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response({"Message": "Post Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
@@ -259,8 +280,8 @@ class PostComments(APIView):
 
         notification_author = AppAuthor.objects.get(user_id = request.data['author'])
 
-        if (post_author.user_id != notification_author.user_id):
-            notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
+        if (post_author != str(notification_author.user_id)):
+            notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
                             'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
                             'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
@@ -334,18 +355,25 @@ class PostLikeViews(APIView):
         
         notification_author = AppAuthor.objects.get(user_id = request.data['author']['user']['user_id'])
 
-        if (post_author.user_id != notification_author.user_id):
-            notification = {'author':post_author.user_id, 'notification_author':notification_author.user_id, 
-                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
+        if (post_author != str(notification_author.user_id)):
+            notification = {'author':post_author, 'notification_author': str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture), 
                             'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+           
             notification_serializer = NotificationsSerializer(data = notification)
-
+            
+            notification_serializer.is_valid()
+            print(notification_serializer.errors)
+            
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
 
         like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
 
         serializer = LikeSerializer(data = like_data)
+
+        serializer.is_valid()
+        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -363,7 +391,7 @@ class PostLikeViews(APIView):
         post_id = uuid.UUID(pk)
         author_id = request.user.user_id
 
-        post_liked = PostLike.objects.filter(author_id = author_id).filter(post_object_id = post_id)
+        post_liked = PostLike.objects.filter(author = author_id).filter(post_object_id = post_id)
 
         post = Post.objects.filter(post_id = post_id).update(likes_count = request.data['like_count'])
 
@@ -458,9 +486,7 @@ class CommentsRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        comments = Comment.objects.filter(author_id = auth_id).filter(post_id = post_id)
-
-        print(comments[0])
+        comments = Comment.objects.filter(author = auth_id).filter(post_id = post_id)
 
         serializer = CommentSerializerRemote(comments, many = True)
 
@@ -492,7 +518,7 @@ class PostRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        post = Post.objects.filter(author_id = auth_id).filter(post_id = post_id)
+        post = Post.objects.filter(author = auth_id).filter(post_id = post_id)
 
         serializer = PostSerializerRemote(post, many = True)
 
@@ -521,7 +547,7 @@ class AuthorPostsRemote(APIView):
         
         auth_id = uuid.UUID(author)
 
-        posts = Post.objects.filter(author_id = auth_id)
+        posts = Post.objects.filter(author = auth_id)
 
         #posts = Post.objects.filter(author = auth_id).order_by('date_time')
 
@@ -535,4 +561,34 @@ class AuthorPostsRemote(APIView):
             return Response (serializer.data, status=status.HTTP_200_OK)
         
         return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+class ImagesRemote(APIView):
+    '''
+    Image Posts are just posts that are images. But they are encoded as base64 data. 
+    You can inline an image post using a data url or you can use this shortcut to get the image if authenticated to see it.
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/image
+    GET [local, remote] get the public post converted to binary as an iamge
+    return 404 if not an image
+    '''
+    @swagger_auto_schema(operation_description="Get the image of a post of an author if it exists",
+            operation_summary="Get the image of a post of an author if it exists",
+            responses={200: PostSerializerRemote()},
+            tags=['Remote'],)
 
+    def get(self, request, author, post):
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        post = Post.objects.filter(author = auth_id).filter(post_id = post_id)[0]
+
+        image = None # If its None still then it means that its an imageless post
+        if (post.image_file != ''):
+            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + str(post.image_file)
+        elif (post.image_url != ''):
+            image = post.image_url
+        
+        if (post and image != None):
+            return Response (image, status = status.HTTP_200_OK)
+
+        return Response ({"Message": "Post/Image does not exist"}, status=status.HTTP_404_NOT_FOUND)

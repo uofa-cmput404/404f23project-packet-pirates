@@ -20,6 +20,8 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import DefaultStorage, FileSystemStorage
 from django.core.files import File
 from django.core.files.images import ImageFile
+from django.core.paginator import Paginator
+
 from django.conf import settings
 
 from urllib.request import urlopen
@@ -28,6 +30,8 @@ from PIL import Image
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+
 
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -42,10 +46,17 @@ class AuthorRegistration(APIView):
 
         image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
         request.data['profile_picture'] = image
- 
-        validated_data = custom_validation(request.data)
-        serializer = AuthorRegisterSerializer(data=validated_data)
+        request.data['user_id'] = uuid.uuid4()
 
+        request.data['host'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/"
+
+        request.data['url'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(request.data['user_id'])
+
+        validated_data = custom_validation(request.data)
+        print(validated_data)
+        serializer = AuthorRegisterSerializer(data=validated_data)
+        print(serializer.is_valid())
+        print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
 
@@ -163,6 +174,17 @@ class GetSingleAuthorByUsername(APIView):
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
     
+class getNodes(APIView):
+    '''
+    Returns all nodes
+    '''
+    def get(self, request):
+
+        nodes = Node.objects.all()
+
+        serializer = NodeSerializer(nodes, many = True)
+
+        return Response (serializer.data, status=status.HTTP_200_OK)
 
 # REMOTE VIEWS
 class getAllAuthorsRemote(APIView):
@@ -173,38 +195,44 @@ class getAllAuthorsRemote(APIView):
         size: how big is a page
     '''
 
-    permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (BasicAuthentication, )
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get All Authors Remote",
             operation_summary="Get All Authors Remote",
-            responses={200: AuthorSerializer()},
+            responses={200: AuthorSerializerRemote()},
             tags=['Remote'],)
     
     def get(self, request):
         all_authors = AppAuthor.objects.all()
         
-        serializer = AuthorSerializer(all_authors, many = True)
+        serializer = AuthorSerializerRemote(all_authors, many = True)
 
-        return Response({"items": serializer.data}, status=status.HTTP_200_OK)
+        if (all_authors):
+            return Response({"type": "authors", "items": serializer.data}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Authors do not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class getSingleAuthorRemote(APIView):
     '''
     URL: ://service/authors/{AUTHOR_ID}/
     GET [local, remote]: retrieve AUTHOR_ID’s profile
     '''
-    permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (BasicAuthentication, )
+    # permission_classes = (permissions.IsAuthenticated, )
+    # authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get A Single Author Remote",
             operation_summary="Get a single author remote",
-            responses={200: AuthorSerializer()},
+            responses={200: AuthorSerializerRemote()},
             tags=['Remote'],)
     
     def get (self, request, author_id):
         author = AppAuthor.objects.get(user_id = author_id)
 
-        serializer = AuthorSerializer(author)
+        serializer = AuthorSerializerRemote(author)
 
-        return Response (serializer.data, status=status.HTTP_200_OK)
+        if (author):
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Author do not exist"}, status=status.HTTP_404_NOT_FOUND)
     

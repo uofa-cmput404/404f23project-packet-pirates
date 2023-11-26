@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Landing from "./components/login/Landing";
 import MainPage from "./components/site/MainPage";
-import CreatePost from "./components/main-feed/CreatePost";
-import Post from "./components/main-feed/Posts";
-import Profile from "./components/main-feed/Profile";
+import SinglePost from "./components/single-post/singlePost";
 
 // routing
 import {
@@ -49,7 +47,7 @@ function App() {
   useEffect(() => {
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
-      .get("/api/author")
+      .get("/author")
       .then((response) => {
         // console.log("Response from /api/author:", response);
         setIsLoggedIn(true);
@@ -82,6 +80,10 @@ function App() {
               <ViewProfileNotLogged />
             )
           }
+        />
+        <Route
+          path="/post/:postID"
+          element={isLoggedIn ? <SinglePost user={authorInfo} /> : <Landing />}
         />
         <Route
           path="/inbox"
