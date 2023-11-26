@@ -325,10 +325,10 @@ class InboxViews(APIView):
         '''
         Update the inbox of an author
         '''
-        # inbox = Inbox.objects.get(author = pk)
+        inbox = Inbox.objects.get(author = pk)
 
-        inbox = Inbox.objects.get(author = request.data['author'])
-
+        # inbox = Inbox.objects.get(author = request.data['author'])
+        print(inbox.posts)
         # print("Inbox", inbox.author.user_id)
 
         # print("Inbox", dict(inbox.posts))
@@ -351,23 +351,39 @@ class InboxViews(APIView):
 
         if (posts is not None):
             key = list(posts.keys())[0]
-            inbox.posts[key] = posts[key]
-            print("APPENDED", inbox.posts)
+            if(inbox.posts == None):
+                inbox.posts = {key:posts[key]}
+                print("New object", inbox.posts)
+            else:
+                inbox.posts[key] = posts[key]
+                print("APPENDED", inbox.posts)
 
         if (post_comments is not None):
             key = list(post_comments.keys())[0]
-            inbox.post_comments[key] = post_comments[key]
-            print("APPENDED", inbox.post_comments)
+            if(inbox.post_comments == None):
+                inbox.post_comments = {key:post_comments[key]}
+                print("New object", inbox.post_comments)
+            else:
+                inbox.post_comments[key] = post_comments[key]
+                print("APPENDED", inbox.post_comments)
 
         if (post_likes is not None):
             key = list(post_likes.keys())[0]
-            inbox.post_likes[key] = post_likes[key]
-            print("APPENDED", inbox.post_likes)
+            if(inbox.post_likes == None):
+                inbox.post_likes = {key:post_likes[key]}
+                print("New object", inbox.post_likes)
+            else:
+                inbox.post_likes[key] = post_likes[key]
+                print("APPENDED", inbox.post_likes)
 
         if (follow_requests is not None):
             key = list(follow_requests.keys())[0]
-            inbox.follow_requests[key] = follow_requests[key]
-            print("APPENDED", inbox.follow_requests)
+            if(inbox.follow_requests == None):
+                inbox.follow_requests = {key:follow_requests[key]}
+                print("New object", inbox.follow_requests)
+            else:
+                inbox.follow_requests[key] = follow_requests[key]
+                print("APPENDED", inbox.follow_requests)
 
         # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
         # if (len(post) != 0):
@@ -496,23 +512,39 @@ class InboxViewsRemote(APIView):
         
         if (posts is not None):
             key = list(posts.keys())[0]
-            inbox.posts[key] = posts[key]
-            print("APPENDED", inbox.posts)
+            if(inbox.posts == None):
+                inbox.posts = {key:posts[key]}
+                print("New object", inbox.posts)
+            else:
+                inbox.posts[key] = posts[key]
+                print("APPENDED", inbox.posts)
 
         if (post_comments is not None):
             key = list(post_comments.keys())[0]
-            inbox.post_comments[key] = post_comments[key]
-            print("APPENDED", inbox.post_comments)
+            if(inbox.post_comments == None):
+                inbox.post_comments = {key:post_comments[key]}
+                print("New object", inbox.post_comments)
+            else:
+                inbox.post_comments[key] = post_comments[key]
+                print("APPENDED", inbox.post_comments)
 
         if (post_likes is not None):
             key = list(post_likes.keys())[0]
-            inbox.post_likes[key] = post_likes[key]
-            print("APPENDED", inbox.post_likes)
+            if(inbox.post_likes == None):
+                inbox.post_likes = {key:post_likes[key]}
+                print("New object", inbox.post_likes)
+            else:
+                inbox.post_likes[key] = post_likes[key]
+                print("APPENDED", inbox.post_likes)
 
         if (follow_requests is not None):
             key = list(follow_requests.keys())[0]
-            inbox.follow_requests[key] = follow_requests[key]
-            print("APPENDED", inbox.follow_requests)
+            if(inbox.follow_requests == None):
+                inbox.follow_requests = {key:follow_requests[key]}
+                print("New object", inbox.follow_requests)
+            else:
+                inbox.follow_requests[key] = follow_requests[key]
+                print("APPENDED", inbox.follow_requests)
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                      'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}

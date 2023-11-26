@@ -83,3 +83,8 @@ class AuthorSerializerRemote(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
         fields = ("type", "id", "url", "host", "displayName", "github", "profileImage")
+
+class NodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Node
+        fields = "__all__"

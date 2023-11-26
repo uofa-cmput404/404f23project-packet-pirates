@@ -6,6 +6,7 @@ import CreatePost from "./components/main-feed/CreatePost";
 import Post from "./components/main-feed/Posts";
 import Profile from "./components/main-feed/Profile";
 import Cookies from 'universal-cookie'
+import SinglePost from "./components/single-post/singlePost";
 
 
 // routing
@@ -92,6 +93,16 @@ function App() {
               <ViewProfile user={authorInfo} />
             ) : (
               <ViewProfileNotLogged />
+            )
+          }
+        />
+        <Route
+          path="/post/:postID"
+          element={
+            isLoggedIn ? (
+              <SinglePost user={authorInfo} />
+            ) : (
+              <Landing />
             )
           }
         />
