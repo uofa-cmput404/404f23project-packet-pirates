@@ -30,6 +30,15 @@ export default function RemotePost({
     console.log("share");
   };
 
+  useEffect(() => {
+    console.log("user", user);
+    console.log("title", title);
+    console.log("description", description);
+    console.log("content", content);
+    console.log("img", img);
+    console.log("likes", likes);
+  }, []);
+
   return (
     <>
       <li className="list-none mb-5">
