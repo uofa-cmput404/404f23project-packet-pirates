@@ -478,21 +478,25 @@ class InboxViewsRemote(APIView):
 
         follow_requests = request.data['follow_requests']
         
-        key = list(posts.keys())[0]
-        inbox.posts[key] = posts[key]
-        print("APPENDED", inbox.posts)
+        if (posts is not None):
+            key = list(posts.keys())[0]
+            inbox.posts[key] = posts[key]
+            print("APPENDED", inbox.posts)
 
-        key = list(post_comments.keys())[0]
-        inbox.post_comments[key] = post_comments[key]
-        print("APPENDED", inbox.post_comments)
+        if (post_comments is not None):
+            key = list(post_comments.keys())[0]
+            inbox.post_comments[key] = post_comments[key]
+            print("APPENDED", inbox.post_comments)
 
-        key = list(post_likes.keys())[0]
-        inbox.post_likes[key] = post_likes[key]
-        print("APPENDED", inbox.post_likes)
+        if (post_likes is not None):
+            key = list(post_likes.keys())[0]
+            inbox.post_likes[key] = post_likes[key]
+            print("APPENDED", inbox.post_likes)
 
-        key = list(follow_requests.keys())[0]
-        inbox.follow_requests[key] = follow_requests[key]
-        print("APPENDED", inbox.follow_requests)
+        if (follow_requests is not None):
+            key = list(follow_requests.keys())[0]
+            inbox.follow_requests[key] = follow_requests[key]
+            print("APPENDED", inbox.follow_requests)
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                      'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
