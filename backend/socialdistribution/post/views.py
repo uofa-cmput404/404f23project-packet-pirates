@@ -100,7 +100,7 @@ class GetFeedPostsByUsername(APIView):
     def get(self, request, pk):
         author = AppAuthor.objects.get(username = pk)
         # is_private = false
-        posts = Post.objects.filter(author_id=author.user_id) # Find posts that the specific author has posted
+        posts = Post.objects.filter(author = author.user_id) # Find posts that the specific author has posted
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
@@ -131,13 +131,14 @@ class GetFeedPosts(APIView):
                 tags=['Post'],)
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
 
+        posts = Post.objects.filter(author = request.user.user_id).exclude(unlisted = True) # Find posts that the specific author has posted
+        
         friends = Friends.objects.filter(author = request.user.user_id) # Friends of author
-        for friend in friends:
-            # print(friend.friend.user_id)
 
-            posts = posts | Post.objects.filter(author_id = friend.friend.user_id).exclude(unlisted = True) # Add posts from each friend
+        for friend in friends:
+            posts = posts | Post.objects.filter(author = friend.friend).exclude(unlisted = True) # Add posts from each friend
+
         # print("Friends", friends)
         # print("Posts", posts)
         serializer = PostSerializer(posts, many = True)

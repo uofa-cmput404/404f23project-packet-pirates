@@ -8,7 +8,8 @@ class Post(models.Model):
 
     post_id = models.UUIDField(default = uuid.uuid4, primary_key = True, unique= True)
 
-    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    author = models.CharField(max_length=200, blank=True)
 
     title = models.CharField(max_length=50)
 

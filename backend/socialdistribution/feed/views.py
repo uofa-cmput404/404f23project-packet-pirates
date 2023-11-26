@@ -49,7 +49,7 @@ class GetAllNotifications(APIView):
                     tags=['Feed'],)
 
     def get(self, request, pk):
-        notifications = Notifications.objects.filter(author_id = pk)
+        notifications = Notifications.objects.filter(author = pk)
 
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
@@ -160,9 +160,9 @@ class GetTrueFriends(APIView):
     
     def get(self, request, pk):
           
-        followers = Friends.objects.filter(author_id = pk)
+        followers = Friends.objects.filter(author = pk)
 
-        following = Friends.objects.filter(friend_id = pk)
+        following = Friends.objects.filter(friend = pk)
 
         # Empty queryset
         true_friends = Friends.objects.none() 
@@ -171,7 +171,7 @@ class GetTrueFriends(APIView):
 
             #follow: auth id them friend id me
 
-            friend  =  followers.filter(friend_id = follow.author)
+            friend  =  followers.filter(friend = follow.author)
 
             if friend.exists():
 
@@ -200,6 +200,9 @@ class FollowRequestViews(APIView):
                                   # Or request can have both.
 
         serializer = FollowerRequestSerializer(data = request.data)
+        
+        print(serializer.is_valid())
+        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -223,6 +226,7 @@ class FollowRequestViews(APIView):
         return Response({"Message": "Error has occured when trying to delete follow request"}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendsViews(APIView):
+
     '''
     Creates a Friend Object
     '''
@@ -266,7 +270,7 @@ class NotificationViews(APIView):
                                                                   # that are affected by the action
 
         author = AppAuthor.objects.get(username = request.data['author'])
-        request.data['author'] = author.user_id
+        request.data['author'] = str(author.user_id)
 
         serializer.is_valid()
         print(serializer.errors)
