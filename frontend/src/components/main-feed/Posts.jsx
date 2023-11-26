@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Post({
   user,
@@ -21,6 +22,8 @@ export default function Post({
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [postAuthor, setPostAuthor] = useState('');
+  const navigate = useNavigate();
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -89,12 +92,27 @@ export default function Post({
 
 
   const handleShare = () => {
-    // Handle share functionality
+    setShowShareOptions((prev) => !prev);
   };
 
-  const handleComment = () => {
-    setIsCommenting(true); // Show comment input field
+  const handleCopyLink = () => {
+    const postLink = window.location.origin + `/post/${id}`; // Construct link to post based on current URL
+  
+    navigator.clipboard.writeText(postLink) // Copy link to clipboard
+      .then(() => {
+        console.log('Link copied to clipboard:', postLink);
+      })
+      .catch((error) => {
+        console.error('Error copying link to clipboard:', error);
+      });
+  
+    setShowShareOptions(false); // Close share options
   };
+
+  const handleView = () => {
+    navigate("/post/" + id);
+    window.location.reload(false);
+  }
 
   const handleCommentSubmit = async () => {
     
@@ -130,8 +148,6 @@ export default function Post({
     });
 
   };
-
-  // console.log("IMG_file", img, "IMG_url", img_url)
 
   const getComments = async () => {
 
@@ -256,8 +272,21 @@ export default function Post({
             <img src={img} alt="" className="w-full h-full object-cover" />
           </div>
 
-          <div className="likes">
-            <span>Likes: {likeCount}</span>
+          <div className="flex flex-row justify-between mt-2">
+            <div className="likes">
+              <span>Likes: {likeCount}</span>
+            </div>
+            <button 
+              onClick={handleView}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-lm-custom-black rounded-full view-button"
+              >
+              View
+              <img
+                src="/view-button.png"
+                alt="View"
+                className="view-button-img"
+              />
+            </button>
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
@@ -283,10 +312,10 @@ export default function Post({
               />
             </button>
 
-            <button 
+            <button
               onClick={handleShare}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
-              >
+            >
               <img
                 src="/share-button.png"
                 alt="Share"
@@ -294,6 +323,24 @@ export default function Post({
               />
             </button>
           </div>
+
+          {showShareOptions && (
+            <div className="share-options-box">
+              <button
+                className="share-option-button send-post"
+                onClick={() => { /* handle send post */ }}
+              >
+                Send Post
+              </button>
+              <button
+                className="share-option-button copy-link"
+                onClick={handleCopyLink}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
+          
 
           {isCommenting && (
             <div className="comment-input" style={{ display: "flex", alignItems: "center" }}>
