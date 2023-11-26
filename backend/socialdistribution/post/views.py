@@ -188,9 +188,16 @@ class PostViews(APIView):
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request):
+    def delete(self, request, pk):
+        post_id = uuid.UUID(pk)
 
-    
+        post = Post.objects.filter(post_id = post_id)
+
+        if post:
+            post.delete()
+            return Response({"message": "Post Model Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response({"Message": "Post Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
