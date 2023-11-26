@@ -151,8 +151,8 @@ class PostViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    @swagger_auto_schema(operation_description="Create/delete a post for a specific author",
-                operation_summary="Create/delete Author Post",
+    @swagger_auto_schema(operation_description="Create a post for a specific author",
+                operation_summary="Create Author Post",
                 responses={201: PostSerializer()},
                 tags=['Post'],)
 
@@ -188,6 +188,12 @@ class PostViews(APIView):
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
+
+    @swagger_auto_schema(operation_description="Delete a post for a specific author",
+            operation_summary="Delete Author Post",
+            responses={201: PostSerializer()},
+            tags=['Post'],)
+        
     def delete(self, request, pk):
         post_id = uuid.UUID(pk)
 
