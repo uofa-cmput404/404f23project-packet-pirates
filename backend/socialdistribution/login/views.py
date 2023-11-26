@@ -216,7 +216,10 @@ class getAllAuthorsRemote(APIView):
         
         serializer = AuthorSerializerRemote(all_authors, many = True)
 
-        return Response({"type" : "authors", "items": serializer.data}, status=status.HTTP_200_OK)
+        if (all_authors):
+            return Response({"type": "authors", "items": serializer.data}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Authors do not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class getSingleAuthorRemote(APIView):
     '''
@@ -235,5 +238,9 @@ class getSingleAuthorRemote(APIView):
         author = AppAuthor.objects.get(user_id = author_id)
 
         serializer = AuthorSerializerRemote(author)
-        return Response (serializer.data, status=status.HTTP_200_OK)
+
+        if (author):
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Author do not exist"}, status=status.HTTP_404_NOT_FOUND)
     

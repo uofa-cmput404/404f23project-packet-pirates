@@ -24,7 +24,7 @@ export default function MainPage({ user }) {
 
   const getPosts = async () => {
     let postsUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/feedposts";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/feedposts";
 
     const postsRes = await axios
       .get(postsUrl, config)
@@ -67,7 +67,7 @@ export default function MainPage({ user }) {
   console.log("user", user);
   const getConnections = async () => {
     let connectionsUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + user.user.user_id + "/truefriends";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
       .get(connectionsUrl, config)
@@ -84,7 +84,7 @@ export default function MainPage({ user }) {
 
   const getNotifications = async () => {
     let notificationsUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" +
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
       user.user.user_id +
       "/authornotifications";
 
@@ -122,7 +122,7 @@ export default function MainPage({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout", config);
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {

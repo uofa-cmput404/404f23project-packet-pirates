@@ -43,7 +43,7 @@ export default function ViewProfile({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -75,7 +75,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -94,7 +94,7 @@ export default function ViewProfile({ user }) {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/feedposts_byusername";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl,config)
@@ -172,7 +172,7 @@ export default function ViewProfile({ user }) {
 
   const getAuthorInfo = async () => {
 
-    let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/username";
+    let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
 
     const authRes = await axios
       .get(authUrl, config)
@@ -213,7 +213,7 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/logout", config);
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {
@@ -227,13 +227,13 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     let authorUrl = 
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/username";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
 
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/" + user.user.user_id + "/createnotif";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/" + user.user.user_id + "/followrequest";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
 
     const authReso = await axios
       .get(authorUrl, config)

@@ -41,7 +41,7 @@ export default function ProfilePage({ user }) {
         event.preventDefault()
         console.log(info)
 
-        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/something", info)
+        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/something", info)
         console.log(res.data)
       };
       

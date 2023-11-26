@@ -47,7 +47,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),  
     path('admin/', admin.site.urls),
-    path('api/', include('login.urls')),
-    path('api/', include('post.urls')),
-    path('api/', include('feed.urls')),
+    path('', include('login.urls')),
+    path('', include('post.urls')),
+    path('', include('feed.urls')),
 ]+ static (settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # Don't know if we need this

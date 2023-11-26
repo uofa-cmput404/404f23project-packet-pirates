@@ -40,7 +40,7 @@ export default function ViewProfileNotLogged() {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/" + author + "/feedposts_byusername";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)

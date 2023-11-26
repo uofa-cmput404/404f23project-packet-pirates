@@ -60,10 +60,10 @@ export default function Register() {
         event.preventDefault()
         console.log(info)
 
-        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/register", info)
+        const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/register", info)
         console.log(res.data)
     
-        const res2 = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/login", loginTest)
+        const res2 = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/login", loginTest)
         console.log(res2.data)
       };
 
@@ -79,7 +79,7 @@ export default function Register() {
         console.log("FORM DATA: ", formData);
         axios
         .post(
-            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/register", 
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/register", 
             formData,
             {
                 headers: {

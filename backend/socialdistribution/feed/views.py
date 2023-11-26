@@ -325,30 +325,33 @@ class InboxViews(APIView):
 
         author = request.data['author']
 
-        posts = request.data['posts']
+        posts = request.data.get('posts')
 
-        post_comments = request.data['post_comments']
+        post_comments = request.data.get('post_comments')
 
-        post_likes = request.data['post_likes']
+        post_likes = request.data.get('post_likes')
 
-        follow_requests = request.data['follow_requests']
+        follow_requests = request.data.get('follow_requests')
 
-        
-        key = list(posts.keys())[0]
-        inbox.posts[key] = posts[key]
-        print("APPENDED", inbox.posts)
+        if (posts is not None):
+            key = list(posts.keys())[0]
+            inbox.posts[key] = posts[key]
+            print("APPENDED", inbox.posts)
 
-        key = list(post_comments.keys())[0]
-        inbox.post_comments[key] = post_comments[key]
-        print("APPENDED", inbox.post_comments)
+        if (post_comments is not None):
+            key = list(post_comments.keys())[0]
+            inbox.post_comments[key] = post_comments[key]
+            print("APPENDED", inbox.post_comments)
 
-        key = list(post_likes.keys())[0]
-        inbox.post_likes[key] = post_likes[key]
-        print("APPENDED", inbox.post_likes)
+        if (post_likes is not None):
+            key = list(post_likes.keys())[0]
+            inbox.post_likes[key] = post_likes[key]
+            print("APPENDED", inbox.post_likes)
 
-        key = list(follow_requests.keys())[0]
-        inbox.follow_requests[key] = follow_requests[key]
-        print("APPENDED", inbox.follow_requests)
+        if (follow_requests is not None):
+            key = list(follow_requests.keys())[0]
+            inbox.follow_requests[key] = follow_requests[key]
+            print("APPENDED", inbox.follow_requests)
 
         # KEEP THIS BECAUSE WE NEED TO MAKE NOTIFICATIONS HERE AND APPEND TO NOTIFICATION FIELD
         # if (len(post) != 0):
@@ -409,8 +412,12 @@ class GetAuthorsFollowersRemote(APIView):
         serializer = AuthorSerializerRemote(authors, many = True)
 
         # serializer = FriendsSerializer(friends, many=True)
-    
-        return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
+
+        if (authors):
+            return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
+        
+        return Response({"message": "Author's Followers do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class FollowersRemote(APIView):

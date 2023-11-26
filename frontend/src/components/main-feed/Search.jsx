@@ -15,7 +15,7 @@ export default function SearchBar() {
   const handleInputChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
-    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/api/author/search?q=" + value;
+    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/search?q=" + value;
 
     axios.get(url, config).then((res) => {
       //   console.log("res", res);
