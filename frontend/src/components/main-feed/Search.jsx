@@ -15,7 +15,7 @@ export default function SearchBar() {
 
     axios.get(url).then((res) => {
       //   console.log("res", res);
-      const userNames = res.data.Users.map((user) => user.username);
+      const userNames = res.data.Users.map((user) => user.displayName);
       //   setResults(res.data.Users);
       setResults(userNames);
     });
