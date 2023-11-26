@@ -229,6 +229,11 @@ class FriendsViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @swagger_auto_schema(operation_description="Creates a friend object",
+        operation_summary="Creates a friend object",
+        responses={200: FriendsSerializer()},
+        tags=['Feed'],)
+    
     def post (self, request, pk):
         
         serializer = FriendsSerializer(data = request.data)
