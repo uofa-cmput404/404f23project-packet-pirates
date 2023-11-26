@@ -61,7 +61,7 @@ function App() {
 
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
-      .get("/author")
+      .get("/author", config)
       .then((response) => {
         console.log("Response from /author:", response);
         setIsLoggedIn(true);
