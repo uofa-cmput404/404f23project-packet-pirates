@@ -168,17 +168,24 @@ class PostViews(APIView):
         print(request.data['image_file'])
 
         picture = request.data['image_file']
+        
+        new_request_data = request.data.copy()
 
+        new_request_data['post_id'] = uuid.uuid4()
+        
+        new_request_data['origin'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + request.data['author']  + "/posts/" + str(new_request_data['post_id'])
+
+        print("TEST", test)
         if (picture != "null"):
             image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-            request.data['image_file'] = image
-            request.data['image_url'] = ''
-            serializer = PostSerializer(data = request.data)
+            new_request_data['image_file'] = image
+            new_request_data['image_url'] = ''
+            serializer = PostSerializer(data = new_request_data)
         else:
-            new_request_data = request.data.copy()
             new_request_data['image_file'] = ''
             serializer = PostSerializer(data = new_request_data)
 
+        print(request.data)
 
         serializer.is_valid()
         print(serializer)
