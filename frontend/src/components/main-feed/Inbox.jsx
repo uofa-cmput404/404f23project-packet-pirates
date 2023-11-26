@@ -25,13 +25,13 @@ export default function Inbox({ user }) {
     const fetchPostData = async (post) => {
       try {
         console.log("FETCHING POST DATA AT URL:", post.API);
-        // const response = await axios.get(post.API);
+        // const response = await axios.get(post.API)
         const response = await axios
           .get(
-            "http://127.0.0.1:8000/api/authors/5e4b8ac6-c5bb-4a4c-b671-a76300236f5d/posts/bd4f68ae-e148-4732-b3e1-9f210f2c2f4d"
+            "http://127.0.0.1:8000/authors/5e4b8ac6-c5bb-4a4c-b671-a76300236f5d/posts/bd4f68ae-e148-4732-b3e1-9f210f2c2f4d"
           )
           .then((res) => {
-            console.log("res", res);
+            console.log("res", res.data);
             setShowPost((prev) => [
               ...prev,
               res.data.map((post, index) => {
@@ -73,7 +73,7 @@ export default function Inbox({ user }) {
     console.log("getting inbox: ", user);
     axios
       .get(
-        config.API_ENDPOINT + "api/author/" + user.user.user_id + "/inbox/local"
+        config.API_ENDPOINT + "/author/" + user.user.user_id + "/inbox/local"
       )
       .then((res) => {
         console.log("inbox", res);

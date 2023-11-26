@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Landing from "./components/login/Landing";
 import MainPage from "./components/site/MainPage";
+import CreatePost from "./components/main-feed/CreatePost";
+import Post from "./components/main-feed/Posts";
+import Profile from "./components/main-feed/Profile";
 import SinglePost from "./components/single-post/singlePost";
 
 // routing

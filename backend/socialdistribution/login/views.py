@@ -46,17 +46,10 @@ class AuthorRegistration(APIView):
 
         image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
         request.data['profile_picture'] = image
-        request.data['user_id'] = uuid.uuid4()
-
-        request.data['host'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/"
-
-        request.data['url'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(request.data['user_id'])
-
+ 
         validated_data = custom_validation(request.data)
-        print(validated_data)
         serializer = AuthorRegisterSerializer(data=validated_data)
-        print(serializer.is_valid())
-        print(serializer.errors)
+
         if serializer.is_valid(raise_exception=True):
             author = serializer.create(validated_data)
 
