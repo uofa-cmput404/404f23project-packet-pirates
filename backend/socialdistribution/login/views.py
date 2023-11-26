@@ -167,6 +167,17 @@ class GetSingleAuthorByUsername(APIView):
         serializer = AuthorSerializer(author)
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
     
+class getNodes(APIView):
+    '''
+    Returns all nodes
+    '''
+    def get(self, request):
+
+        nodes = Node.objects.all()
+
+        serializer = NodeSerializer(nodes, many = True)
+
+        return Response (serializer.data, status=status.HTTP_200_OK)
 
 # REMOTE VIEWS
 class getAllAuthorsRemote(APIView):
