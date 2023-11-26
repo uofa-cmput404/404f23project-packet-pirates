@@ -34,10 +34,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -73,10 +73,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -105,7 +105,7 @@ export function Notification({ user, index, notification }) {
 
 
     let friendUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/friends";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/friends";
 
     const friendData = {
       author : user.user.user_id,

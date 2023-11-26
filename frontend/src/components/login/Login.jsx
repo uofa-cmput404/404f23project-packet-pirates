@@ -29,7 +29,7 @@ export default function Login() {
 
     // check if login was sucessful, then reloads the window
     const res = await axios
-      .post("http://127.0.0.1:8000/api/login", content, {})
+      .post("http://127.0.0.1:8000/login", content, {})
       .then((res) => res.data)
       .then(function (data) {
         console.log(data);

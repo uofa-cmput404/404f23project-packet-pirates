@@ -41,7 +41,7 @@ export default function Post({
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "http://127.0.0.1:8000/api/author/" + id + "/postlikes",
+          "http://127.0.0.1:8000/author/" + id + "/postlikes",
           {
             post_object_id: id,
             author: user,
@@ -53,7 +53,7 @@ export default function Post({
         );
       } else {
         // If unliking, make a DELETE request to remove the like
-        await axios.delete("http://127.0.0.1:8000/api/author/" + id + "/postlikes", {
+        await axios.delete("http://127.0.0.1:8000/author/" + id + "/postlikes", {
           data: {
             post_object_id: id,
             author: user,
@@ -76,7 +76,7 @@ export default function Post({
     // Check if the current user has liked the post
     const checkLikeStatus = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/author/" + id + "/postlikes");
+        const response = await axios.get("http://127.0.0.1:8000/author/" + id + "/postlikes");
         const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
         setHasLiked(likedByCurrentUser);
       } catch (error) {
@@ -102,8 +102,8 @@ export default function Post({
 
     console.log("USER!!!" , user)
 
-    let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
-    let authorUrl = "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/simpleauthor"
+    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
+    let authorUrl = "http://127.0.0.1:8000/author/" + user.user.user_id + "/simpleauthor"
 
     const authorRes = await axios
     .get(authorUrl)
@@ -135,7 +135,7 @@ export default function Post({
 
   const getComments = async () => {
 
-    let commentsUrl = "http://127.0.0.1:8000/api/author/" + id + "/postcomments"
+    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
 
     const commentsRes = await axios
     .get(commentsUrl)
@@ -185,7 +185,7 @@ export default function Post({
 
   const getPostAuthor = async () => {
 
-    let authorUrl = "http://127.0.0.1:8000/api/author/" + post_author + "/simpleauthor"
+    let authorUrl = "http://127.0.0.1:8000/author/" + post_author + "/simpleauthor"
 
     const authorRes = await axios
     .get(authorUrl)

@@ -188,9 +188,22 @@ class PostViews(APIView):
         
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
-    # def delete(self, request):
 
-    
+    @swagger_auto_schema(operation_description="Delete a post for a specific author",
+            operation_summary="Delete Author Post",
+            responses={201: PostSerializer()},
+            tags=['Post'],)
+        
+    def delete(self, request, pk):
+        post_id = uuid.UUID(pk)
+
+        post = Post.objects.filter(post_id = post_id)
+
+        if post:
+            post.delete()
+            return Response({"message": "Post Model Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response({"Message": "Post Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
@@ -535,4 +548,34 @@ class AuthorPostsRemote(APIView):
             return Response (serializer.data, status=status.HTTP_200_OK)
         
         return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+class ImagesRemote(APIView):
+    '''
+    Image Posts are just posts that are images. But they are encoded as base64 data. 
+    You can inline an image post using a data url or you can use this shortcut to get the image if authenticated to see it.
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/image
+    GET [local, remote] get the public post converted to binary as an iamge
+    return 404 if not an image
+    '''
+    @swagger_auto_schema(operation_description="Get the image of a post of an author if it exists",
+            operation_summary="Get the image of a post of an author if it exists",
+            responses={200: PostSerializerRemote()},
+            tags=['Remote'],)
 
+    def get(self, request, author, post):
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        post = Post.objects.filter(author_id = auth_id).filter(post_id = post_id)[0]
+
+        image = None # If its None still then it means that its an imageless post
+        if (post.image_file != ''):
+            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + str(post.image_file)
+        elif (post.image_url != ''):
+            image = post.image_url
+        
+        if (post and image != None):
+            return Response (image, status = status.HTTP_200_OK)
+
+        return Response ({"Message": "Post/Image does not exist"}, status=status.HTTP_404_NOT_FOUND)

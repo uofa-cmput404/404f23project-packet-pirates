@@ -11,6 +11,7 @@ urlpatterns = [
     path('author/<str:pk>/simpleauthor', views.GetSimpleAuthor.as_view(), name = "simple_author"),
     path('author/<str:pk>/username', views.GetSingleAuthorByUsername.as_view(), name = "get_author_by_username"),
     path('author/username', views.GetSingleAuthorByUsername.as_view(), name = "get_author_by_username"),
+    path('nodes', views.getNodes.as_view(), name = "get_nodes"),
 
 
     # Remote URLS

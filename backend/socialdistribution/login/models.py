@@ -30,8 +30,10 @@ class AppAuthorManager(BaseUserManager):
 
 
 class AppAuthor(AbstractBaseUser, PermissionsMixin):
-    user_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True)
-    username = models.CharField(max_length=40, unique=True, blank=False)
+    user_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True) # id
+
+    username = models.CharField(max_length=40, unique=True, blank=False) # displayName
+
     display_name = models.CharField(max_length=40, blank=True, null=True)
 
     first_name = models.CharField(max_length=20, blank=True, null=True)
@@ -39,15 +41,15 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     date_of_birth = models.DateField(blank=True, null=True)
 
-    profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
+    profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/") # profileImage
 
-    image_url = models.URLField(max_length=200, blank=True, null=True)
+    image_url = models.URLField(max_length=200, blank=True, null=True) # profileImage?
 
-    host = models.CharField(max_length=200, blank=True, null=True)
+    host = models.CharField(max_length=200, blank=True, null=True) # host
 
-    github = models.URLField(max_length=200, blank=True)
+    github = models.URLField(max_length=200, blank=True) # github
 
-    url = models.URLField(max_length=200, blank=True)
+    url = models.URLField(max_length=200, blank=True) # url
 
     is_active = models.BooleanField(default=True)
 
