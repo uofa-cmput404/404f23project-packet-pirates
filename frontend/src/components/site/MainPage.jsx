@@ -33,7 +33,7 @@ export default function MainPage({ user }) {
         console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
         setPosts(
-          postsRes.data.Posts.map((post, index) => {
+          postsRes.data.Posts.filter((post) => !post.is_private).map((post, index) => {
               const image_conditions = post.image_url === '' && post.image_file != ''
               // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
