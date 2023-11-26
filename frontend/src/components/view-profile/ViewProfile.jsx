@@ -39,7 +39,7 @@ export default function ViewProfile({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -71,7 +71,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -90,7 +90,7 @@ export default function ViewProfile({ user }) {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + author + "/feedposts_byusername";
+        "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)
@@ -168,7 +168,7 @@ export default function ViewProfile({ user }) {
 
   const getAuthorInfo = async () => {
 
-    let authUrl = "http://127.0.0.1:8000/api/author/" + author + "/username";
+    let authUrl = "http://127.0.0.1:8000/author/" + author + "/username";
 
     const authRes = await axios
       .get(authUrl)
@@ -209,7 +209,7 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/api/logout");
+      await axios.get("/logout");
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {
@@ -223,13 +223,13 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     let authorUrl = 
-    "http://127.0.0.1:8000/api/author/" + author + "/username";
+    "http://127.0.0.1:8000/author/" + author + "/username";
 
     let notificationUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/api/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const authReso = await axios
       .get(authorUrl)

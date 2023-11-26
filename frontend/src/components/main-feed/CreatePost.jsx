@@ -93,7 +93,7 @@ export default function CreatePost({ user }) {
     console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/api/postViews", formData, 
+      .post("http://127.0.0.1:8000/postViews", formData, 
       {
         headers: {
           "Content-Type": "multipart/form-data",

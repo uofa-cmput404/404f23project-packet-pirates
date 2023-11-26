@@ -40,7 +40,6 @@ class AuthorLoginSerializer(serializers.Serializer):
         
         return author
     
-
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
@@ -50,3 +49,42 @@ class SimpleAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorModel
         fields = ("user_id", "username", "profile_picture")
+
+class AuthorSerializerRemote(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
+    profileImage = serializers.SerializerMethodField()
+
+    displayName = serializers.CharField(source = "username")
+    
+    def get_type(self ,instance):
+        return 'author'
+    
+    def get_id(self, instance):
+        return ''
+    
+    def get_profileImage(self, instance):
+        return ''
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(instance.user_id)
+
+        representation['host'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/"
+
+        representation['url'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(instance.user_id)
+
+        # representation['displayName'] = representation['username']
+
+        representation['profileImage'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(instance.profile_picture)
+        
+        return representation
+       
+    class Meta:
+        model = AuthorModel
+        fields = ("type", "id", "url", "host", "displayName", "github", "profileImage")
+
+class NodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Node
+        fields = "__all__"

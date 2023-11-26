@@ -17,7 +17,7 @@ export default function MainPage({ user }) {
 
   const getPosts = async () => {
     let postsUrl =
-      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/feedposts";
+      "http://127.0.0.1:8000/author/" + user.user.user_id + "/feedposts";
 
     const postsRes = await axios
       .get(postsUrl)
@@ -26,7 +26,7 @@ export default function MainPage({ user }) {
         console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
 
         setPosts(
-          postsRes.data.Posts.map((post, index) => {
+          postsRes.data.Posts.filter((post) => !post.is_private).map((post, index) => {
               const image_conditions = post.image_url === '' && post.image_file != ''
               // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
@@ -60,7 +60,7 @@ export default function MainPage({ user }) {
   console.log("user", user);
   const getConnections = async () => {
     let connectionsUrl =
-      "http://127.0.0.1:8000/api/author/" + user.user.user_id + "/truefriends";
+      "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
       .get(connectionsUrl)
@@ -77,7 +77,7 @@ export default function MainPage({ user }) {
 
   const getNotifications = async () => {
     let notificationsUrl =
-      "http://127.0.0.1:8000/api/author/" +
+      "http://127.0.0.1:8000/author/" +
       user.user.user_id +
       "/authornotifications";
 
@@ -107,7 +107,7 @@ export default function MainPage({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/api/logout");
+      await axios.get("/logout");
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {

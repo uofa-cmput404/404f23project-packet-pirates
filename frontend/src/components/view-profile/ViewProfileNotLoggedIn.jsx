@@ -40,7 +40,7 @@ export default function ViewProfileNotLogged() {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "http://127.0.0.1:8000/api/author/" + author + "/feedposts_byusername";
+        "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)

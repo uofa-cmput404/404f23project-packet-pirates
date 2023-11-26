@@ -1,7 +1,7 @@
 import axios from "axios";
 export default function Site() {
   const getAuthor = async () => {
-    const res = await axios.get("http://localhost:8000/api/authors/");
+    const res = await axios.get("http://localhost:8000/authors/");
     console.log(res.data);
   };
 

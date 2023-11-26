@@ -40,7 +40,7 @@ export default function ProfilePage({ user }) {
         event.preventDefault()
         console.log(info)
 
-        const res = await axios.post("http://127.0.0.1:8000/api/something", info)
+        const res = await axios.post("http://127.0.0.1:8000/something", info)
         console.log(res.data)
       };
       
