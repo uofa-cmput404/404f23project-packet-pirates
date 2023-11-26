@@ -74,7 +74,9 @@ class GetUsers(APIView):
 
         # Fetch and filter data from external API
         basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
-        external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
+        # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
+        external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+
         filtered_external_data = [
             {
                 "id": author["id"],
