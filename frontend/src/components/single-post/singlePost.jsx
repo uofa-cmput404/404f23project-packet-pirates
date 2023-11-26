@@ -60,7 +60,7 @@ export default function SinglePost({ user }) {
 
     const fetchPost = async () => {
       let postUrl =
-        "http://127.0.0.1:8000/api/" + postID + "/viewpost";
+        "http://127.0.0.1:8000/" + postID + "/viewpost";
 
       const postRes = await axios
         .get(postUrl)
@@ -105,7 +105,7 @@ export default function SinglePost({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/api/logout");
+      await axios.get("/logout");
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {
