@@ -29,7 +29,6 @@ class PostSerializerRemote(serializers.ModelSerializer):
     # author = serializers.PrimaryKeyRelatedField(read_only=True)
     type = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
-    author = serializers.SerializerMethodField()
     source = serializers.SerializerMethodField()
     origin = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField(source = "content")
@@ -44,14 +43,11 @@ class PostSerializerRemote(serializers.ModelSerializer):
 
     def get_type(self,instance):
         return 'post'
-    
+    '''
+    http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments
+    '''
     def get_id(self,instance):
-        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id)
-    
-    def get_author(self,instance):
-        author = AppAuthor.objects.get(user_id = instance.author)
-        serializer = AuthorSerializerRemote(author)
-        return serializer.data
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author.user_id) + "/posts/" + str(instance.post_id)
 
     def get_source(self, instance):
         return 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com'
@@ -76,7 +72,7 @@ class PostSerializerRemote(serializers.ModelSerializer):
         return num_comments
     
     def get_comments(self, instance):
-        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id) + "/comments"
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author.user_id) + "/posts/" + str(instance.post_id) + "/comments"
 
     def get_published(self, instance):
         return instance.date_time
@@ -93,6 +89,7 @@ class PostSerializerRemote(serializers.ModelSerializer):
         elif (instance.unlisted == False):
             return False
 
+    author = AuthorSerializerRemote()
     class Meta:
         model = Post
         fields = ("type", "title", "id", "source", "origin", "description", "contentType", "content", "author", "categories", "count", "comments", "published", "visibility", "unlisted")
@@ -103,15 +100,10 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     object = serializers.SerializerMethodField()
 
-    author = serializers.SerializerMethodField()
+    author = AuthorSerializerRemote()
 
     def get_type(self,instance):
         return "Like"
-    
-    def get_author(self,instance):
-        author = AppAuthor.objects.get(user_id = instance.author)
-        serializer = AuthorSerializerRemote(author)
-        return serializer.data
     
     def get_summary(self,instance):
         return ''
@@ -121,11 +113,10 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        author = AppAuthor.objects.get(user_id = instance.author)
 
         representation['@context'] = "https://www.w3.org/ns/activitystreams"
-        representation['summary'] = author.username + " liked your post"
-        representation['object'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_object.post_id)
+        representation['summary'] = instance.author.username + " liked your post"
+        representation['object'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author.user_id) + "/posts/" + str(instance.post_object.post_id)
         return representation
     
     class Meta:
@@ -133,7 +124,7 @@ class LikeSerializerRemote(serializers.ModelSerializer):
         fields = ("summary", "type", "author", "object")
 
 class CommentSerializerRemote(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
+    author = AuthorSerializerRemote()
     type = serializers.SerializerMethodField()
     comment = serializers.SerializerMethodField(source = 'text')
     contentType = serializers.SerializerMethodField()
@@ -144,12 +135,6 @@ class CommentSerializerRemote(serializers.ModelSerializer):
     def get_type(self, instance):
         return 'comment'
     
-    def get_author(self,instance):
-        print(instance.author)
-        author = AppAuthor.objects.get(user_id = instance.author)
-        serializer = AuthorSerializerRemote(author)
-        return serializer.data
-
     def get_comment(self, instance):
         return instance.text
     
@@ -165,7 +150,7 @@ class CommentSerializerRemote(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post.post_id)
+        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author.user_id) + "/posts/" + str(instance.post.post_id)
         return representation
     
     class Meta:

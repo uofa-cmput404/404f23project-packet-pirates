@@ -49,7 +49,7 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     github = models.URLField(max_length=200, blank=True) # github
 
-    url = models.CharField(max_length=200, blank=True) # url
+    url = models.URLField(max_length=200, blank=True) # url
 
     is_active = models.BooleanField(default=True)
 

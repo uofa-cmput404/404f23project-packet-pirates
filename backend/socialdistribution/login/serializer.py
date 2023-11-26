@@ -24,11 +24,7 @@ class AuthorRegisterSerializer(serializers.ModelSerializer):
         author_obj.github = validated_data['github']
         author_obj.display_name = validated_data['display_name']
         author_obj.profile_picture = validated_data['profile_picture']
-        author_obj.host = validated_data['host']
-        author_obj.url = validated_data['url']
-        
         author_obj.save()
-
         return author_obj
 
 class AuthorLoginSerializer(serializers.Serializer):

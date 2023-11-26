@@ -6,15 +6,8 @@ from post.models import Post, Comment, PostLike
 
 
 class FollowerRequest(models.Model):
-    # sender = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_requester")
-    # recipient = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_receiver")
-
-    sender = models.CharField(max_length=200, blank=True)
-    recipient = models.CharField(max_length=200, blank=True)
-
-    sender_origin = models.CharField(max_length=200, blank=True)
-    recipient_origin = models.CharField(max_length=200, blank=True)
-
+    sender = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_requester")
+    recipient = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="follow_receiver")
     is_pending = models.BooleanField(default=True)
     
 class Friends(models.Model):
@@ -23,14 +16,9 @@ class Friends(models.Model):
     # Did one model because Friend => Still need both author and friend
 
     # Author is recipient, friend is following author
-    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors") # Overwrites query_set name. so query by using AppAuthor.objects.get(uuid).authors.all()
-    # friend = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors_friends")
 
-    author = models.CharField(max_length=200, blank=True)
-    friend = models.CharField(max_length=200, blank=True)
-
-    author_origin = models.CharField(max_length=200, blank=True)
-    friend_origin = models.CharField(max_length=200, blank=True)
+    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors") # Overwrites query_set name. so query by using AppAuthor.objects.get(uuid).authors.all()
+    friend = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name= "authors_friends")
 
     friend_pfp = models.URLField(max_length= 200, null=True, blank=True)
     friend_username = models.CharField(max_length=40, blank=True)
@@ -40,15 +28,9 @@ class Notifications(models.Model):
     # Also need FollowRequests
     # Posts, Likes, Comments
     notif_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable=False, unique=True)
+    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="main_author") # Main user
 
-    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="main_author") # Main user
-    # notification_author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="notifier") # Person who likes/comments
-
-    author = models.CharField(max_length=200, blank=True)
-    notification_author = models.CharField(max_length=200, blank=True)
-
-    notification_author_origin = models.CharField(max_length=200, blank=True)
-
+    notification_author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE, related_name="notifier") # Person who likes/comments
     notif_author_pfp = models.URLField(max_length=300, null=True, blank=True)
     notif_author_username = models.CharField(max_length=40, blank=True)
 
