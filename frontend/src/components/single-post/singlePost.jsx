@@ -20,7 +20,7 @@ export default function SinglePost({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -41,7 +41,7 @@ export default function SinglePost({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/api/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -69,7 +69,7 @@ export default function SinglePost({ user }) {
             console.log("postRes", postRes);
 
             let singlePost = postRes.data.post;
-            const image_conditions = singlePost.image_url === null && singlePost.image_file != null
+            const image_conditions = singlePost.image_url === '' && singlePost.image_file != ''
             const image = image_conditions ? 'http://127.0.0.1:8000' + singlePost.image_file : singlePost.image_url
 
             setPost(
