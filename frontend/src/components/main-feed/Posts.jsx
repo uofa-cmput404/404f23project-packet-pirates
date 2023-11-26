@@ -95,6 +95,20 @@ export default function Post({
     setShowShareOptions((prev) => !prev);
   };
 
+  const handleCopyLink = () => {
+    const postLink = window.location.origin + `/post/${id}`; // Construct link to post based on current URL
+  
+    navigator.clipboard.writeText(postLink) // Copy link to clipboard
+      .then(() => {
+        console.log('Link copied to clipboard:', postLink);
+      })
+      .catch((error) => {
+        console.error('Error copying link to clipboard:', error);
+      });
+  
+    setShowShareOptions(false); // Close share options
+  };
+
   const handleView = () => {
     navigate("/post/" + id);
     window.location.reload(false);
@@ -320,7 +334,7 @@ export default function Post({
               </button>
               <button
                 className="share-option-button copy-link"
-                onClick={() => { /* handle copy link */ }}
+                onClick={handleCopyLink}
               >
                 Copy Link
               </button>
