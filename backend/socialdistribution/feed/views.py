@@ -49,7 +49,7 @@ class GetAllNotifications(APIView):
                     tags=['Feed'],)
 
     def get(self, request, pk):
-        notifications = Notifications.objects.filter(author_id = pk)
+        notifications = Notifications.objects.filter(author = pk)
 
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
@@ -159,10 +159,11 @@ class GetTrueFriends(APIView):
                     tags=['Feed'],)
     
     def get(self, request, pk):
-          
-        followers = Friends.objects.filter(author_id = pk)
+        pk = uuid.UUID(pk)
+        
+        followers = Friends.objects.filter(author = pk)
 
-        following = Friends.objects.filter(friend_id = pk)
+        following = Friends.objects.filter(friend = pk)
 
         # Empty queryset
         true_friends = Friends.objects.none() 
@@ -171,7 +172,7 @@ class GetTrueFriends(APIView):
 
             #follow: auth id them friend id me
 
-            friend  =  followers.filter(friend_id = follow.author)
+            friend  =  followers.filter(friend = follow.author)
 
             if friend.exists():
 
@@ -200,6 +201,9 @@ class FollowRequestViews(APIView):
                                   # Or request can have both.
 
         serializer = FollowerRequestSerializer(data = request.data)
+        
+        print(serializer.is_valid())
+        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -223,6 +227,7 @@ class FollowRequestViews(APIView):
         return Response({"Message": "Error has occured when trying to delete follow request"}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendsViews(APIView):
+
     '''
     Creates a Friend Object
     '''
@@ -262,11 +267,12 @@ class NotificationViews(APIView):
         tags=['Notifications'],)
 
     def post(self, request, pk):
+        
         serializer = NotificationsSerializer(data = request.data) # May have to for loop, we need to send a notification to every author
                                                                   # that are affected by the action
 
         author = AppAuthor.objects.get(username = request.data['author'])
-        request.data['author'] = author.user_id
+        request.data['author'] = str(author.user_id)
 
         serializer.is_valid()
         print(serializer.errors)
@@ -309,11 +315,13 @@ class InboxViews(APIView):
         '''
         Return the inbox of an author
         '''
+        pk = uuid.UUID(pk)
+
         inbox = Inbox.objects.get(author = pk)
 
         serializer = InboxSerializer(inbox)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
     @swagger_auto_schema(operation_description="Updates an authors inbox",
@@ -433,11 +441,16 @@ class GetAuthorsFollowersRemote(APIView):
         tags=['Remote'],)
     
     def get(self, request, author_id):
-        friends = Friends.objects.filter(author_id = author_id)
+
+        author_id = uuid.UUID(author_id)
+
+        friends = Friends.objects.filter(author = author_id)
 
         friend_list = []
+        
         for friend in friends:
-            friend_list.append(friend.friend.user_id)
+
+            friend_list.append(uuid.UUID(friend.friend))
 
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
@@ -467,7 +480,10 @@ class FollowersRemote(APIView):
         tags=['Remote'],)
 
     def get(self, request, author_id, foreign_author_id):
-        
+        author_id = uuid.UUID(author_id)
+
+        foreign_author_id = uuid.UUID(foreign_author_id)
+
         friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
 
         serializer = FriendsSerializer(friend, many = True)
@@ -496,6 +512,8 @@ class InboxViewsRemote(APIView):
         '''
         Update the inbox of an author remotely
         '''
+        author_id = uuid.UUID(author_id)
+        
         inbox = Inbox.objects.get(author_id = author_id) # We need to test this
 
         # inbox = Inbox.objects.get(author = request.data['author'])
