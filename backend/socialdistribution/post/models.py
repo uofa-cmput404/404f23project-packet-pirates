@@ -8,7 +8,8 @@ class Post(models.Model):
 
     post_id = models.UUIDField(default = uuid.uuid4, primary_key = True, unique= True)
 
-    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    author = models.CharField(max_length=200, blank=True)
 
     title = models.CharField(max_length=50)
 
@@ -44,7 +45,8 @@ class Comment(models.Model):
 
     post = models.ForeignKey(Post, on_delete = models.CASCADE)
 
-    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    author = models.CharField(max_length=200, blank=True)
 
     author_picture = models.URLField(max_length=200, null=True, blank=True)
 
@@ -56,5 +58,8 @@ class Comment(models.Model):
 
 class PostLike(models.Model): # Assume front-end restricts like
     like_id = models.UUIDField(default = uuid.uuid4, primary_key=True, unique=True)
-    author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+
+    # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
+    author = models.CharField(max_length=200, blank=True)
+
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE)
