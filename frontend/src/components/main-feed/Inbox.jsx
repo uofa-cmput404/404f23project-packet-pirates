@@ -21,101 +21,107 @@ export default function Inbox({ user }) {
   console.log(user);
 
   const fetchCommentData = async () => {
-
-    try {
-      console.log("Sending request for comments")
-
-      await axios
-        
-        .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/comments", token)
-
-        .then((res) => {
-
-          console.log("TESTING COMMENTS", res)
-
-          setInboxComments(res.data.map((comment, index) => {
-
-            return(
-              <li className="mt-4" key={index}>
-                <div className="comments">
-                  <div className="comment flex flex-row">
-                    <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                      <img
-                        src={comment.author.profileImage}
-                        alt="profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="engagement flex flex-col ml-4">
-                      <div className="username">
-                        <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                          {comment.author.displayName}
-                        </span>
-                      </div>
-                      <div className="">
-                        <span>Likes</span>
-                        <span className="ml-3">{comment.likes}</span>
-                      </div>
-                    </div>
-                    <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
-                      <div className="comment">{comment.comment}</div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            )
-
-          }));
-
-        });
-
-    } catch (error) {
-
-      console.error("Error fetching comment data:", error);
-      throw error; // Rethrow the error to be caught by Promise.all
-
-    }
-
-  }
-
-  const fetchPostData = async () => {
-
-    try {
-      // console.log("FETCHING POST DATA AT URL:", post.API);
-      // const response = await axios.get(post.API)
-      console.log("Sending request for posts")
-      await axios
-        .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts", token)
-        .then((res) => {
-          console.log("res", res);
-
-          setShowPost(() => [
-            res.data.map((post, index) => {
-              return (
-                <RemotePost
-                  key={index}
-                  user={user}
-                  post_author={post.author}
-                  title={post.title}
-                  description={post.description}
-                  content={post.content}
-                  img={post.image_url}
-                  likes={post.likes_count}
-                />
-              );
-            }),
-          ]);
-
-        });
-
-    } catch (error) {
-
-      console.error("Error fetching post data:", error);
-
-      throw error; // Rethrow the error to be caught by Promise.all
-
-    }
+    await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/inbox/local/comments", token).then((res) => {
+      console.log(res)
+    });
   };
+
+  // const fetchCommentData = async () => {
+
+  //   try {
+  //     console.log("Sending request for comments")
+
+  //     await axios
+        
+  //       .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/comments", token)
+
+  //       .then((res) => {
+
+  //         console.log("TESTING COMMENTS", res)
+
+  //         setInboxComments(res.data.map((comment, index) => {
+
+  //           return(
+  //             <li className="mt-4" key={index}>
+  //               <div className="comments">
+  //                 <div className="comment flex flex-row">
+  //                   <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+  //                     <img
+  //                       src={comment.author.profileImage}
+  //                       alt="profile"
+  //                       className="w-full h-full object-cover"
+  //                     />
+  //                   </div>
+  //                   <div className="engagement flex flex-col ml-4">
+  //                     <div className="username">
+  //                       <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+  //                         {comment.author.displayName}
+  //                       </span>
+  //                     </div>
+  //                     <div className="">
+  //                       <span>Likes</span>
+  //                       <span className="ml-3">{comment.likes}</span>
+  //                     </div>
+  //                   </div>
+  //                   <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
+  //                     <div className="comment">{comment.comment}</div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </li>
+  //           )
+
+  //         }));
+
+  //       });
+
+  //   } catch (error) {
+
+  //     console.error("Error fetching comment data:", error);
+  //     throw error; // Rethrow the error to be caught by Promise.all
+
+  //   }
+
+  // }
+
+  // const fetchPostData = async () => {
+
+  //   try {
+  //     // console.log("FETCHING POST DATA AT URL:", post.API);
+  //     // const response = await axios.get(post.API)
+  //     console.log("Sending request for posts")
+  //     await axios
+  //       .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts", token)
+  //       .then((res) => {
+  //         console.log("res", res);
+
+  //         setShowPost(() => [
+  //           res.data.map((post, index) => {
+  //             return (
+  //               <RemotePost
+  //                 key={index}
+  //                 user={user}
+  //                 post_author={post.author}
+  //                 title={post.title}
+  //                 description={post.description}
+  //                 content={post.content}
+  //                 img={post.image_url}
+  //                 likes={post.likes_count}
+  //               />
+  //             );
+  //           }),
+  //         ]);
+
+  //       });
+
+  //   } catch (error) {
+
+  //     console.error("Error fetching post data:", error);
+
+  //     throw error; // Rethrow the error to be caught by Promise.all
+
+  //   }
+  // };
 
   useEffect(() => {
     getInbox();
@@ -137,7 +143,7 @@ export default function Inbox({ user }) {
     //console.log("notifications", notifications);
     //console.log("inboxPosts", inboxPosts);
 
-    fetchPostData()
+    // fetchPostData()
     fetchCommentData()
     setPostsFetched(true);
 
