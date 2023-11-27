@@ -52,7 +52,7 @@ export default function EditPost({ user,
     console.log("Sent Image URL is:", event.target.value);
   }
 
-  const handleImageUpload = (event) => {
+  const handleImageUploadEdit = (event) => {
     setImageFile(event.target.files[0]);
 
     const file = new FileReader();
@@ -127,7 +127,7 @@ export default function EditPost({ user,
         }
       })
       .then((response) => {
-        // window.location.reload(false)
+        window.location.reload(false)
         console.log(response.data);
       })
       .catch((error) => {
@@ -192,7 +192,7 @@ export default function EditPost({ user,
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row justify-between items-center">
             <li>
-            <label htmlFor="select-image">
+            <label htmlFor="select-image-edit">
               <div 
                   className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
                   Upload Image
@@ -201,9 +201,9 @@ export default function EditPost({ user,
             <input
                 type="file"
                 accept="image/*"
-                id="select-image"
+                id="select-image-edit"
                 style={{ display: "none" }}
-                onChange={handleImageUpload}
+                onChange={handleImageUploadEdit}
             />
             </li>
             <li>
