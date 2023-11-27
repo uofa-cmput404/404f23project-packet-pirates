@@ -24,9 +24,9 @@ urlpatterns = [
     # path('logout', views.AuthorLogout.as_view(), name = "logout"),
     # path('author', views.AuthorView.as_view(), name = "author"),
     
-    path("authors/<str:pk>/inbox/local", views.InboxViews.as_view(), name ='Inbox'),
-    path("authors/<str:pk>/inbox/local/posts", views.InboxViewPosts.as_view(), name ='Inbox'),
-    path("authors/<str:pk>/inbox/local/comments", views.InboxViewComments.as_view(), name ='Inbox'),
+    path("author/<str:pk>/inbox/local", views.InboxViews.as_view(), name ='Inbox'),
+    path("author/<str:pk>/inbox/local/posts", views.InboxViewPosts.as_view(), name ='Inbox'),
+    path("author/<str:pk>/inbox/local/comments", views.InboxViewComments.as_view(), name ='Inbox'),
 
     # REMOTE URLS
     path("authors/<str:author_id>/followers", views.GetAuthorsFollowersRemote.as_view(), name ="Get Authors Followers Remote"),
