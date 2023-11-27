@@ -154,7 +154,9 @@ export default function Inbox({ user }) {
 
     await axios
       .get(
-        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token
+        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token, {
+          withCredentials: true,
+        } 
       )
       .then((res) => {
         console.log("inbox", res);
