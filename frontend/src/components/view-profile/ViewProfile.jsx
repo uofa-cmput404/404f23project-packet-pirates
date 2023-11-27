@@ -25,6 +25,8 @@ export default function ViewProfile({ user }) {
   const [notifications, setNotifications] = useState(null);
   const [authorInfo, setAuthorInfo] = useState(null);
   const [profileHeader, setProfileHeader] = useState(null);
+  const [is_pending, set_is_pending] = useState(false);
+  const [areFriends, setAreFriends] = useState(false);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -157,11 +159,31 @@ export default function ViewProfile({ user }) {
         });
     };
 
+    const checkFriendship = async () => {
+        let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+        const authReso = await axios
+        .get(authorUrl)
+        .then(async (authReso) => {
+        
+          const followersUrl = "http://127.0.0.1:8000/authors/" + user.user.user_id + "/followers/" + authReso.data.Author.user_id;
+          
+          try {
+            const response = await axios.get(followersUrl);
+            setAreFriends(response.data);
+            console.log(areFriends)
+            console.log(response.data)
+          } catch (error) {
+            console.error("Error checking friendship:", error);
+          }
+        })
+    }
+
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
+    checkFriendship();
     //location.reload()
     console.log("posts", posts);
   }, [author]);
@@ -190,13 +212,29 @@ export default function ViewProfile({ user }) {
               {author + "'s profile"}
             </h2>
 
-            {/* Follow Button */}
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              onClick={handleFollow}
-            >
-              Follow
-            </button>
+            {areFriends && (
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+                onClick={handleUnfollow}
+              >
+                Unfollow
+              </button>
+            )}
+
+            {!areFriends && !is_pending && (
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleFollow}
+              >
+                Follow
+              </button>
+            )}
+
+            {is_pending && (
+              <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
+                Pending
+              </button>
+            )}
           </div>
         );
       })
@@ -260,14 +298,23 @@ export default function ViewProfile({ user }) {
     
           const res2 = await axios.post(followrequestUrl, requestdata).then((res2) => {
             console.log(res2.data);
+            set_is_pending(true); // Set is_pending to true since a follow request is pending
+            // setAreFriends(false); // Set areFriends to false since a follow request is pending
           });
     
         } catch (err) {
           console.log(err);
+          set_is_pending(false); // If there's an error, set isPending back to false
         }
 
       });
+  }
 
+  const handleUnfollow = async (event) => {
+    event.preventDefault();
+
+
+    // setAreFriends(false);
   };
 
   return (
@@ -290,9 +337,29 @@ export default function ViewProfile({ user }) {
                   className="w-16 h-16 rounded-full object-cover mb-2"
                 />
                 <h2 className="text-xl font-semibold">{profile.username}</h2>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
-                  Follow
-                </button>
+                {areFriends && (
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    onClick={handleUnfollow}
+                  >
+                    Unfollow
+                  </button>
+                )}
+
+                {!areFriends && !is_pending && (
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    onClick={handleFollow}
+                  >
+                    Follow
+                  </button>
+                )}
+
+                {is_pending && (
+                  <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
+                    Pending
+                  </button>
+                )}
               </div>
             )}
             <div className="flex flex-row w-full mx-auto">
