@@ -168,7 +168,7 @@ export default function ViewProfile({ user }) {
         .get(authorUrl)
         .then(async (authReso) => {
         
-          const followersUrl = "http://127.0.0.1:8000/authors/" + user.user.user_id + "/followers/" + authReso.data.Author.user_id;
+          const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
           
           const followReqUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
 
@@ -334,7 +334,7 @@ export default function ViewProfile({ user }) {
       .get(authorUrl)
       .then(async (authReso) => {
 
-      let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + authReso.data.Author.user_id;
+      let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
 
         try {
           const res = await axios.delete(unfollowUrl).then((res) => {
