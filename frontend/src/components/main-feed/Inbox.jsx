@@ -23,7 +23,7 @@ export default function Inbox({ user }) {
 
   //     await axios
         
-  //       .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/inbox/local/comments", token)
+  //       .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/comments", token)
 
   //       .then((res) => {
 
@@ -81,7 +81,7 @@ export default function Inbox({ user }) {
       // const response = await axios.get(post.API)
       await axios
         .get(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/inbox/local/posts", token
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token
         )
 
         .then((res) => {
