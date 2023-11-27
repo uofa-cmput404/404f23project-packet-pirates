@@ -34,6 +34,10 @@ from django.core.serializers import serialize
 
 import json, copy
 
+import requests
+from requests.auth import HTTPBasicAuth
+import config as c
+
 # Create your views here.
 
 class GetAllNotifications(APIView):
@@ -298,6 +302,55 @@ class NotificationViews(APIView):
             return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
 
         return Response({"Message": "Error has occured when trying to delete notification"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InboxViewPosts(APIView):
+    '''
+    Inbox Post Views
+    Get, Post
+    '''
+
+    @swagger_auto_schema(operation_description="Get an authors inbox posts",
+        operation_summary="Get an authors inbox posts",
+        responses={200: PostSerializer()},
+        tags=['Feed'],)    
+    def get(self, request, pk):
+        '''
+        Return the inbox posts of an author
+        '''
+        pk = uuid.UUID(pk)
+
+        inbox = Inbox.objects.get(author = pk)
+
+        serializer = InboxPostsSerializer(inbox)
+        
+        print(serializer.data)
+        
+        # extract only the 'API' field from each post
+        api_fields = []
+        
+        for post_id, post_data in serializer.data.items():
+            api_fields.append(post_data.get('API', ''))
+            
+        posts = []
+        
+        for x in api_fields:
+            if c.SUPER_ENDPOINT in x:
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                r = requests.get(x, auth=basic)
+                posts.append(r.json())
+            elif c.PP_ENDPOINT in x:
+                basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+                r = requests.get(x, auth=basic)
+                posts.append(r.json())
+            else:
+                r = requests.get(x)
+                posts.append(r.json())
+    
+        return Response(posts, status=status.HTTP_200_OK)
+        # return Response(api_fields, status=status.HTTP_200_OK)
+
+            
 
 
 class InboxViews(APIView):
