@@ -336,31 +336,38 @@ class InboxViewPosts(APIView):
         
         for x in api_fields:
             if c.SUPER_ENDPOINT in x:
-                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
-                r = requests.get(x, auth=basic)
+                try:
+                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                    r = requests.get(x, auth=basic)
+            
+                    t = r.json().copy()
 
-                t = r.json().copy()
+                    # Uncomment this when they change their image endpoint
+                    # t['image_url'] = x + "/image"
+                    # image_req = requests.get(t['image_url'], auth=basic)
+                    # t['image_url'] = image_req.json()
 
-                # Uncomment this when they change their image endpoint
-                # t['image_url'] = x + "/image"
-                # image_req = requests.get(t['image_url'], auth=basic)
-                # t['image_url'] = image_req.json()
+                    t['image_url'] = 'https://picsum.photos/200'
 
-                t['image_url'] = 'https://picsum.photos/200'
+                    posts.append(t)
+                except Exception as e:
+                    print(e)
 
-                posts.append(t)
             elif c.PP_ENDPOINT in x:
-                basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
-                r = requests.get(x, auth=basic)
-                t = r.json().copy()
+                try:
+                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+                    r = requests.get(x, auth=basic)
+                    t = r.json().copy()
 
-                t['image_url'] = x + "/image"
+                    t['image_url'] = x + "/image"
 
-                image_req = requests.get(t['image_url'], auth=basic)
+                    image_req = requests.get(t['image_url'], auth=basic)
 
-                t['image_url'] = image_req.json()
+                    t['image_url'] = image_req.json()
 
-                posts.append(t)
+                    posts.append(t)
+                except:
+                    print(e)
             else:
                 r = requests.get(x)
 
@@ -412,41 +419,44 @@ class InboxViewComments(APIView):
         
         for x in api_fields:
             if c.SUPER_ENDPOINT in x:
-                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
-                r = requests.get(x, auth=basic)
+                try:
+                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                    r = requests.get(x, auth=basic)
 
-                print(r)
 
-                # Uncomment this when they change their image endpoint
-                # t['image_url'] = x + "/image"
-                # image_req = requests.get(t['image_url'], auth=basic)
-                # t['image_url'] = image_req.json()
+                    # Uncomment this when they change their image endpoint
+                    # t['image_url'] = x + "/image"
+                    # image_req = requests.get(t['image_url'], auth=basic)
+                    # t['image_url'] = image_req.json()
 
-                comments.append(r)
-            # elif c.PP_ENDPOINT in x:
-            #     basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
-            #     r = requests.get(x, auth=basic)
-            #     t = r.json().copy()
+                    comments.append(r.json())
+                except Exception as e:
+                    print(e)
+            elif c.PP_ENDPOINT in x:
+                try:
+                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+                    r = requests.get(x, auth=basic)
+                    
+                    print(r)
 
-            #     t['image_url'] = x + "/image"
+                    comments.append(r.json())
+                except Exception as e:
+                    print(e)
+            else:
+                try:
+                    r = requests.get(x)
 
-            #     image_req = requests.get(t['image_url'], auth=basic)
+                    t = r.json().copy()
 
-            #     t['image_url'] = image_req.json()
+                    t['image_url'] = x + "/image"
 
-            #     posts.append(t)
-            # else:
-            #     r = requests.get(x)
+                    image_req = requests.get(t['image_url'], auth=basic)
 
-            #     t = r.json().copy()
+                    t['image_url'] = image_req.json()
 
-            #     t['image_url'] = x + "/image"
-
-            #     image_req = requests.get(t['image_url'], auth=basic)
-
-            #     t['image_url'] = image_req.json()
-
-            #     posts.append(t)
+                    comments.append(t)
+                except Exception as e:
+                    print(e)
     
         return Response(comments, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
