@@ -57,7 +57,7 @@ export function Notification({ user, index, notification }) {
 
     const notifRes = await axios.delete(notificationUrl, {data: {data:notifData}, config})
 
-    // const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}})
+    // const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}, {config}})
     .then((notifRes) => {
       window.location.reload(false);
     })
@@ -66,7 +66,7 @@ export function Notification({ user, index, notification }) {
     })
 
     const requestRes = await axios.delete(followrequestUrl, {data: {data:requestData}, config})
-    // const requestRes = await axios.delete(followrequestUrl, {data: {data: requestData}})
+    // const requestRes = await axios.delete(followrequestUrl, {data: requestData, config})
     .then((requestRes) => {
       
     })
