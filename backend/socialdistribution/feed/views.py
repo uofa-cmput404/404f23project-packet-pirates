@@ -184,6 +184,24 @@ class GetTrueFriends(APIView):
         
         # friends = Friends.author.objects.get(author_id = request.user.user_id)
 
+class FollowRequestPending(APIView):
+
+    @swagger_auto_schema(operation_description="Check if a follow request is pending",
+        operation_summary="Check if a follow request is pending",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],)
+    
+    def get(self, request, sender, recipient):
+        follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(sender)).filter(recipient = uuid.UUID(recipient))
+        
+        if (follow_req_obj):
+            if (follow_req_obj[0].is_pending):
+                return Response(True, status=status.HTTP_200_OK)
+            elif (follow_req_obj[0].is_pending):
+                return Response(False, status=status.HTTP_200_OK)
+            
+        return Response(False, status=status.HTTP_200_OK)
+
 class FollowRequestViews(APIView):
     '''
     Follow Request Object Views
@@ -192,11 +210,28 @@ class FollowRequestViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+
+    @swagger_auto_schema(operation_description="Get a follow request object",
+        operation_summary="Get a follow request object",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],)
+    
+    def get (self, request, pk):
+        print("Request", request.data)
+        follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['sender'])).filter(recipient = uuid.UUID(request.data['recipient']))
+        
+        if (follow_req_obj):
+            serializer = FollowerRequestSerializer(follow_req_obj, many = True)
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response ({"Message": "Follow Request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
     @swagger_auto_schema(operation_description="Create a follow request object",
                 operation_summary="Create a follow request object",
                 responses={200: FollowerRequestSerializer()},
                 tags=['Feed'],)
-
+    
     def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
                                   # Or request can have both.
 
@@ -218,7 +253,7 @@ class FollowRequestViews(APIView):
         
     def delete(self, request, pk):
         print("FR DATA", request.data)
-        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
+        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
 
         if (follow_request_obj):
             follow_request_obj.delete()
@@ -233,6 +268,19 @@ class FriendsViews(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+
+    @swagger_auto_schema(operation_description="Get a friend object",
+        operation_summary="Get a friend object",
+        responses={200: FriendsSerializer()},
+        tags=['Feed'],)
+    
+    def get (self, request, pk):
+        follow_req_obj = Friends.objects.filter(author = uuid.UUID(request.data['author'])).filter(friend = uuid.UUID(request.data['friend']))
+        if (follow_req_obj):
+            serializer = FollowerRequestSerializer(follow_req_obj, many = True)
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response ({"Message": "Friend does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(operation_description="Creates a friend object",
         operation_summary="Creates a friend object",
@@ -249,7 +297,23 @@ class FriendsViews(APIView):
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # def delete (self, request, pk):
+
+class FriendsDelete(APIView):
+
+    @swagger_auto_schema(operation_description="Deletes a friend object",
+        operation_summary="Deletes a friend object",
+        responses={200: FriendsSerializer()},
+        tags=['Feed'],)
+    
+    def delete(self, request, author, friend):
+
+        author_friend = Friends.objects.filter(author = author).filter(friend = friend)
+
+        if (author_friend):
+            author_friend.delete()
+            return Response ({'Message':"Friend Object Successfully Deleted"}, status=status.HTTP_200_OK)
+        
+        return Response ({"Error": "Friend does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         
     
@@ -291,7 +355,7 @@ class NotificationViews(APIView):
     def delete(self, request, pk):
         print("Notify DATA", request.data)
 
-        notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
+        notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
 
         if (notification_object):
             notification_object.delete()
