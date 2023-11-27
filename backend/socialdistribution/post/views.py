@@ -526,7 +526,7 @@ class PostRemote(APIView):
 
         if post:
 
-            return Response (serializer.data, status=status.HTTP_200_OK)
+            return Response (serializer.data[0], status=status.HTTP_200_OK)
         
         return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
