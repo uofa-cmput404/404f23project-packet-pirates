@@ -302,8 +302,8 @@ class PostComments(APIView):
         notification_author = AppAuthor.objects.get(user_id = request.data['author'])
 
         if (post_author != str(notification_author.user_id)):
-            notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(notification_author.user_id),
-                            'notif_author_pfp': "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(notification_author.profile_picture),
+            notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture),
                             'notif_author_username':notification_author.username, 'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
             notification_serializer = NotificationsSerializer(data = notification)
@@ -379,8 +379,8 @@ class PostLikeViews(APIView):
         notification_author = AppAuthor.objects.get(user_id = request.data['author']['user']['user_id'])
 
         if (post_author != str(notification_author.user_id)):
-            notification = {'author':post_author, 'notification_author': str(notification_author.user_id), 'notif_origin_author':"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(notification_author.user_id),
-                            'notif_author_pfp': "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(notification_author.profile_picture), 
+            notification = {'author':post_author, 'notification_author': str(notification_author.user_id), 'notif_origin_author':"http://127.0.0.1:8000/author/" + str(notification_author.user_id),
+                            'notif_author_pfp': "http://127.0.0.1:8000/media/" + str(notification_author.profile_picture), 
                             'notif_author_username':notification_author.username, 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
             notification_serializer = NotificationsSerializer(data = notification)
