@@ -119,7 +119,8 @@ export default function Inbox({ user }) {
               );
             }),
           ]);
-          fetchCommentData()
+
+          // fetchCommentData()
         });
 
     } catch (error) {
