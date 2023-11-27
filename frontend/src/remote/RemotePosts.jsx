@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default function RemotePost({
   user,
+  post_author,
   title,
   description,
   content,
@@ -49,7 +50,7 @@ export default function RemotePost({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={"http://127.0.0.1:8000" + postAuthor.profile_picture}
+                src={post_author.profileImage}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -57,7 +58,7 @@ export default function RemotePost({
 
             <div className="info flex flex-col w-full ml-5">
               <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                {postAuthor.username}
+                {post_author.displayName}
               </span>
               <div className="post-title flex flex-row w-full justify-between items-center">
                 <span className="text-center">
