@@ -281,7 +281,7 @@ export default function Post({
                   <Popup
                   trigger = {<button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">Edit</button>}
                   modal = {true}
-                  closeOnDocumentClick = {true}>
+                  closeOnDocumentClick = {false}>
                   
                   {close => (
                     <>

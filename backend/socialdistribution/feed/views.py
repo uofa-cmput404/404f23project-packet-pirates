@@ -71,9 +71,35 @@ class GetUsers(APIView):
     
     def get(self, request):
         query = request.GET.get('q')
-        users = AppAuthor.objects.filter(username__icontains = query)
-        serializer = AuthorSerializer(users, many = True)
-        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
+
+        # Fetch and filter data from external API
+        basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+        # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
+        external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+
+        filtered_external_data = [
+            {
+                "id": author["id"],
+                "displayName": author["displayName"],
+                "profileImage": author["profileImage"]
+            }
+            for author in external_data.get("items", [])
+            if query.lower() in author.get('displayName', '').lower()
+        ]
+        users = AppAuthor.objects.filter(username__icontains=query)
+        serializer = AuthorSerializerRemote(users, many=True)
+        Users = {
+            "Users": serializer.data + filtered_external_data
+        }
+        print(Users)
+
+        return Response(Users, status=status.HTTP_200_OK)
+    
+    # def get(self, request):
+    #     query = request.GET.get('q')
+    #     users = AppAuthor.objects.filter(username__icontains = query)
+    #     serializer = AuthorSerializer(users, many = True)
+    #     return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
     
 class GetAllUsers(APIView):
     """Returns ALL users"""
@@ -438,17 +464,20 @@ class InboxViewPosts(APIView):
                 except Exception as e:
                     print(e)
             else:
-                r = requests.get(x)
+                try:
+                    r = requests.get(x)
 
-                t = r.json().copy()
+                    t = r.json().copy()
 
-                t['image_url'] = x + "/image"
+                    t['image_url'] = x + "/image"
 
-                image_req = requests.get(t['image_url'], auth=basic)
+                    image_req = requests.get(t['image_url'], auth=basic)
 
-                t['image_url'] = image_req.json()
+                    t['image_url'] = image_req.json()
 
-                posts.append(t)
+                    posts.append(t)
+                except Exception as e:
+                    print(e)
     
         return Response(posts, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
