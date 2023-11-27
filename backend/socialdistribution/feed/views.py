@@ -373,7 +373,9 @@ class InboxViewPosts(APIView):
     Inbox Post Views
     Get, Post
     '''
-
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+    
     @swagger_auto_schema(operation_description="Get an authors inbox posts",
         operation_summary="Get an authors inbox posts",
         responses={200: PostSerializer()},
@@ -454,6 +456,8 @@ class InboxViewComments(APIView):
     Inbox Post Views
     Get, Post
     '''
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
 
     @swagger_auto_schema(operation_description="Get an authors inbox comments",
         operation_summary="Get an authors inbox comments",
@@ -530,6 +534,8 @@ class InboxViews(APIView):
     Inbox Notification Views
     Get, Post
     '''
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
 
     @swagger_auto_schema(operation_description="Get an authors inbox",
         operation_summary="Get an authors inbox",
