@@ -26,9 +26,7 @@ export default function Inbox({ user }) {
 
       await axios
         
-        .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/comments", token, {
-          withCredentials: true,
-        })
+        .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/comments", token)
 
         .then((res) => {
 
@@ -85,12 +83,7 @@ export default function Inbox({ user }) {
       // console.log("FETCHING POST DATA AT URL:", post.API);
       // const response = await axios.get(post.API)
       await axios
-        .get(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token, {
-            withCredentials: true,
-          }
-        )
-
+        .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
         .then((res) => {
           console.log("res", res);
 
@@ -154,9 +147,7 @@ export default function Inbox({ user }) {
 
     await axios
       .get(
-        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token, {
-          withCredentials: true,
-        } 
+        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token 
       )
       .then((res) => {
         console.log("inbox", res);
