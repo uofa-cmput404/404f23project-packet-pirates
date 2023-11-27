@@ -79,11 +79,18 @@ export default function EditPost({ user,
     console.log("Sent visibility is:", value);
   };
 
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
+    }
+  };
+
   const handlePostDelete = (event) => {
     event.preventDefault();
 
     axios
-      .delete("http://127.0.0.1:8000/postViews",{ data: { post_id: id}})
+      .delete("http://127.0.0.1:8000/postViews",{ data: {post_id: id}, config})
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
@@ -116,6 +123,7 @@ export default function EditPost({ user,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': 'Token ' + localStorage.getItem('access_token')
         }
       })
       .then((response) => {
