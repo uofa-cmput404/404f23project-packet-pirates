@@ -26,6 +26,11 @@ export default function ViewProfile({ user }) {
   const [authorInfo, setAuthorInfo] = useState(null);
   const [profileHeader, setProfileHeader] = useState(null);
 
+  const [is_pending, set_is_pending] = useState(null);
+  const [areFriends, setAreFriends] = useState(null);
+
+  const[followButtons, setFollowButtons] = useState(null);
+
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
     username: "fake_user",
@@ -161,14 +166,44 @@ export default function ViewProfile({ user }) {
         });
     };
 
+    const checkFriendship = async () => {
+        let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+        const authReso = await axios
+        .get(authorUrl)
+        .then(async (authReso) => {
+        
+          const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
+          
+          const followReqUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
+
+          try {
+            const response = await axios.get(followersUrl).then(async (data) => {
+              setAreFriends(data['data']);
+              console.log("FFF", data['data'])
+              console.log("FRIENDS?", areFriends)
+              // console.log(response.data)
+            });
+            
+            const followReqResponse = await axios.get(followReqUrl).then(async (data) => {
+              set_is_pending(data['data'])
+              console.log("PENDING?", is_pending)
+            });
+
+          } catch (error) {
+            console.error("Error checking friendship:", error);
+          }
+        });
+    }
+
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
+    checkFriendship();
     //location.reload()
     console.log("posts", posts);
-  }, [author]);
+  }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
 
@@ -178,6 +213,7 @@ export default function ViewProfile({ user }) {
       .get(authUrl, config)
       .then((authRes) => {
         setAuthorInfo(authorInfo => authRes.data.Author);
+
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
@@ -193,14 +229,31 @@ export default function ViewProfile({ user }) {
             <h2 className="text-xl font-semibold mb-2">
               {author + "'s profile"}
             </h2>
+            
+            {areFriends && !is_pending &&(
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded-md"
+                  onClick={handleUnfollow}
+                >
+                  Unfollow
+                </button>
+              )}
 
-            {/* Follow Button */}
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              onClick={handleFollow}
-            >
-              Follow
-            </button>
+              {!areFriends && !is_pending && (
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                  onClick={handleFollow}
+                >
+                  Follow
+                </button>
+              )}
+
+              {is_pending && !areFriends &&(
+                <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
+                  Pending
+                </button>
+              )}
+
           </div>
         );
       })
@@ -264,14 +317,38 @@ export default function ViewProfile({ user }) {
     
           const res2 = await axios.post(followrequestUrl, requestdata, config).then((res2) => {
             console.log(res2.data);
+            // set_is_pending(true); // Set is_pending to true since a follow request is pending
+            // setAreFriends(false); // Set areFriends to false since a follow request is pending
           });
     
         } catch (err) {
           console.log(err);
+          // set_is_pending(false); // If there's an error, set isPending back to false
         }
-
+        window.location.reload(false)
       });
+  }
 
+  const handleUnfollow = async (event) => {
+    event.preventDefault();
+  
+    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+  
+    const authReso = await axios
+      .get(authorUrl)
+      .then(async (authReso) => {
+
+      let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
+
+        try {
+          const res = await axios.delete(unfollowUrl).then((res) => {
+            console.log(res.data);
+            setAreFriends(false);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      });
   };
 
   return (
@@ -286,7 +363,7 @@ export default function ViewProfile({ user }) {
 
           <div>
             {/* Profile Header Section */}
-            {profile && (
+            {/* {profile && (
               <div className="profile-header mt-4 p-4 border border-gray-300 rounded-md text-center">
                 <img
                   src={profile.profile_picture}
@@ -294,11 +371,31 @@ export default function ViewProfile({ user }) {
                   className="w-16 h-16 rounded-full object-cover mb-2"
                 />
                 <h2 className="text-xl font-semibold">{profile.username}</h2>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">
-                  Follow
-                </button>
+                {areFriends && !is_pending && (
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    
+                  >
+                    Unfollow
+                  </button>
+                )}
+
+                {!areFriends && !is_pending && (
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    
+                  >
+                    Follow
+                  </button>
+                )}
+
+                {is_pending && !areFriends && (
+                  <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
+                    Pending
+                  </button>
+                )}
               </div>
-            )}
+            )} */}
             <div className="flex flex-row w-full mx-auto">
               <div
                 className="profile h-fit mx-auto"
