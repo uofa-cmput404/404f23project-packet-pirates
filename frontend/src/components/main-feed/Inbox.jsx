@@ -27,12 +27,12 @@ export default function Inbox({ user }) {
   //   });
   // };
 
-  const fetchPostData = async () => {
-    await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
-    .then((res) => {
-      console.log(res)
-    });
-  };
+  // const fetchPostData = async () => {
+  //   await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
+  //   .then((res) => {
+  //     console.log(res)
+  //   });
+  // };
 
   // const fetchCommentData = async () => {
 
@@ -92,44 +92,44 @@ export default function Inbox({ user }) {
 
   // }
 
-  // const fetchPostData = async () => {
+  const fetchPostData = async () => {
 
-  //   try {
-  //     // console.log("FETCHING POST DATA AT URL:", post.API);
-  //     // const response = await axios.get(post.API)
-  //     console.log("Sending request for posts")
-  //     await axios
-  //       .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts", token)
-  //       .then((res) => {
-  //         console.log("res", res);
+    try {
+      // console.log("FETCHING POST DATA AT URL:", post.API);
+      // const response = await axios.get(post.API)
+      console.log("Sending request for posts")
+      await axios
+        .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
+        .then((res) => {
+          console.log("res", res);
 
-  //         setShowPost(() => [
-  //           res.data.map((post, index) => {
-  //             return (
-  //               <RemotePost
-  //                 key={index}
-  //                 user={user}
-  //                 post_author={post.author}
-  //                 title={post.title}
-  //                 description={post.description}
-  //                 content={post.content}
-  //                 img={post.image_url}
-  //                 likes={post.likes_count}
-  //               />
-  //             );
-  //           }),
-  //         ]);
+          setShowPost(() => [
+            res.data.map((post, index) => {
+              return (
+                <RemotePost
+                  key={index}
+                  user={user}
+                  post_author={post.author}
+                  title={post.title}
+                  description={post.description}
+                  content={post.content}
+                  img={post.image_url}
+                  likes={post.likes_count}
+                />
+              );
+            }),
+          ]);
 
-  //       });
+        });
 
-  //   } catch (error) {
+    } catch (error) {
 
-  //     console.error("Error fetching post data:", error);
+      console.error("Error fetching post data:", error);
 
-  //     throw error; // Rethrow the error to be caught by Promise.all
+      throw error; // Rethrow the error to be caught by Promise.all
 
-  //   }
-  // };
+    }
+  };
 
   useEffect(() => {
     getInbox();
