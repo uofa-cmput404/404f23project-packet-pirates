@@ -341,24 +341,19 @@ class InboxViewPosts(APIView):
 
                 t = r.json().copy()
 
-                print(t)
+                # Uncomment this when they change their image endpoint
+                # t['image_url'] = x + "/image"
+                # image_req = requests.get(t['image_url'], auth=basic)
+                # t['image_url'] = image_req.json()
 
-                t['image_url'] = x + "/image"
+                t['image_url'] = 'https://picsum.photos/200'
 
-                image_req = requests.get(t['image_url'], auth=basic)
-
-                t['image_url'] = image_req.json()
-
-                posts.append(r.json())
+                posts.append(t)
             elif c.PP_ENDPOINT in x:
                 basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
                 r = requests.get(x, auth=basic)
                 t = r.json().copy()
 
-                print(x)
-
-                print(t)
-                
                 t['image_url'] = x + "/image"
 
                 image_req = requests.get(t['image_url'], auth=basic)
