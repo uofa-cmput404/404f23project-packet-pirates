@@ -75,7 +75,7 @@ export default function Post({
         });
       } else {
         // If unliking, make a DELETE request to remove the like
-        await axios.delete("http://127.0.0.1:8000/author/" + id + "/postlikes", {
+        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes", {
           data: {
             post_object_id: id,
             author: user,
