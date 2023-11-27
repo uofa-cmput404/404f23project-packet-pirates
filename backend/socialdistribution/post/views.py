@@ -484,11 +484,11 @@ class CommentsRemote(APIView):
         
         auth_id = uuid.UUID(author)
         
-        post_id = uuid.UUID(post)
+        authors_post_id = uuid.UUID(post)
 
-        post = Post.objects.filter(author = auth_id).filter(post_id = post_id)[0]
+        authors_post = Post.objects.filter(author = auth_id).filter(post_id = authors_post_id)[0]
 
-        comments = Comment.objects.filter(post_id = post.post_id)
+        comments = Comment.objects.filter(post_id = authors_post.post_id)
 
         serializer = CommentSerializerRemote(comments, many = True)
 
