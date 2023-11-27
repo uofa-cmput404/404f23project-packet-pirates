@@ -23,7 +23,7 @@ urlpatterns = [
     path('authors/<str:author>/liked', views.LikedRemote.as_view(), name = 'liked_remote'),
     path('authors/<str:author>/posts/<str:post>/likes', views.GetLikesOnPostRemote.as_view(), name = 'likes_remote'),
     path('authors/<str:author>/posts/<str:post>/comments', views.CommentsRemote.as_view(), name = 'comments_remote'),
-    path('authors/<str:author>/posts/<str:post>/images', views.ImagesRemote.as_view(), name = 'images_remote'),
+    path('authors/<str:author>/posts/<str:post>/image', views.ImagesRemote.as_view(), name = 'images_remote'),
     path('authors/<str:author>/posts/<str:post>', views.PostRemote.as_view(), name = 'post_remote'),
     path('authors/<str:author>/posts', views.AuthorPostsRemote.as_view(), name = 'author_posts_remote'),
 

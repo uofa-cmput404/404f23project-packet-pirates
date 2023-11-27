@@ -324,7 +324,7 @@ class InboxViewPosts(APIView):
 
         serializer = InboxPostsSerializer(inbox)
         
-        print(serializer.data)
+        # print(serializer.data)
         
         # extract only the 'API' field from each post
         api_fields = []
@@ -338,14 +338,46 @@ class InboxViewPosts(APIView):
             if c.SUPER_ENDPOINT in x:
                 basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
                 r = requests.get(x, auth=basic)
+
+                t = r.json().copy()
+
+                print(t)
+
+                t['image_url'] = x + "/image"
+
+                image_req = requests.get(t['image_url'], auth=basic)
+
+                t['image_url'] = image_req.json()
+
                 posts.append(r.json())
             elif c.PP_ENDPOINT in x:
                 basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
                 r = requests.get(x, auth=basic)
-                posts.append(r.json())
+                t = r.json().copy()
+
+                print(x)
+
+                print(t)
+                
+                t['image_url'] = x + "/image"
+
+                image_req = requests.get(t['image_url'], auth=basic)
+
+                t['image_url'] = image_req.json()
+
+                posts.append(t)
             else:
                 r = requests.get(x)
-                posts.append(r.json())
+
+                t = r.json().copy()
+
+                t['image_url'] = x + "/image"
+
+                image_req = requests.get(t['image_url'], auth=basic)
+
+                t['image_url'] = image_req.json()
+
+                posts.append(t)
     
         return Response(posts, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
