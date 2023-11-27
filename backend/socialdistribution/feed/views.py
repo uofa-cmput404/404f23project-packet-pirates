@@ -430,20 +430,23 @@ class InboxViewPosts(APIView):
                     t['image_url'] = image_req.json()
 
                     posts.append(t)
-                except:
+                except Exception as e:
                     print(e)
             else:
-                r = requests.get(x)
+                try:
+                    r = requests.get(x)
 
-                t = r.json().copy()
+                    t = r.json().copy()
 
-                t['image_url'] = x + "/image"
+                    t['image_url'] = x + "/image"
 
-                image_req = requests.get(t['image_url'], auth=basic)
+                    image_req = requests.get(t['image_url'], auth=basic)
 
-                t['image_url'] = image_req.json()
+                    t['image_url'] = image_req.json()
 
-                posts.append(t)
+                    posts.append(t)
+                except Exception as e:
+                    print(e)
     
         return Response(posts, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
