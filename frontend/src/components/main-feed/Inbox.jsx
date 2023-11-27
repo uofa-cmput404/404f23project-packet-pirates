@@ -141,7 +141,7 @@ export default function Inbox({ user }) {
     fetchCommentData()
     setPostsFetched(true);
 
-  }, [inbox]);
+  }, []);
 
   const getInbox = async () => {
 
