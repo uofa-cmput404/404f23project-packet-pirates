@@ -152,7 +152,7 @@ export default function Inbox({ user }) {
     //console.log("inboxPosts", inboxPosts);
 
     fetchPostData()
-    fetchCommentData()
+    // fetchCommentData()
     setPostsFetched(true);
 
   }, []);
