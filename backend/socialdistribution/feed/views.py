@@ -191,11 +191,26 @@ class FollowRequestViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+
+    @swagger_auto_schema(operation_description="Get a follow request object",
+        operation_summary="Get a follow request object",
+        responses={200: FollowerRequestSerializer()},
+        tags=['Feed'],)
+    
+    def get (self, request, pk):
+        follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['sender'])).filter(recipient = uuid.UUID(request.data['recipient']))
+        if (follow_req_obj):
+            serializer = FollowerRequestSerializer(follow_req_obj, many = True)
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response ({"Message": "Follow Request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
     @swagger_auto_schema(operation_description="Create a follow request object",
                 operation_summary="Create a follow request object",
                 responses={200: FollowerRequestSerializer()},
                 tags=['Feed'],)
-
+    
     def post(self, request, pk): # pk should be the user's primary key and in the request we pass back the profile user's ID they were looking at
                                   # Or request can have both.
 
@@ -228,6 +243,19 @@ class FriendsViews(APIView):
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+
+    @swagger_auto_schema(operation_description="Get a friend object",
+        operation_summary="Get a friend object",
+        responses={200: FriendsSerializer()},
+        tags=['Feed'],)
+    
+    def get (self, request, pk):
+        follow_req_obj = Friends.objects.filter(author = uuid.UUID(request.data['author'])).filter(friend = uuid.UUID(request.data['friend']))
+        if (follow_req_obj):
+            serializer = FollowerRequestSerializer(follow_req_obj, many = True)
+            return Response (serializer.data, status=status.HTTP_200_OK)
+        
+        return Response ({"Message": "Friend does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(operation_description="Creates a friend object",
         operation_summary="Creates a friend object",
