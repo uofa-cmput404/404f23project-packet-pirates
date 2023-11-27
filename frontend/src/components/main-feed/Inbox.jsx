@@ -20,12 +20,12 @@ export default function Inbox({ user }) {
 
   console.log(user);
 
-  const fetchCommentData = async () => {
-    await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/comments", token)
-    .then((res) => {
-      console.log(res)
-    });
-  };
+  // const fetchCommentData = async () => {
+  //   await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/comments", token)
+  //   .then((res) => {
+  //     console.log(res)
+  //   });
+  // };
 
   const fetchPostData = async () => {
     await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
