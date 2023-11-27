@@ -401,12 +401,13 @@ class InboxViewPosts(APIView):
             api_fields.append(post_data.get('API', ''))
             
         posts = []
-        
+        print("GOT HERE 1")
         for x in api_fields:
             if c.SUPER_ENDPOINT in x:
                 try:
                     basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
                     r = requests.get(x, auth=basic)
+                    print("GOT HERE 2")
             
                     t = r.json().copy()
 
@@ -426,7 +427,7 @@ class InboxViewPosts(APIView):
                     basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
                     r = requests.get(x, auth=basic)
                     t = r.json().copy()
-
+                    print("GOT HERE 3")
                     t['image_url'] = x + "/image"
 
                     image_req = requests.get(t['image_url'], auth=basic)

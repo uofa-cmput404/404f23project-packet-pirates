@@ -23,6 +23,7 @@ export default function Inbox({ user }) {
   const fetchCommentData = async () => {
 
     try {
+      console.log("Sending request for comments")
 
       await axios
         
@@ -82,6 +83,7 @@ export default function Inbox({ user }) {
     try {
       // console.log("FETCHING POST DATA AT URL:", post.API);
       // const response = await axios.get(post.API)
+      console.log("Sending request for posts")
       await axios
         .get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local/posts", token)
         .then((res) => {
