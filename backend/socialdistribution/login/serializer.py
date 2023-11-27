@@ -72,7 +72,7 @@ class AuthorSerializerRemote(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(instance.user_id)
+        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.user_id)
 
         representation['host'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/"
 
