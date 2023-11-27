@@ -37,7 +37,10 @@ export default function ViewProfile({ user }) {
   };
 
   const config = {
-    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
+    }
   };
 
   useEffect(() => {
@@ -169,7 +172,7 @@ export default function ViewProfile({ user }) {
     const checkFriendship = async () => {
         let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
         const authReso = await axios
-        .get(authorUrl)
+        .get(authorUrl, config)
         .then(async (authReso) => {
         
           const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
@@ -335,13 +338,13 @@ export default function ViewProfile({ user }) {
     let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
   
     const authReso = await axios
-      .get(authorUrl)
+      .get(authorUrl, config)
       .then(async (authReso) => {
 
       let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
 
         try {
-          const res = await axios.delete(unfollowUrl).then((res) => {
+          const res = await axios.delete(unfollowUrl, config).then((res) => {
             console.log(res.data);
             setAreFriends(false);
           });
