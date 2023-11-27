@@ -11,6 +11,10 @@ export default function Inbox({ user }) {
 
   const [inboxComments, setInboxComments] = useState([])
 
+  const token = {
+    headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
+  };
+
   console.log(user);
 
   const fetchCommentData = async () => {
@@ -19,7 +23,7 @@ export default function Inbox({ user }) {
 
       await axios
         
-        .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/comments")
+        .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/comments", token)
 
         .then((res) => {
 
@@ -77,7 +81,7 @@ export default function Inbox({ user }) {
       // const response = await axios.get(post.API)
       await axios
         .get(
-          "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts"
+          "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts", token
         )
 
         .then((res) => {
@@ -143,7 +147,7 @@ export default function Inbox({ user }) {
 
     await axios
       .get(
-        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local"
+        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token
       )
       .then((res) => {
         console.log("inbox", res);
