@@ -98,7 +98,7 @@ export default function CreatePost({ user }) {
         headers: {
           "Content-Type": "multipart/form-data",
           //"Content-Type": "application/json",
-        }
+        },
       })
       .then((response) => {
         console.log(response.data);
@@ -171,7 +171,7 @@ export default function CreatePost({ user }) {
         </div>
         <div className="menu">
           {/* upload photo, public, plaintext, post */}
-          <ul className="flex flex-row justify-between items-center">
+          <ul className="flex flex-row justify-between">
             <li>
             <label htmlFor="select-image">
               <div 
