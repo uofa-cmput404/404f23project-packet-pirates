@@ -327,7 +327,24 @@ export default function ViewProfile({ user }) {
 
   const handleUnfollow = async (event) => {
     event.preventDefault();
-    setAreFriends(false);
+  
+    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+  
+    const authReso = await axios
+      .get(authorUrl)
+      .then(async (authReso) => {
+
+      let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + authReso.data.Author.user_id;
+
+        try {
+          const res = await axios.delete(unfollowUrl).then((res) => {
+            console.log(res.data);
+            setAreFriends(false);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      });
   };
 
   return (
