@@ -90,7 +90,7 @@ export default function EditPost({ user,
     event.preventDefault();
 
     axios
-      .delete("http://127.0.0.1:8000/postViews",{ data: {post_id: id}, config})
+      .delete("http://127.0.0.1:8000/" + id + "/postViews", config)
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
@@ -101,7 +101,7 @@ export default function EditPost({ user,
       });
   }
 
-  const handleEditting = (e) => {
+  const handleEditing = (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('author', user.user.user_id);
@@ -127,6 +127,7 @@ export default function EditPost({ user,
         }
       })
       .then((response) => {
+        // window.location.reload(false)
         console.log(response.data);
       })
       .catch((error) => {
@@ -226,7 +227,7 @@ export default function EditPost({ user,
             <li>
               <button
                 className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
-                onClick={handleEditting}
+                onClick={handleEditing}
               >
                 Update
               </button>

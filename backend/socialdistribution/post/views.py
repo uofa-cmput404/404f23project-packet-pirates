@@ -197,13 +197,13 @@ class PostViews(APIView):
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
 
+class DeletePost(APIView):
     @swagger_auto_schema(operation_description="Delete a post for a specific author",
-            operation_summary="Delete Author Post",
-            responses={201: PostSerializer()},
-            tags=['Post'],)
+        operation_summary="Delete Author Post",
+        responses={201: PostSerializer()},
+        tags=['Post'],)
         
-    def delete(self, request):
-        pk = request.data['post_id']
+    def delete(self, request, pk):
         post_id = uuid.UUID(pk)
 
         post = Post.objects.filter(post_id = post_id)
