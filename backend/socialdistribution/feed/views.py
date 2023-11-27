@@ -378,7 +378,78 @@ class InboxViewPosts(APIView):
         # return Response(api_fields, status=status.HTTP_200_OK)
 
             
+class InboxViewComments(APIView):
+    '''
+    Inbox Post Views
+    Get, Post
+    '''
 
+    @swagger_auto_schema(operation_description="Get an authors inbox comments",
+        operation_summary="Get an authors inbox comments",
+        responses={200: PostSerializer()},
+        tags=['Feed'],)    
+    
+    def get(self, request, pk):
+        '''
+        Return the inbox posts of an author
+        '''
+        pk = uuid.UUID(pk)
+
+        inbox = Inbox.objects.get(author = pk)
+
+        serializer = InboxCommentsSerializer(inbox)
+        
+        # print(serializer.data)
+        
+        # extract only the 'API' field from each post
+        api_fields = []
+        print(serializer.data.items())
+        for comment_id, comment_data in serializer.data.items():
+            api_fields.append(comment_data.get('API', ''))
+        
+        print(api_fields)
+        comments = []
+        
+        for x in api_fields:
+            if c.SUPER_ENDPOINT in x:
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                r = requests.get(x, auth=basic)
+
+                print(r)
+
+                # Uncomment this when they change their image endpoint
+                # t['image_url'] = x + "/image"
+                # image_req = requests.get(t['image_url'], auth=basic)
+                # t['image_url'] = image_req.json()
+
+                comments.append(r)
+            # elif c.PP_ENDPOINT in x:
+            #     basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+            #     r = requests.get(x, auth=basic)
+            #     t = r.json().copy()
+
+            #     t['image_url'] = x + "/image"
+
+            #     image_req = requests.get(t['image_url'], auth=basic)
+
+            #     t['image_url'] = image_req.json()
+
+            #     posts.append(t)
+            # else:
+            #     r = requests.get(x)
+
+            #     t = r.json().copy()
+
+            #     t['image_url'] = x + "/image"
+
+            #     image_req = requests.get(t['image_url'], auth=basic)
+
+            #     t['image_url'] = image_req.json()
+
+            #     posts.append(t)
+    
+        return Response(comments, status=status.HTTP_200_OK)
+        # return Response(api_fields, status=status.HTTP_200_OK)
 
 class InboxViews(APIView):
     '''

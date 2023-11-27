@@ -496,7 +496,39 @@ class CommentsRemote(APIView):
         
         return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class PostCommentRemote(APIView):
+    '''
+    Get a comment on AUTHOR_ID's post POST_ID
+    URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/comments/{COMMENT_ID}
+    '''
+    # permission_classes = (permissions.AllowAny,)
     
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (BasicAuthentication,)
+
+    
+    @swagger_auto_schema(operation_description="Get a comment on AUTHOR_ID's post POST_ID",
+                operation_summary="Get comment on AUTHOR_ID's post POST_ID",
+                responses={200: CommentSerializerRemote()},
+                tags=['Remote'],)
+
+    def get(self, request, author, post, comment):
+        
+        auth_id = uuid.UUID(author)
+        
+        post_id = uuid.UUID(post)
+
+        comment = Comment.objects.filter(author = auth_id).filter(post_id = post_id).filter(comment_id = comment)
+
+        serializer = CommentSerializerRemote(comment, many = True)
+
+        if comment:
+
+            return Response (serializer.data[0], status=status.HTTP_200_OK)
+        
+        return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
+
 class PostRemote(APIView):
     '''
     Get the public post whose id is POST_ID
