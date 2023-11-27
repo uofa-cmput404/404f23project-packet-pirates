@@ -165,7 +165,7 @@ class CommentSerializerRemote(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post.post_id) + '/comments/' +  + str(instance.comment_id)
+        representation['id'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post.post_id) + '/comments/' + str(instance.comment_id)
         return representation
     
     class Meta:
