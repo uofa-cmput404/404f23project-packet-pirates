@@ -531,7 +531,7 @@ class PostCommentRemote(APIView):
 
             return Response (serializer.data[0], status=status.HTTP_200_OK)
         
-        return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class PostRemote(APIView):
     '''
