@@ -24,12 +24,14 @@ export default function Inbox({ user }) {
     const notifications = inbox.notifications || [];
     const fetchPostData = async (post) => {
       try {
-        console.log("FETCHING POST DATA AT URL:", post.API);
-        const response = await axios.get(post.API)
-        // const response = await axios
-          // .get(
-          //   "http://127.0.0.1:8000/authors/5e4b8ac6-c5bb-4a4c-b671-a76300236f5d/posts/bd4f68ae-e148-4732-b3e1-9f210f2c2f4d"
-          // )
+        // console.log("FETCHING POST DATA AT URL:", post.API);
+        // const response = await axios.get(post.API)
+        const response = await axios
+          .get(
+            // "http://127.0.0.1:8000/authors/5e4b8ac6-c5bb-4a4c-b671-a76300236f5d/posts/50d4afaf39de4c8f9cfe0f1f6421d7bd"
+          "http://127.0.0.1:8000/author/5e4b8ac6-c5bb-4a4c-b671-a76300236f5d/inbox/local/posts"
+
+          )
           .then((res) => {
             console.log("res", res);
             setShowPost((prev) => [
@@ -56,10 +58,13 @@ export default function Inbox({ user }) {
       }
     };
 
-    posts.forEach((post) => {
-      console.log("post", post);
-      fetchPostData(post);
-    });
+    // posts.forEach((post) => {
+    //   console.log("post", post);
+    //   fetchPostData(post);
+    // });
+
+    fetchPostData(posts)
+
     setPostsFetched(true);
     console.log("posts", posts);
     console.log("postComments", postComments);
