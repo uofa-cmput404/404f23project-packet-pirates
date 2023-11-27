@@ -34,6 +34,10 @@ from django.core.serializers import serialize
 
 import json, copy
 
+import requests
+from requests.auth import HTTPBasicAuth
+import config as c
+
 # Create your views here.
 
 class GetAllNotifications(APIView):
@@ -218,7 +222,7 @@ class FollowRequestViews(APIView):
     
     def get (self, request, pk):
         print("Request", request.data)
-        follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['sender'])).filter(recipient = uuid.UUID(request.data['recipient']))
+        follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['data']['sender'])).filter(recipient = uuid.UUID(request.data['data']['recipient']))
         
         if (follow_req_obj):
             serializer = FollowerRequestSerializer(follow_req_obj, many = True)
@@ -253,7 +257,7 @@ class FollowRequestViews(APIView):
         
     def delete(self, request, pk):
         print("FR DATA", request.data)
-        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['sender']).filter(recipient = request.data['recipient'])
+        follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
 
         if (follow_request_obj):
             follow_request_obj.delete()
@@ -355,7 +359,7 @@ class NotificationViews(APIView):
     def delete(self, request, pk):
         print("Notify DATA", request.data)
 
-        notification_object = Notifications.objects.get(notif_id = request.data['notif_id'])
+        notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
         if (notification_object):
             notification_object.delete()
@@ -363,6 +367,163 @@ class NotificationViews(APIView):
 
         return Response({"Message": "Error has occured when trying to delete notification"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class InboxViewPosts(APIView):
+    '''
+    Inbox Post Views
+    Get, Post
+    '''
+
+    @swagger_auto_schema(operation_description="Get an authors inbox posts",
+        operation_summary="Get an authors inbox posts",
+        responses={200: PostSerializer()},
+        tags=['Feed'],)    
+    def get(self, request, pk):
+        '''
+        Return the inbox posts of an author
+        '''
+        pk = uuid.UUID(pk)
+
+        inbox = Inbox.objects.get(author = pk)
+
+        serializer = InboxPostsSerializer(inbox)
+        
+        # print(serializer.data)
+        
+        # extract only the 'API' field from each post
+        api_fields = []
+        
+        for post_id, post_data in serializer.data.items():
+            api_fields.append(post_data.get('API', ''))
+            
+        posts = []
+        
+        for x in api_fields:
+            if c.SUPER_ENDPOINT in x:
+                try:
+                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                    r = requests.get(x, auth=basic)
+            
+                    t = r.json().copy()
+
+                    # Uncomment this when they change their image endpoint
+                    # t['image_url'] = x + "/image"
+                    # image_req = requests.get(t['image_url'], auth=basic)
+                    # t['image_url'] = image_req.json()
+
+                    t['image_url'] = 'https://picsum.photos/200'
+
+                    posts.append(t)
+                except Exception as e:
+                    print(e)
+
+            elif c.PP_ENDPOINT in x:
+                try:
+                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+                    r = requests.get(x, auth=basic)
+                    t = r.json().copy()
+
+                    t['image_url'] = x + "/image"
+
+                    image_req = requests.get(t['image_url'], auth=basic)
+
+                    t['image_url'] = image_req.json()
+
+                    posts.append(t)
+                except:
+                    print(e)
+            else:
+                r = requests.get(x)
+
+                t = r.json().copy()
+
+                t['image_url'] = x + "/image"
+
+                image_req = requests.get(t['image_url'], auth=basic)
+
+                t['image_url'] = image_req.json()
+
+                posts.append(t)
+    
+        return Response(posts, status=status.HTTP_200_OK)
+        # return Response(api_fields, status=status.HTTP_200_OK)
+
+            
+class InboxViewComments(APIView):
+    '''
+    Inbox Post Views
+    Get, Post
+    '''
+
+    @swagger_auto_schema(operation_description="Get an authors inbox comments",
+        operation_summary="Get an authors inbox comments",
+        responses={200: PostSerializer()},
+        tags=['Feed'],)    
+    
+    def get(self, request, pk):
+        '''
+        Return the inbox posts of an author
+        '''
+        pk = uuid.UUID(pk)
+
+        inbox = Inbox.objects.get(author = pk)
+
+        serializer = InboxCommentsSerializer(inbox)
+        
+        # print(serializer.data)
+        
+        # extract only the 'API' field from each post
+        api_fields = []
+        print(serializer.data.items())
+        for comment_id, comment_data in serializer.data.items():
+            api_fields.append(comment_data.get('API', ''))
+        
+        print(api_fields)
+        comments = []
+        
+        for x in api_fields:
+            if c.SUPER_ENDPOINT in x:
+                try:
+                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                    r = requests.get(x, auth=basic)
+
+
+                    # Uncomment this when they change their image endpoint
+                    # t['image_url'] = x + "/image"
+                    # image_req = requests.get(t['image_url'], auth=basic)
+                    # t['image_url'] = image_req.json()
+
+                    comments.append(r.json())
+                except Exception as e:
+                    print(e)
+            elif c.PP_ENDPOINT in x:
+                try:
+                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+                    r = requests.get(x, auth=basic)
+                    
+                    print(r)
+
+                    comments.append(r.json())
+                except Exception as e:
+                    print(e)
+            else:
+                try:
+                    r = requests.get(x)
+
+                    t = r.json().copy()
+
+                    t['image_url'] = x + "/image"
+
+                    image_req = requests.get(t['image_url'], auth=basic)
+
+                    t['image_url'] = image_req.json()
+
+                    comments.append(t)
+                except Exception as e:
+                    print(e)
+    
+        return Response(comments, status=status.HTTP_200_OK)
+        # return Response(api_fields, status=status.HTTP_200_OK)
 
 class InboxViews(APIView):
     '''
