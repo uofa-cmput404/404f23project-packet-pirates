@@ -33,7 +33,7 @@ export default function Login() {
 
     // check if login was sucessful, then reloads the window
     const res = await axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/login", content, {})
+      .post("http://127.0.0.1:8000/login", content, {})
       .then((res) => res.data)
       .then(function (data) {
         console.log(data);

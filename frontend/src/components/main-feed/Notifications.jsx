@@ -41,10 +41,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -90,10 +90,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -136,7 +136,7 @@ export function Notification({ user, index, notification }) {
 
 
     let friendUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/friends";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/friends";
 
     const friendData = {
       author : user.user.user_id,

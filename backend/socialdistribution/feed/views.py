@@ -649,6 +649,36 @@ class InboxViews(APIView):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class FollowersLocal(APIView):
+    '''
+    URL: ://service/authors/{AUTHOR_ID}/followers/{FOREIGN_AUTHOR_ID}
+    GET [local, remote] check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID
+    '''
+    # permission_classes = (permissions.AllowAny, )
+    # authentication_classes = ()
+    
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+
+    @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
+        operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
+        responses={200: FriendsSerializer()},
+        tags=['Remote'],)
+
+    def get(self, request, author_id, foreign_author_id):
+        author_id = uuid.UUID(author_id)
+
+        foreign_author_id = uuid.UUID(foreign_author_id)
+
+        friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
+
+        serializer = FriendsSerializer(friend, many = True)
+
+        if (len(serializer.data) == 0):
+
+            return Response(False, status = status.HTTP_200_OK)
+        
+        return Response (True, status = status.HTTP_200_OK)
 
 # REMOTE VIEWS
 class GetAuthorsFollowersRemote(APIView):

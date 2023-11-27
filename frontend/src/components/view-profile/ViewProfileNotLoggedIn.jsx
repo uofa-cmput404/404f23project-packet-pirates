@@ -23,7 +23,7 @@ export default function ViewProfileNotLogged() {
   };
 
   useEffect(() => {
-    const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
+    const getUrl = "http://127.0.0.1:8000";
     setIsLoading(true);
     console.log("author", author);
     // console.log("user", user);
@@ -40,7 +40,7 @@ export default function ViewProfileNotLogged() {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
+        "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)
@@ -53,7 +53,7 @@ export default function ViewProfileNotLogged() {
             postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => {
               const image_conditions = post.image_url === '' && post.image_file != ''
               // console.log("TESTING", image_conditions)
-              const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+              const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
               // console.log("IMAGE", image)
               return (
                 <Post

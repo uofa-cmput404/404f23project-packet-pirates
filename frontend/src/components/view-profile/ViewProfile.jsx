@@ -44,14 +44,14 @@ export default function ViewProfile({ user }) {
   };
 
   useEffect(() => {
-    const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
+    const getUrl = "http://127.0.0.1:8000";
     setIsLoading(true);
     console.log("author", author);
     console.log("user", user);
 
     const getConnections = async () => {
       let connectionsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -83,7 +83,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+        "http://127.0.0.1:8000/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -102,7 +102,7 @@ export default function ViewProfile({ user }) {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
+        "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl,config)
@@ -114,7 +114,7 @@ export default function ViewProfile({ user }) {
               postsRes.data.Posts.map((post, index) => { // As the user, want to be able to see your all your posts.
                 const image_conditions = post.image_url === '' && post.image_file != ''
                 // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
                 // console.log("IMAGE", image)
                 return (
                   <Post
@@ -138,7 +138,7 @@ export default function ViewProfile({ user }) {
               postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => { // Swap !post.is_private to our boolean checker to see if they are friends
                 const image_conditions = post.image_url === '' && post.image_file != ''
                 // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
                 // console.log("IMAGE", image)
                 return (
                   <Post
@@ -170,24 +170,24 @@ export default function ViewProfile({ user }) {
     };
 
     const checkFriendship = async () => {
-        let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
+        let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
         const authReso = await axios
         .get(authorUrl, config)
         .then(async (authReso) => {
         
-          const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
+          const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id + "/local";
           
-          const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
+          const followReqUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
 
           try {
-            const response = await axios.get(followersUrl).then(async (data) => {
+            const response = await axios.get(followersUrl, config).then(async (data) => {
               setAreFriends(data['data']);
               console.log("FFF", data['data'])
               console.log("FRIENDS?", areFriends)
               // console.log(response.data)
             });
             
-            const followReqResponse = await axios.get(followReqUrl).then(async (data) => {
+            const followReqResponse = await axios.get(followReqUrl, config).then(async (data) => {
               set_is_pending(data['data'])
               console.log("PENDING?", is_pending)
             });
@@ -210,7 +210,7 @@ export default function ViewProfile({ user }) {
 
   const getAuthorInfo = async () => {
 
-    let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
+    let authUrl = "http://127.0.0.1:8000/author/" + author + "/username";
 
     const authRes = await axios
       .get(authUrl, config)
@@ -222,7 +222,7 @@ export default function ViewProfile({ user }) {
             {/* User's Profile Picture */}
             <img
               src={
-                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authRes.data.Author.profile_picture
+                "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
               }
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
@@ -269,7 +269,7 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+      await axios.get("http://127.0.0.1:8000/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {
@@ -283,13 +283,13 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
 
     let authorUrl = 
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
+    "http://127.0.0.1:8000/author/" + author + "/username";
 
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
+    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const authReso = await axios
       .get(authorUrl, config)
@@ -299,7 +299,7 @@ export default function ViewProfile({ user }) {
         const notifdata = {
           author: author,
           notification_author: user.user.user_id,
-          notif_author_pfp: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture,
+          notif_author_pfp: "http://127.0.0.1:8000" + user.user.profile_picture,
           notif_author_username: user.user.username,
           message: "Requested to follow you",
           is_follow_notification: true,
@@ -335,13 +335,13 @@ export default function ViewProfile({ user }) {
   const handleUnfollow = async (event) => {
     event.preventDefault();
   
-    let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
+    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
   
     const authReso = await axios
       .get(authorUrl, config)
       .then(async (authReso) => {
 
-      let unfollowUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
+      let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
 
         try {
           const res = await axios.delete(unfollowUrl, config).then((res) => {

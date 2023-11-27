@@ -51,7 +51,7 @@ export default function Post({
     try {
       if (newLikeState) {
         // If liking, make a POST request to add a like
-        await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes", {
+        await axios.post("http://127.0.0.1:8000/author/" + id + "/postlikes", {
           post_object_id: id,
           author: user,
           like_count: newLikeCount,
@@ -60,7 +60,7 @@ export default function Post({
         });
       } else {
         // If unliking, make a DELETE request to remove the like
-        await axios.delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes", {
+        await axios.delete("http://127.0.0.1:8000/author/" + id + "/postlikes", {
           data: {
             post_object_id: id,
             author: user,
@@ -86,7 +86,7 @@ export default function Post({
     // Check if the current user has liked the post
     const checkLikeStatus = async () => {
       try {
-        const response = await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes", config);
+        const response = await axios.get("http://127.0.0.1:8000/author/" + id + "/postlikes", config);
         const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
         setHasLiked(likedByCurrentUser);
       } catch (error) {
@@ -127,8 +127,8 @@ export default function Post({
 
     console.log("USER!!!" , user)
 
-    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments"
-    let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/simpleauthor"
+    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
+    let authorUrl = "http://127.0.0.1:8000/author/" + user.user.user_id + "/simpleauthor"
 
     const authorRes = await axios
     .get(authorUrl,config)
@@ -137,7 +137,7 @@ export default function Post({
       await axios.post(commentsUrl, { 
         text: commentText,
         author: user.user.user_id,
-        author_picture: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
+        author_picture: "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
         author_username: authorRes.data.Author.username,
       
     }, config, {
@@ -159,7 +159,7 @@ export default function Post({
 
   const getComments = async () => {
 
-    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments"
+    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
 
     const commentsRes = await axios
     .get(commentsUrl,config)
@@ -209,7 +209,7 @@ export default function Post({
 
   const getPostAuthor = async () => {
 
-    let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_author + "/simpleauthor"
+    let authorUrl = "http://127.0.0.1:8000/author/" + post_author + "/simpleauthor"
 
     const authorRes = await axios
     .get(authorUrl,config)
@@ -244,7 +244,7 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + postAuthor.profile_picture}
+                src={"http://127.0.0.1:8000" + postAuthor.profile_picture}
                 alt="profile"
                 className="w-full h-full object-cover"
               />

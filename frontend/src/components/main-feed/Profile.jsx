@@ -20,7 +20,7 @@ export default function Profile({ friends, user }) {
         <div className="header flex flex-col justify-center items-center">
           <div className="image-container w-24 h-24 rounded-full overflow-hidden bg-black">
             <img
-              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
+              src={"http://127.0.0.1:8000" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />
