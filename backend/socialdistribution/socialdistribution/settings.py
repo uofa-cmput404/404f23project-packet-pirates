@@ -36,15 +36,6 @@ CORS_ALLOWED_ORIGINS = [
 'https://super-coding-team-89a5aa34a95f.herokuapp.com/'
 ]
 
-# CSRF_COOKIE_SAMESITE = 'Lax'
-# SESSION_COOKIE_SAMESITE = 'Lax'
-# # CSRF_COOKIE_HTTPONLY = False  # False since we will grab it via universal-cookies
-# # SESSION_COOKIE_HTTPONLY = False  
-
-# CORS_ALLOW_CREDENTIALS = True
-
-# CORS_ORIGIN_ALLOW_ALL = True
-
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 
                         'https://packet-pirates-frontend-46271456b73c.herokuapp.com/', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/',
                         'https://packet-pirates-frontend-46271456b73c.herokuapp.com', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com',
