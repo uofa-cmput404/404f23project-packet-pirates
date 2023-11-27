@@ -21,7 +21,7 @@ export default function SinglePost({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
@@ -42,7 +42,7 @@ export default function SinglePost({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -61,7 +61,7 @@ export default function SinglePost({ user }) {
 
     const fetchPost = async () => {
       let postUrl =
-        "http://127.0.0.1:8000/" + postID + "/viewpost";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + postID + "/viewpost";
 
       const postRes = await axios
         .get(postUrl, config)
@@ -71,7 +71,7 @@ export default function SinglePost({ user }) {
 
             let singlePost = postRes.data.post;
             const image_conditions = singlePost.image_url === '' && singlePost.image_file != ''
-            const image = image_conditions ? 'http://127.0.0.1:8000' + singlePost.image_file : singlePost.image_url
+            const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + singlePost.image_file : singlePost.image_url
 
             setPost(
                 <Post

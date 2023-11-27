@@ -90,7 +90,7 @@ export default function EditPost({ user,
     event.preventDefault();
 
     axios
-      .delete("http://127.0.0.1:8000/" + id + "/postViews", config)
+      .delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + id + "/postViews", config)
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
@@ -119,7 +119,7 @@ export default function EditPost({ user,
     console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/author/" + id + "/editpost", formData, 
+      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/editpost", formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data',

@@ -30,10 +30,10 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
 
 const client = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com",
 });
 
 function App() {
