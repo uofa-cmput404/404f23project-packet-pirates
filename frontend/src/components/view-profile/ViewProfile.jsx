@@ -170,14 +170,14 @@ export default function ViewProfile({ user }) {
     };
 
     const checkFriendship = async () => {
-        let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+        let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
         const authReso = await axios
         .get(authorUrl, config)
         .then(async (authReso) => {
         
-          const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
+          const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id;
           
-          const followReqUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
+          const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
 
           try {
             const response = await axios.get(followersUrl).then(async (data) => {
@@ -335,13 +335,13 @@ export default function ViewProfile({ user }) {
   const handleUnfollow = async (event) => {
     event.preventDefault();
   
-    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+    let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
   
     const authReso = await axios
       .get(authorUrl, config)
       .then(async (authReso) => {
 
-      let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
+      let unfollowUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
 
         try {
           const res = await axios.delete(unfollowUrl, config).then((res) => {
