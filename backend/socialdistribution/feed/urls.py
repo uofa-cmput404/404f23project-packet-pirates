@@ -12,6 +12,9 @@ urlpatterns = [
     path("author/getall", views.GetAllUsers.as_view(), name = "search_author"),
     path("<str:pk>/followrequest", views.FollowRequestViews.as_view(), name = "follow_request"),
     path("<str:pk>/friends", views.FriendsViews.as_view(), name = "create_friend"),
+    path("<str:sender>/followrequest/<str:recipient>/ispending", views.FollowRequestPending.as_view(), name = "follow_request_pending"),
+    path("<str:author>/unfriend/<str:friend>", views.FriendsDelete.as_view(), name = "unfriend"),
+
 
     # path("author/<str:pk>/friendrequest")
     # path('register', views.AuthorRegistration.as_view(), name="register"),
