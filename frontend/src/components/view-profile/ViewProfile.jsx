@@ -31,11 +31,6 @@ export default function ViewProfile({ user }) {
 
   const [followButtons, setFollowButtons] = useState(null);
 
-  const fake_user = {
-    profile_picture: "https://i.imgur.com/7bIhcuD.png",
-    username: "fake_user",
-  };
-
   const config = {
     headers: {
       "Content-Type": "application/json",
