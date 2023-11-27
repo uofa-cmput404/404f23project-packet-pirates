@@ -28,7 +28,7 @@ import Inbox from "./components/main-feed/Inbox";
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
 axios.defaults.baseURL = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
 

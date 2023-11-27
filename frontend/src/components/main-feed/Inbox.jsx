@@ -14,7 +14,8 @@ export default function Inbox({ user }) {
   const token = {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
+      'Authorization': 'Token ' + localStorage.getItem('access_token'),
+      'Access-Control-Allow-Credentials':true
     }
   };
 
