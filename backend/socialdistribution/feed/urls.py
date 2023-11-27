@@ -31,7 +31,7 @@ urlpatterns = [
     # REMOTE URLS
     path("authors/<str:author_id>/followers", views.GetAuthorsFollowersRemote.as_view(), name ="Get Authors Followers Remote"),
     path("authors/<str:author_id>/followers/<str:foreign_author_id>", views.FollowersRemote.as_view(), name ="Boolean Authors Followers Remote"),
-    path("author/<str:author_id>/inbox", views.InboxViewsRemote.as_view(), name ='Inbox Remote'),
+    path("authors/<str:author_id>/inbox", views.InboxViewsRemote.as_view(), name ='Inbox Remote'),
 
 
 ]
