@@ -9,7 +9,7 @@ export default function SearchBar() {
   const navigate = useNavigate();
 
   const config = {
-    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
 
   const handleInputChange = (event) => {

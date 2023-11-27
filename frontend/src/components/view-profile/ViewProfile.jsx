@@ -29,7 +29,7 @@ export default function ViewProfile({ user }) {
   const [is_pending, set_is_pending] = useState(null);
   const [areFriends, setAreFriends] = useState(null);
 
-  const[followButtons, setFollowButtons] = useState(null);
+  const [followButtons, setFollowButtons] = useState(null);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -39,8 +39,8 @@ export default function ViewProfile({ user }) {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
-    }
+      Authorization: "Token " + localStorage.getItem("access_token"),
+    },
   };
 
   useEffect(() => {
@@ -51,11 +51,9 @@ export default function ViewProfile({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/author/" +
-        user.user.user_id +
-        "/truefriends";
+        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
       const connectionsRes = await axios
-        .get(connectionsUrl,config)
+        .get(connectionsUrl, config)
         .then((connectionsRes) => {
           console.log("CONNECTSRES", connectionsRes.data);
           setFriends(
@@ -88,11 +86,14 @@ export default function ViewProfile({ user }) {
         "/authornotifications";
 
       const notifsRes = await axios
-        .get(notificationsUrl,config)
+        .get(notificationsUrl, config)
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
-            <Notifications notifications={notifsRes.data.Notifications} user = {user} />
+            <Notifications
+              notifications={notifsRes.data.Notifications}
+              user={user}
+            />
           );
         })
         .catch((error) => {
@@ -105,16 +106,20 @@ export default function ViewProfile({ user }) {
         "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
 
       const postsRes = await axios
-        .get(postsUrl,config)
+        .get(postsUrl, config)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
           console.log("posts", postsRes.data.Posts);
           if (author === user.user.username) {
             setPosts(
-              postsRes.data.Posts.map((post, index) => { // As the user, want to be able to see your all your posts.
-                const image_conditions = post.image_url === '' && post.image_file != ''
+              postsRes.data.Posts.map((post, index) => {
+                // As the user, want to be able to see your all your posts.
+                const image_conditions =
+                  post.image_url === "" && post.image_file != "";
                 // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
+                const image = image_conditions
+                  ? "http://127.0.0.1:8000" + post.image_file
+                  : post.image_url;
                 // console.log("IMAGE", image)
                 return (
                   <Post
@@ -135,10 +140,16 @@ export default function ViewProfile({ user }) {
             );
           } else {
             setPosts(
-              postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => { // Swap !post.is_private to our boolean checker to see if they are friends
-                const image_conditions = post.image_url === '' && post.image_file != ''
+              postsRes.data.Posts.filter(
+                (post) => !post.unlisted && !post.is_private
+              ).map((post, index) => {
+                // Swap !post.is_private to our boolean checker to see if they are friends
+                const image_conditions =
+                  post.image_url === "" && post.image_file != "";
                 // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
+                const image = image_conditions
+                  ? "http://127.0.0.1:8000" + post.image_file
+                  : post.image_url;
                 // console.log("IMAGE", image)
                 return (
                   <Post
@@ -170,33 +181,45 @@ export default function ViewProfile({ user }) {
     };
 
     const checkFriendship = async () => {
-        let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
-        const authReso = await axios
+      let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+      const authReso = await axios
         .get(authorUrl, config)
         .then(async (authReso) => {
-        
-          const followersUrl = "http://127.0.0.1:8000/authors/" + authReso.data.Author.user_id  + "/followers/" + user.user.user_id + "/local";
-          
-          const followReqUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest/" + authReso.data.Author.user_id + "/ispending"
+          const followersUrl =
+            "http://127.0.0.1:8000/authors/" +
+            authReso.data.Author.user_id +
+            "/followers/" +
+            user.user.user_id +
+            "/local";
+
+          const followReqUrl =
+            "http://127.0.0.1:8000/" +
+            user.user.user_id +
+            "/followrequest/" +
+            authReso.data.Author.user_id +
+            "/ispending";
 
           try {
-            const response = await axios.get(followersUrl, config).then(async (data) => {
-              setAreFriends(data['data']);
-              console.log("FFF", data['data'])
-              console.log("FRIENDS?", areFriends)
-              // console.log(response.data)
-            });
-            
-            const followReqResponse = await axios.get(followReqUrl, config).then(async (data) => {
-              set_is_pending(data['data'])
-              console.log("PENDING?", is_pending)
-            });
+            const response = await axios
+              .get(followersUrl, config)
+              .then(async (data) => {
+                setAreFriends(data["data"]);
+                console.log("FFF", data["data"]);
+                console.log("FRIENDS?", areFriends);
+                // console.log(response.data)
+              });
 
+            const followReqResponse = await axios
+              .get(followReqUrl, config)
+              .then(async (data) => {
+                set_is_pending(data["data"]);
+                console.log("PENDING?", is_pending);
+              });
           } catch (error) {
             console.error("Error checking friendship:", error);
           }
         });
-    }
+    };
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
@@ -209,13 +232,12 @@ export default function ViewProfile({ user }) {
   }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
-
     let authUrl = "http://127.0.0.1:8000/author/" + author + "/username";
 
     const authRes = await axios
       .get(authUrl, config)
       .then((authRes) => {
-        setAuthorInfo(authorInfo => authRes.data.Author);
+        setAuthorInfo((authorInfo) => authRes.data.Author);
 
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
@@ -232,31 +254,33 @@ export default function ViewProfile({ user }) {
             <h2 className="text-xl font-semibold mb-2">
               {author + "'s profile"}
             </h2>
-            
-            {areFriends && !is_pending &&(
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                  onClick={handleUnfollow}
-                >
-                  Unfollow
-                </button>
-              )}
 
-              {!areFriends && !is_pending && (
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                  onClick={handleFollow}
-                >
-                  Follow
-                </button>
-              )}
+            {areFriends && !is_pending && (
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+                onClick={handleUnfollow}
+              >
+                Unfollow
+              </button>
+            )}
 
-              {is_pending && !areFriends &&(
-                <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
-                  Pending
-                </button>
-              )}
+            {!areFriends && !is_pending && (
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleFollow}
+              >
+                Follow
+              </button>
+            )}
 
+            {is_pending && !areFriends && (
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                disabled
+              >
+                Pending
+              </button>
+            )}
           </div>
         );
       })
@@ -282,20 +306,17 @@ export default function ViewProfile({ user }) {
   const handleFollow = async (event) => {
     event.preventDefault();
 
-    let authorUrl = 
-    "http://127.0.0.1:8000/author/" + author + "/username";
+    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
 
     let notificationUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
+      "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
+      "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
 
     const authReso = await axios
       .get(authorUrl, config)
       .then(async (authReso) => {
-      
-
         const notifdata = {
           author: author,
           notification_author: user.user.user_id,
@@ -305,43 +326,48 @@ export default function ViewProfile({ user }) {
           is_follow_notification: true,
           url: "",
         };
-    
+
         const requestdata = {
           sender: user.user.user_id,
           recipient: authReso.data.Author.user_id,
-          is_pending: true
-        }
-    
+          is_pending: true,
+        };
+
         try {
-    
-          const res1 = await axios.post(notificationUrl, notifdata, config).then((res1) => {
-            console.log(res1.data);
-          });
-    
-          const res2 = await axios.post(followrequestUrl, requestdata, config).then((res2) => {
-            console.log(res2.data);
-            // set_is_pending(true); // Set is_pending to true since a follow request is pending
-            // setAreFriends(false); // Set areFriends to false since a follow request is pending
-          });
-    
+          const res1 = await axios
+            .post(notificationUrl, notifdata, config)
+            .then((res1) => {
+              console.log(res1.data);
+            });
+
+          const res2 = await axios
+            .post(followrequestUrl, requestdata, config)
+            .then((res2) => {
+              console.log(res2.data);
+              // set_is_pending(true); // Set is_pending to true since a follow request is pending
+              // setAreFriends(false); // Set areFriends to false since a follow request is pending
+            });
         } catch (err) {
           console.log(err);
           // set_is_pending(false); // If there's an error, set isPending back to false
         }
-        window.location.reload(false)
+        window.location.reload(false);
       });
-  }
+  };
 
   const handleUnfollow = async (event) => {
     event.preventDefault();
-  
+
     let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
-  
+
     const authReso = await axios
       .get(authorUrl, config)
       .then(async (authReso) => {
-
-      let unfollowUrl = "http://127.0.0.1:8000/" + authReso.data.Author.user_id + "/unfriend/" + user.user.user_id;
+        let unfollowUrl =
+          "http://127.0.0.1:8000/" +
+          authReso.data.Author.user_id +
+          "/unfriend/" +
+          user.user.user_id;
 
         try {
           const res = await axios.delete(unfollowUrl, config).then((res) => {
