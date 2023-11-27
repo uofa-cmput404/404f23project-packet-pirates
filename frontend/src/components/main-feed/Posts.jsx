@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
+import Popup from 'reactjs-popup';
+import EditPost from "../main-feed/EditPost";
+
 
 export default function Post({
   user,
@@ -24,11 +27,22 @@ export default function Post({
   const [postAuthor, setPostAuthor] = useState('');
   const navigate = useNavigate();
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
 
   const handleEdit = () => {
     // Handle edit functionality
+
   };
 
+  const handleEditAccess = () => {
+    console.log("user", user);
+    console.log("post_author", post_author);
+    console.log(user.user.user_id == post_author);
+
+    if (user.user.user_id == post_author) {
+      setIsEditable(true);
+    }
+  }
 
   const handleLike = async () => {
     const newLikeState = !hasLiked;
@@ -220,6 +234,7 @@ export default function Post({
 
   useEffect(() => {
     //Get data on post load
+    handleEditAccess();
     getComments();
     getPostAuthor();
 
@@ -252,9 +267,32 @@ export default function Post({
                   <h1>{title}</h1>
                 </span>
 
-                <button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">
-                  Edit
-                </button>
+                {/* Post Edit Button */}
+                {isEditable && (
+                  <Popup
+                  trigger = {<button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">Edit</button>}
+                  modal = {true}
+                  closeOnDocumentClick = {true}>
+                  
+                  {close => (
+                    <>
+                    <EditPost
+                    user={user}
+                    titl={title}
+                    description={description}
+                    img={img}
+                    img_url={img_url}
+                    id={id}
+                    is_private={is_private}
+                    unlisted={unlisted}/>
+
+                    <button className="close absolute top-[.5rem] right-[.5rem]" onClick={close}>Cancel</button>
+                    </>
+                  )}
+
+                  </Popup>
+                )}
+
               </div>
             </div>
           </div>

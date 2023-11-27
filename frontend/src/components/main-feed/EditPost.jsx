@@ -1,14 +1,19 @@
 import axios from "axios";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 
-export default function CreatePost({ user }) {
-  const navigate = useNavigate();
+export default function EditPost({ user,
+    titl,
+    description,
+    img,
+    img_url,
+    id,
+    is_private,
+    unlisted, }) {
 
-  const [text, setText] = useState("");
-  const [title, setTitle] = useState("");
+  const [text, setText] = useState(description);
+  const [title, setTitle] = useState(titl);
 
   // Image variables
   const [imageFile, setImageFile] = useState(null);
@@ -22,8 +27,8 @@ export default function CreatePost({ user }) {
   ];
   const [visibility, setVisibility] = useState(visibilityOptions[0].value);
 
-  const [isUnlisted, setIsUnlisted] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isUnlisted, setIsUnlisted] = useState(unlisted);
+  const [isPrivate, setIsPrivate] = useState(is_private);
 
   const contentOptions = [
     { value: "text/plain", label: "Plaintext" },
@@ -74,7 +79,22 @@ export default function CreatePost({ user }) {
     console.log("Sent visibility is:", value);
   };
 
-  const handlePosting = (e) => {
+  const handlePostDelete = (event) => {
+    event.preventDefault();
+
+    axios
+      .delete("http://127.0.0.1:8000/postViews",{ data: { post_id: id}})
+      .then((response) => {
+        console.log(response.data);
+        window.location.reload(false);
+      })
+      .catch((error) => {
+        console.log("Error Response: ", error.response);
+        console.log("Error Data: ", error.response.data);
+      });
+  }
+
+  const handleEditting = (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('author', user.user.user_id);
@@ -88,21 +108,18 @@ export default function CreatePost({ user }) {
     formData.append('image_file', imageFile)
     formData.append('image_url', imageUrl)
     formData.append('visibility', visibility)
-    formData.append('url', "")
 
     console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/postViews", formData, 
+      .post("http://127.0.0.1:8000/author/" + id + "/editpost", formData, 
       {
         headers: {
-          "Content-Type": "multipart/form-data",
-          //"Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data',
         }
       })
       .then((response) => {
         console.log(response.data);
-        window.location.reload(false);
       })
       .catch((error) => {
         console.log("Error Response: ", error.response);
@@ -113,19 +130,12 @@ export default function CreatePost({ user }) {
   return (
     <div>
       <div
-        className="create-post flex flex-col bg-white border border-gray-300 p-4 w-full rounded-lg"
+        className="edit-post flex flex-col bg-white border border-gray-300 p-4 w-full rounded-lg"
         style={{ boxShadow: "8px 8px 0px 0px rgba(0, 0, 0, 0.2)" }}
       >
-        <div className="post-content flex flex-row">
-          <div className="image-container w-12 h-12 rounded-full overflow-hidden bg-black">
-            <img
-              src={"http://127.0.0.1:8000" + user.user.profile_picture}
-              alt="profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
+        <div className="edit-post-content flex flex-row">
           <form
-            className="stuff-to-post flex flex-col w-[80%] ml-5 "
+            className="edit-stuff-to-post flex flex-col w-[80%] ml-5 "
             action="#"
           >
             {/* Title Input */}
@@ -133,7 +143,7 @@ export default function CreatePost({ user }) {
               id="title"
               name="title"
               type="text"
-              placeholder="Add a title..."
+              placeholder="Edit title..."
               className="border border-black rounded-lg p-2 mb-4"
               onChange={handleTitleChange}
             />
@@ -143,33 +153,33 @@ export default function CreatePost({ user }) {
               id="content"
               name="content"
               type="text"
-              placeholder="Anything you want to discuss?"
+              placeholder="Edit description..."
               className="border border-black rounded-lg p-2 h- mb-4"
               onChange={handleTextChange}
             ></input>
 
              {/* Post Body Input */}
-                      <input
+            <input
               id="content"
               name="content"
               type="text"
-              placeholder="Place an image URL in such as https://picsum.photos/200"
+              placeholder="Edit image URL"
               className="border border-black rounded-lg p-2 h- mb-4"
               onChange={handleImageUrlTextChange}
             ></input>
           </form>
         </div>
-        <div className="imgPreviewBox">
+        <div className="edit-imgPreviewBox flex flex-row justify-between items-center max-w-[300px]">
             {/* show the image in a preview box */}
-            <div className="imgPreview">
+            <div className="edit-imgPreview">
                 {imageBase64 && (
-                    <div className="imgContainer">
+                    <div className="edit-imgContainer">
                         <img src={imageBase64} alt="Image Preview" />
                     </div>
                 )}
             </div>
         </div>
-        <div className="menu">
+        <div className="edit-menu">
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row justify-between items-center">
             <li>
@@ -208,12 +218,18 @@ export default function CreatePost({ user }) {
             <li>
               <button
                 className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
-                onClick={handlePosting}
+                onClick={handleEditting}
               >
-                Post
+                Update
               </button>
             </li>
           </ul>
+          <button
+          className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-red-700"
+          onClick={handlePostDelete}
+          >
+          Delete
+          </button>
         </div>
       </div>
     </div>

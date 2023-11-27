@@ -146,11 +146,11 @@ class GetFeedPosts(APIView):
 
 
 class PostViews(APIView):
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = ()    
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()    
 
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    #permission_classes = (permissions.IsAuthenticated,)
+    #authentication_classes = (SessionAuthentication,)
 
     @swagger_auto_schema(operation_description="Create a post for a specific author",
                 operation_summary="Create Author Post",
@@ -202,7 +202,9 @@ class PostViews(APIView):
             responses={201: PostSerializer()},
             tags=['Post'],)
         
-    def delete(self, request, pk):
+    def delete(self, request):
+        print(request.data)
+        pk = request.data['post_id']
         post_id = uuid.UUID(pk)
 
         post = Post.objects.filter(post_id = post_id)
@@ -215,11 +217,11 @@ class PostViews(APIView):
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
 
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
 
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    #permission_classes = (permissions.IsAuthenticated,)
+    #authentication_classes = (SessionAuthentication,)
     
     @swagger_auto_schema(operation_description="Edit Post of an Author",
                 operation_summary="Edit post",
@@ -232,8 +234,28 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
         post = Post.objects.get(post_id = post_id)
         
         print(request.data)
+        print(request.data['image_file'])
 
-        serializer = PostSerializer(post, data = request.data)
+        picture = request.data['image_file']
+        
+        new_request_data = request.data.copy()
+
+        print("TEST", test)
+        if (picture != "null"):
+            image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+            new_request_data['image_file'] = image
+            new_request_data['image_url'] = ''
+            serializer = PostSerializer(post, data = new_request_data)
+        else:
+            new_request_data['image_file'] = ''
+            serializer = PostSerializer(post, data = new_request_data)
+
+        serializer.is_valid()
+        print(serializer)
+        print(serializer.errors)
+
+        print(serializer.is_valid())
+        print(serializer.errors)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()

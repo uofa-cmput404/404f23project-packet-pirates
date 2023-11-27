@@ -1,4 +1,3 @@
-import CreatePost from "../main-feed/CreatePost";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
@@ -15,8 +14,6 @@ export default function SinglePost({ user }) {
   const [notifications, setNotifications] = useState(null);
 
   useEffect(() => {
-    console.log("postID", postID);
-    console.log("user", user);
 
     const getConnections = async () => {
       let connectionsUrl =
