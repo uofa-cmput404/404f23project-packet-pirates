@@ -2,7 +2,7 @@ import CreatePost from "../main-feed/CreatePost";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
@@ -30,6 +30,9 @@ export default function ViewProfile({ user }) {
   const [areFriends, setAreFriends] = useState(null);
 
   const [followButtons, setFollowButtons] = useState(null);
+
+  let location = useLocation();
+  console.log("location", location);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
