@@ -24,6 +24,7 @@ import Register from "./components/login/Register";
 import ViewProfile from "./components/view-profile/ViewProfile";
 import ProfilePage from "./components/profilepage/ProfilePage";
 import ViewProfileNotLogged from "./components/view-profile/ViewProfileNotLoggedIn";
+import Inbox from "./components/main-feed/Inbox";
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -70,7 +71,7 @@ function App() {
         if (response.data.session_id) {
           // User is logged in
           setIsLoggedIn(true);
-          console.log("User is logged in");
+          // console.log("User is logged in");
         }
       })
       .catch((error) => {
@@ -96,6 +97,11 @@ function App() {
             )
           }
         />
+        <Route
+          path="/inbox"
+          element={isLoggedIn ? <Inbox user={authorInfo} /> : <Landing />}
+        />
+        
         <Route
           path="/post/:postID"
           element={

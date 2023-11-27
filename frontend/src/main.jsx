@@ -6,9 +6,9 @@ import Landing from "./components/login/Login.jsx";
 import MainPage from "./components/site/Site.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <>
     <App />
     {/* <Landing /> */}
     {/* <Site /> */}
-  </React.StrictMode>
+  </>
 );
