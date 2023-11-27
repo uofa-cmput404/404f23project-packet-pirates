@@ -286,7 +286,7 @@ export default function Post({
                     is_private={is_private}
                     unlisted={unlisted}/>
 
-                    <button className="close absolute top-[.5rem] right-[.5rem]" onClick={close}>Cancel</button>
+                    <button className="close absolute top-[.5rem] right-[.95rem]" onClick={close}>Cancel</button>
                     </>
                   )}
 
