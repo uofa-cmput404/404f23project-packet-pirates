@@ -12,7 +12,10 @@ export default function Inbox({ user }) {
   const [inboxComments, setInboxComments] = useState([])
 
   const token = {
-    headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
+    }
   };
 
   console.log(user);
