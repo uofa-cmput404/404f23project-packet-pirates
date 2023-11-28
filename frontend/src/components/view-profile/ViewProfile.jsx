@@ -119,7 +119,6 @@ export default function ViewProfile({ user }) {
     //       console.error("Error getting notifications:", error);
     //     });
     // };
-  
     let auth = ''
     const fetchPosts = async () => {
       let postsUrl =
@@ -138,77 +137,86 @@ export default function ViewProfile({ user }) {
         .get(postsUrl, auth)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
-          console.log("posts", postsRes.data.Posts);
-          console.log("TESTING?")
-          if (author === user.user.username) {
-            setPosts(
-              postsRes.data.Posts.map((post, index) => {
-                // As the user, want to be able to see your all your posts.
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions
-                  ? "http://127.0.0.1:8000" + post.image_file
-                  : post.image_url;
-                // console.log("IMAGE", image)
-                return (
-                  <Post
-                    key={index}
-                    user={user}
-                    post_author={post.author}
-                    title={post.title}
-                    description={post.content}
-                    img={image}
-                    img_url={post.image_url}
-                    likes={post.likes_count}
-                    id={post.post_id}
-                    is_private={post.is_private}
-                    unlisted={post.unlisted}
-                  />
-                );
-              })
-            );
-          } else {
-            setPosts(
-              postsRes.data.Posts.filter(
-                (post) => !post.unlisted && !post.is_private
-              ).map((post, index) => {
-                // Swap !post.is_private to our boolean checker to see if they are friends
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions
-                  ? "http://127.0.0.1:8000" + post.image_file
-                  : post.image_url;
-                // console.log("IMAGE", image)
-                return (
-                  <Post
-                    key={index}
-                    user={user}
-                    post_author={post.author}
-                    title={post.title}
-                    description={post.content}
-                    img={image}
-                    img_url={post.image_url}
-                    likes={post.likes_count}
-                    id={post.post_id}
-                    is_private={post.is_private}
-                    unlisted={post.unlisted}
-                  />
-                );
-              })
-            );
+          console.log("posts", postsRes.data);
+          const urls = []
+
+          for (let i = 0; i < postsRes.data.length; i++) {
+            console.log(postsRes.data[i]['id'] + '/image')
+            urls.push(postsRes.data[i]['id'] + '/image')
           }
-        })
-        .catch((error) => {
-          console.error("Error getting posts:", error);
-          setPosts(
-            <div className="flex justify-center items-center">
-              This user does not exists, did you enter the correct username?
-            </div>
+
+          console.log("URLS", urls)
+
+          const requests = urls.map(url =>
+            axios.get(url)
+            .then(response => response)
+            .catch (error => console.error('Error', error))
           );
-        });
-    };
+
+          Promise.all(requests)
+          .then(responses => {
+            console.log("RESPONSES", responses);
+            console.log(responses[0]['data'])
+            if ((author === user.user.username)) {
+              setPosts(
+                postsRes.data.map((post, index) => {
+                  // As the user, want to be able to see your all your posts.
+                  const image = responses[index]['data']
+                  return (
+                    <Post
+                      key={index}
+                      user={user}
+                      post_author={post.author}
+                      title={post.title}
+                      description={post.content}
+                      img={image}
+                      img_url={post.image_url}
+                      likes={post.likes_count}
+                      id={post.post_id}
+                      is_private={post.is_private}
+                      unlisted={post.unlisted}
+                    />
+                  );
+                })
+              );
+            } else {
+              setPosts(
+                postsRes.data.Posts.filter(
+                  (post) => !post.unlisted && !post.is_private
+                ).map((post, index) => {
+                  const image = responses[index]['data']
+
+                  return (
+                    <Post
+                      key={index}
+                      user={user}
+                      post_author={post.author}
+                      title={post.title}
+                      description={post.content}
+                      img={image}
+                      img_url={post.image_url}
+                      likes={post.likes_count}
+                      id={post.post_id}
+                      is_private={post.is_private}
+                      unlisted={post.unlisted}
+                    />
+                  ); // end return
+                }) // end map
+              ); // end setPosts
+            } // end else
+          })
+          })
+
+
+    .catch((error) => {
+      console.error("Error getting posts:", error);
+      setPosts(
+        <div className="flex justify-center items-center">
+          This user does not exists, did you enter the correct username?
+        </div>
+      );// end catch error
+    }); // 
+  }; // end fetchPosts 
 
     const checkFriendship = async () => {
       let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";

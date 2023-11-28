@@ -93,7 +93,8 @@ function App() {
             isLoggedIn ? (
               <ViewProfile user={authorInfo} />
             ) : (
-              <ViewProfileNotLogged />
+              // <ViewProfileNotLogged />
+              <Landing/>
             )
           }
         />
