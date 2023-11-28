@@ -248,7 +248,7 @@ export default function ViewProfile({ user }) {
 }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
-        let authUrl = "http://127.0.0.1:8000/loadprofile"
+    let authUrl = "http://127.0.0.1:8000/loadprofile"
 
     console.log("AUTHOR LOCATION", location.state['api'])
 
