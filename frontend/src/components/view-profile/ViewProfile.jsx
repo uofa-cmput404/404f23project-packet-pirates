@@ -33,6 +33,8 @@ export default function ViewProfile({ user }) {
 
   let location = useLocation();
   console.log("location", location);
+  console.log("location host", location.state['api']);
+  console.log("HOSTNAME:", new URL(location.state['api']).hostname)
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -46,73 +48,98 @@ export default function ViewProfile({ user }) {
     },
   };
 
+  const SC_auth = {
+    auth: {
+      username: 'packet_pirates',
+      password: 'pass123$'
+    }
+  }
+
+  const PP_auth = {
+    auth: {
+      username: 'packetpirates',
+      password: 'cmput404'
+    }
+  }
+
   useEffect(() => {
     const getUrl = "http://127.0.0.1:8000";
     setIsLoading(true);
     console.log("author", author);
     console.log("user", user);
 
-    const getConnections = async () => {
-      let connectionsUrl =
-        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
-      const connectionsRes = await axios
-        .get(connectionsUrl, config)
-        .then((connectionsRes) => {
-          console.log("CONNECTSRES", connectionsRes.data);
-          setFriends(
-            <Profile
-              friends={connectionsRes.data.Friends}
-              // username={user.user.username}
-              user={user}
-            />
-          );
-        })
-        .catch((error) => {
-          console.error("Error getting friends:", error);
-        });
-    };
+    // const getConnections = async () => {
+    //   let connectionsUrl =
+    //     "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+    //   const connectionsRes = await axios
+    //     .get(connectionsUrl, config)
+    //     .then((connectionsRes) => {
+    //       console.log("CONNECTSRES", connectionsRes.data);
+    //       setFriends(
+    //         <Profile
+    //           friends={connectionsRes.data.Friends}
+    //           // username={user.user.username}
+    //           user={user}
+    //         />
+    //       );
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting friends:", error);
+    //     });
+    // };
 
-    const getProfile = async () => {
-      try {
-        const profileUrl = `${getUrl}/user/${author}`;
-        const profileRes = await axios.get(profileUrl, config);
-        setProfile(profileRes.data);
-      } catch (error) {
-        console.error("Error getting profile:", error);
-      }
-    };
+    // const getProfile = async () => {
+    //   try {
+    //     const profileUrl = `${getUrl}/user/${author}`;
+    //     const profileRes = await axios.get(profileUrl, config);
+    //     setProfile(profileRes.data);
+    //   } catch (error) {
+    //     console.error("Error getting profile:", error);
+    //   }
+    // };
 
-    const getNotifications = async () => {
-      let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
-        user.user.user_id +
-        "/authornotifications";
+    // const getNotifications = async () => {
+    //   let notificationsUrl =
+    //     "http://127.0.0.1:8000/author/" +
+    //     user.user.user_id +
+    //     "/authornotifications";
 
-      const notifsRes = await axios
-        .get(notificationsUrl, config)
-        .then((notifsRes) => {
-          console.log("NOTIFSRES", notifsRes.data.Notifications);
-          setNotifications(
-            <Notifications
-              notifications={notifsRes.data.Notifications}
-              user={user}
-            />
-          );
-        })
-        .catch((error) => {
-          console.error("Error getting notifications:", error);
-        });
-    };
-
+    //   const notifsRes = await axios
+    //     .get(notificationsUrl, config)
+    //     .then((notifsRes) => {
+    //       console.log("NOTIFSRES", notifsRes.data.Notifications);
+    //       setNotifications(
+    //         <Notifications
+    //           notifications={notifsRes.data.Notifications}
+    //           user={user}
+    //         />
+    //       );
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting notifications:", error);
+    //     });
+    // };
+  
+    let auth = ''
     const fetchPosts = async () => {
       let postsUrl =
-        "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
+        // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
+        location.state['api'] + '/posts'
+      let host = new URL(location.state['api']).hostname
 
+      if (host.includes('packet-pirates')) {
+        console.log("PIRATE!")
+        auth = PP_auth
+      } else if (host.includes("super-coding")) {
+        auth = SC_auth
+      }
+    
       const postsRes = await axios
-        .get(postsUrl, config)
+        .get(postsUrl, auth)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
           console.log("posts", postsRes.data.Posts);
+          console.log("TESTING?")
           if (author === user.user.username) {
             setPosts(
               postsRes.data.Posts.map((post, index) => {
@@ -226,8 +253,8 @@ export default function ViewProfile({ user }) {
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
-    getConnections();
-    getNotifications();
+    // getConnections();
+    // getNotifications();
     getAuthorInfo();
     checkFriendship();
     //location.reload()
