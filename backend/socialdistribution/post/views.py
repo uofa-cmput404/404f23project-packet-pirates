@@ -33,6 +33,10 @@ from drf_yasg.utils import swagger_auto_schema
 
 from drf_yasg import openapi
 
+import requests
+from requests.auth import HTTPBasicAuth
+import config as c
+
 class ViewPostByID(APIView): # FOR TESTING PURPOSES DELETE LATER
 
     def get(self, request, pk):
@@ -424,6 +428,61 @@ class PostLikeViews(APIView):
         
         return Response({"message": "Like Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class ProfilePosts(APIView):
+
+    def get(self, request):
+        api = request.GET['data']
+
+        print("API", api)
+        posts = []
+
+        if (c.SUPER_ENDPOINT in api):
+            basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+            r = requests.get(api, auth=basic)
+            print(r)
+
+            print(r.json())
+
+            for post in r.json():
+                t = post.copy()
+                image_url = t['id'] + '/image'
+
+                image_req = requests.get(image_url, auth=basic)
+
+                print(image_req.json()['image'])
+                t['image_url'] = image_req.json()['image']
+
+                posts.append(t)
+            return Response (posts, status=status.HTTP_200_OK)
+
+        elif (c.PP_ENDPOINT in api):
+            basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+            r = requests.get(api, auth=basic)
+            try:
+                print(r.json())
+        
+                t = r.json().copy()
+                for post in r.json():
+                    t = post.copy()
+                    image_url = t['id'] + '/image'
+
+                    image_req = requests.get(image_url, auth=basic)
+                    
+                    t['image_url'] = image_req.json()
+                
+
+                    posts.append(t)
+
+                print(posts)
+                return Response (posts, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+
+
+        return Response({"Message" : "Author has no posts"}, status = status.HTTP_404_NOT_FOUND)
+
+# Remote Views
 class LikedRemote(APIView):
     '''
     All likes of a given author

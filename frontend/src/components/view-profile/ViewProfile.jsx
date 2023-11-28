@@ -6,6 +6,7 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
+import RemotePost from "../../remote/RemotePosts";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function ViewProfile({ user }) {
@@ -124,41 +125,32 @@ export default function ViewProfile({ user }) {
     const fetchPosts = async () => {
       let postsUrl =
         // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
-        location.state['api'] + '/posts'
-      let host = new URL(location.state['api']).hostname
+        "http://127.0.0.1:8000/profileposts"
+      // let host = new URL(location.state['api']).hostname
 
-      if (host.includes('packet-pirates')) {
-        console.log("PIRATE!")
-        auth = PP_auth
-      } else if (host.includes("super-coding")) {
-        auth = SC_auth
-      }
-    
+      // const requestData = {
+      //   host: new URL(location.state['api']).hostname
+      // }
       const postsRes = await axios
-        .get(postsUrl, auth)
+        .get(postsUrl, {
+          params: {
+            data: new URL(location.state['api']) + '/posts'
+        }})
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
-          console.log("posts", postsRes.data.Posts);
+          console.log("posts", postsRes.data);
           console.log("TESTING?")
           if (author === user.user.username) {
             setPosts(
-              postsRes.data.Posts.map((post, index) => {
-                // As the user, want to be able to see your all your posts.
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions
-                  ? "http://127.0.0.1:8000" + post.image_file
-                  : post.image_url;
-                // console.log("IMAGE", image)
+              postsRes.data.map((post, index) => {
                 return (
-                  <Post
+                  <RemotePost
                     key={index}
                     user={user}
                     post_author={post.author}
                     title={post.title}
                     description={post.content}
-                    img={image}
+                    img={post.image_url}
                     img_url={post.image_url}
                     likes={post.likes_count}
                     id={post.post_id}
@@ -170,25 +162,18 @@ export default function ViewProfile({ user }) {
             );
           } else {
             setPosts(
-              postsRes.data.Posts.filter(
+              postsRes.data.filter(
                 (post) => !post.unlisted && !post.is_private
               ).map((post, index) => {
                 // Swap !post.is_private to our boolean checker to see if they are friends
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions
-                  ? "http://127.0.0.1:8000" + post.image_file
-                  : post.image_url;
-                // console.log("IMAGE", image)
                 return (
-                  <Post
+                  <RemotePost
                     key={index}
                     user={user}
                     post_author={post.author}
                     title={post.title}
                     description={post.content}
-                    img={image}
+                    img={post.image_url}
                     img_url={post.image_url}
                     likes={post.likes_count}
                     id={post.post_id}
@@ -204,7 +189,7 @@ export default function ViewProfile({ user }) {
           console.error("Error getting posts:", error);
           setPosts(
             <div className="flex justify-center items-center">
-              This user does not exists, did you enter the correct username?
+              This user has no posts
             </div>
           );
         });
@@ -256,25 +241,32 @@ export default function ViewProfile({ user }) {
     // getConnections();
     // getNotifications();
     getAuthorInfo();
-    checkFriendship();
+    // checkFriendship();
     //location.reload()
     console.log("posts", posts);
-  }, [author, is_pending, areFriends]);
+  // }, []);
+}, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
-    let authUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+        let authUrl = "http://127.0.0.1:8000/loadprofile"
+
+    console.log("AUTHOR LOCATION", location.state['api'])
 
     const authRes = await axios
-      .get(authUrl, config)
+      .get(authUrl, {
+        params: {
+          data: new URL(location.state['api'])
+      }})
       .then((authRes) => {
-        setAuthorInfo((authorInfo) => authRes.data.Author);
+        console.log("DATA", authRes.data)
+        setAuthorInfo((authorInfo) => authRes.data);
 
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
               src={
-                "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
+                authRes.data.profileImage
               }
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"

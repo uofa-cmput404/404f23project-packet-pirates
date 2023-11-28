@@ -253,6 +253,7 @@ export default function Post({
 
   }, []);
 
+  console.log("POST AUTHOR", postAuthor.profileImage)
 
   return (
     <>

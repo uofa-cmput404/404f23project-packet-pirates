@@ -83,7 +83,7 @@ export default function ViewProfileNotLogged() {
     };
 
     // getProfile(); // Call the getProfile function
-    fetchPosts(); // Call the fetchPosts function
+    // fetchPosts(); // Call the fetchPosts function
     console.log("posts", posts);
   }, [author]);
 

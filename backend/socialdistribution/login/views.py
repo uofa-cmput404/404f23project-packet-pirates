@@ -37,7 +37,9 @@ from PIL import Image
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-
+import requests
+from requests.auth import HTTPBasicAuth
+import config as c
 
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -212,6 +214,34 @@ class getNodes(APIView):
 
         return Response (serializer.data, status=status.HTTP_200_OK)
 
+class getAuthorProfile(APIView):
+        
+    def get(self, request):
+        api = request.GET['data']
+
+        print("API", api)
+
+        if (c.SUPER_ENDPOINT in api):
+            basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+            r = requests.get(api, auth=basic)
+            print(r)
+
+            print(r.json())
+
+            pass
+            return Response (r.json(), status=status.HTTP_200_OK)
+
+        elif (c.PP_ENDPOINT in api):
+            basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
+            r = requests.get(api, auth=basic)
+            print(r.json())
+           
+            # pass
+            return Response (r.json(), status=status.HTTP_200_OK)
+
+
+        return Response({"Message" : "Something went wrong"}, status = status.HTTP_400_BAD_REQUEST)
+
 # REMOTE VIEWS
 class getAllAuthorsRemote(APIView):
     '''
@@ -261,4 +291,3 @@ class getSingleAuthorRemote(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response({"message": "Author do not exist"}, status=status.HTTP_404_NOT_FOUND)
-    

@@ -18,8 +18,9 @@ urlpatterns = [
 
     # path("user/", views.GetPost.as_view(), name = "get_post")
     path('<str:pk>/viewpost', views.ViewPostByID.as_view(), name = "View_post"), # For testing purposes, delete later
-
     path('api/posts/<str:pk>/editpost', views.EditPost.as_view(), name='edit_post'),
+    path('profileposts', views.ProfilePosts.as_view(), name='profile_posts'),
+
 
     #REMOTE URLS
     path('authors/<str:author>/liked', views.LikedRemote.as_view(), name = 'liked_remote'),
