@@ -76,7 +76,7 @@ class AuthorSerializerRemote(serializers.ModelSerializer):
 
         representation['host'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/"
 
-        representation['url'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(instance.user_id)
+        representation['url'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.user_id)
 
         # representation['displayName'] = representation['username']
 

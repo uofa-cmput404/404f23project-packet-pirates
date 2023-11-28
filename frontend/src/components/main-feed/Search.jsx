@@ -8,6 +8,11 @@ export default function SearchBar() {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
+  var userNames = [];
+  var userIds = [];
+
+  const [resultIDs, setResultIDs] = useState([]);
+
   const config = {
     headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
@@ -19,9 +24,13 @@ export default function SearchBar() {
 
     axios.get(url, config).then((res) => {
       //   console.log("res", res);
-      const userNames = res.data.Users.map((user) => user.displayName);
+      // console.log("res.data", res.data);
+      // const users = res.data.Users;
+      userIds = res.data.Users.map((user) => user.id);
+      userNames = res.data.Users.map((user) => user.displayName);
       //   setResults(res.data.Users);
       setResults(userNames);
+      setResultIDs(userIds);
     });
     setShowResults(true);
   };
@@ -48,9 +57,21 @@ export default function SearchBar() {
   //   };
   function handleFriendClick(friend) {
     // console.log(friend);
-    console.log("HANDLE FRIEND CLICK" + friend);
-    navigate("/user/" + friend);
-    window.location.reload(false);
+    // const userId = user.id;
+    // console.log(userId + "AUISDHIAUSHDIUASHDIUASHDIUAHSUIDHAIUSD");
+    // console.log("HANDLE FRIEND CLICK" + friend);
+    // get the index of friend in userNames
+
+    const index = results.indexOf(friend);
+    console.log(index);
+    console.log(friend);
+    console.log(userNames);
+    console.log(results);
+    console.log("USER ID OF THIS " + resultIDs[index]);
+    console.log("USER ID OF THIS " + resultIDs[index].split("/").pop());
+
+    navigate("/user/" + friend, { state: { api: resultIDs[index] } });
+    // window.location.reload(false);
   }
 
   return (

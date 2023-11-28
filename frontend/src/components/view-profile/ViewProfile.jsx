@@ -2,7 +2,7 @@ import CreatePost from "../main-feed/CreatePost";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
@@ -31,6 +31,16 @@ export default function ViewProfile({ user }) {
 
   const [followButtons, setFollowButtons] = useState(null);
 
+  let location = useLocation();
+  console.log("location", location);
+  console.log("location host", location.state['api']);
+  console.log("HOSTNAME:", new URL(location.state['api']).hostname)
+
+  const fake_user = {
+    profile_picture: "https://i.imgur.com/7bIhcuD.png",
+    username: "fake_user",
+  };
+
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -38,140 +48,175 @@ export default function ViewProfile({ user }) {
     },
   };
 
+  const SC_auth = {
+    auth: {
+      username: 'packet_pirates',
+      password: 'pass123$'
+    }
+  }
+
+  const PP_auth = {
+    auth: {
+      username: 'packetpirates',
+      password: 'cmput404'
+    }
+  }
+
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
     console.log("author", author);
     console.log("user", user);
 
-    const getConnections = async () => {
-      let connectionsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
-        user.user.user_id +
-        "/truefriends";
-      const connectionsRes = await axios
-        .get(connectionsUrl, config)
-        .then((connectionsRes) => {
-          console.log("CONNECTSRES", connectionsRes.data);
-          setFriends(
-            <Profile
-              friends={connectionsRes.data.Friends}
-              // username={user.user.username}
-              user={user}
-            />
-          );
-        })
-        .catch((error) => {
-          console.error("Error getting friends:", error);
-        });
-    };
+    // const getConnections = async () => {
+    //   let connectionsUrl =
+    //     "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+    //   const connectionsRes = await axios
+    //     .get(connectionsUrl, config)
+    //     .then((connectionsRes) => {
+    //       console.log("CONNECTSRES", connectionsRes.data);
+    //       setFriends(
+    //         <Profile
+    //           friends={connectionsRes.data.Friends}
+    //           // username={user.user.username}
+    //           user={user}
+    //         />
+    //       );
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting friends:", error);
+    //     });
+    // };
 
-    const getProfile = async () => {
-      try {
-        const profileUrl = `${getUrl}/user/${author}`;
-        const profileRes = await axios.get(profileUrl, config);
-        setProfile(profileRes.data);
-      } catch (error) {
-        console.error("Error getting profile:", error);
-      }
-    };
+    // const getProfile = async () => {
+    //   try {
+    //     const profileUrl = `${getUrl}/user/${author}`;
+    //     const profileRes = await axios.get(profileUrl, config);
+    //     setProfile(profileRes.data);
+    //   } catch (error) {
+    //     console.error("Error getting profile:", error);
+    //   }
+    // };
 
-    const getNotifications = async () => {
-      let notificationsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
-        user.user.user_id +
-        "/authornotifications";
+    // const getNotifications = async () => {
+    //   let notificationsUrl =
+    //     "http://127.0.0.1:8000/author/" +
+    //     user.user.user_id +
+    //     "/authornotifications";
 
-      const notifsRes = await axios
-        .get(notificationsUrl, config)
-        .then((notifsRes) => {
-          console.log("NOTIFSRES", notifsRes.data.Notifications);
-          setNotifications(
-            <Notifications
-              notifications={notifsRes.data.Notifications}
-              user={user}
-            />
-          );
-        })
-        .catch((error) => {
-          console.error("Error getting notifications:", error);
-        });
-    };
-
+    //   const notifsRes = await axios
+    //     .get(notificationsUrl, config)
+    //     .then((notifsRes) => {
+    //       console.log("NOTIFSRES", notifsRes.data.Notifications);
+    //       setNotifications(
+    //         <Notifications
+    //           notifications={notifsRes.data.Notifications}
+    //           user={user}
+    //         />
+    //       );
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting notifications:", error);
+    //     });
+    // };
+    let auth = ''
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
+        // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
+        location.state['api'] + '/posts'
+      let host = new URL(location.state['api']).hostname
 
+      if (host.includes('packet-pirates')) {
+        console.log("PIRATE!")
+        auth = PP_auth
+      } else if (host.includes("super-coding")) {
+        auth = SC_auth
+      }
+    
       const postsRes = await axios
-        .get(postsUrl, config)
+        .get(postsUrl, auth)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
-          console.log("posts", postsRes.data.Posts);
-          if (author === user.user.username) {
-            setPosts(
-              postsRes.data.Posts.map((post, index) => {
-                // As the user, want to be able to see your all your posts.
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
-                // console.log("IMAGE", image)
-                return (
-                  <Post
-                    key={index}
-                    user={user}
-                    post_author={post.author}
-                    title={post.title}
-                    description={post.content}
-                    img={image}
-                    img_url={post.image_url}
-                    likes={post.likes_count}
-                    id={post.post_id}
-                    is_private={post.is_private}
-                    unlisted={post.unlisted}
-                  />
-                );
-              })
-            );
-          } else {
-            setPosts(
-              postsRes.data.Posts.filter(
-                (post) => !post.unlisted && !post.is_private
-              ).map((post, index) => {
-                // Swap !post.is_private to our boolean checker to see if they are friends
-                const image_conditions =
-                  post.image_url === "" && post.image_file != "";
-                // console.log("TESTING", image_conditions)
-                const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
-                // console.log("IMAGE", image)
-                return (
-                  <Post
-                    key={index}
-                    user={user}
-                    post_author={post.author}
-                    title={post.title}
-                    description={post.content}
-                    img={image}
-                    img_url={post.image_url}
-                    likes={post.likes_count}
-                    id={post.post_id}
-                    is_private={post.is_private}
-                    unlisted={post.unlisted}
-                  />
-                );
-              })
-            );
+          console.log("posts", postsRes.data);
+          const urls = []
+
+          for (let i = 0; i < postsRes.data.length; i++) {
+            console.log(postsRes.data[i]['id'] + '/image')
+            urls.push(postsRes.data[i]['id'] + '/image')
           }
-        })
-        .catch((error) => {
-          console.error("Error getting posts:", error);
-          setPosts(
-            <div className="flex justify-center items-center">
-              This user does not exists, did you enter the correct username?
-            </div>
+
+          console.log("URLS", urls)
+
+          const requests = urls.map(url =>
+            axios.get(url)
+            .then(response => response)
+            .catch (error => console.error('Error', error))
           );
-        });
-    };
+
+          Promise.all(requests)
+          .then(responses => {
+            console.log("RESPONSES", responses);
+            console.log(responses[0]['data'])
+            if ((author === user.user.username)) {
+              setPosts(
+                postsRes.data.map((post, index) => {
+                  // As the user, want to be able to see your all your posts.
+                  const image = responses[index]['data']
+                  return (
+                    <Post
+                      key={index}
+                      user={user}
+                      post_author={post.author}
+                      title={post.title}
+                      description={post.content}
+                      img={image}
+                      img_url={post.image_url}
+                      likes={post.likes_count}
+                      id={post.post_id}
+                      is_private={post.is_private}
+                      unlisted={post.unlisted}
+                    />
+                  );
+                })
+              );
+            } else {
+              setPosts(
+                postsRes.data.Posts.filter(
+                  (post) => !post.unlisted && !post.is_private
+                ).map((post, index) => {
+                  const image = responses[index]['data']
+
+                  return (
+                    <Post
+                      key={index}
+                      user={user}
+                      post_author={post.author}
+                      title={post.title}
+                      description={post.content}
+                      img={image}
+                      img_url={post.image_url}
+                      likes={post.likes_count}
+                      id={post.post_id}
+                      is_private={post.is_private}
+                      unlisted={post.unlisted}
+                    />
+                  ); // end return
+                }) // end map
+              ); // end setPosts
+            } // end else
+          })
+          })
+
+
+    .catch((error) => {
+      console.error("Error getting posts:", error);
+      setPosts(
+        <div className="flex justify-center items-center">
+          This user does not exists, did you enter the correct username?
+        </div>
+      );// end catch error
+    }); // 
+  }; // end fetchPosts 
 
     const checkFriendship = async () => {
         let authorUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
@@ -207,10 +252,10 @@ export default function ViewProfile({ user }) {
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
-    getConnections();
-    getNotifications();
-    getAuthorInfo();
-    checkFriendship();
+    // getConnections();
+    // getNotifications();
+    // getAuthorInfo();
+    // checkFriendship();
     //location.reload()
     console.log("posts", posts);
   }, [author, is_pending, areFriends]);
