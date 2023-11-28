@@ -44,12 +44,16 @@ export default function Post({
 
   
   const handleEditAccess = () => {
-    console.log("user", user);
-    console.log("post_author", post_author);
-    console.log(user.user.user_id == post_author);
+    try {
+      console.log("Edit User", user);
+      console.log("post_author", post_author);
+      console.log(user.user.user_id == post_author);
 
-    if (user.user.user_id == post_author) {
-      setIsEditable(true);
+      if (user.user.user_id == post_author) {
+        setIsEditable(true);
+      }
+     } catch {
+      console.log(":^]")
     }
   }
 
@@ -281,7 +285,7 @@ export default function Post({
                   <Popup
                   trigger = {<button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">Edit</button>}
                   modal = {true}
-                  closeOnDocumentClick = {true}>
+                  closeOnDocumentClick = {false}>
                   
                   {close => (
                     <>

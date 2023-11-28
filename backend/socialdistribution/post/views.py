@@ -641,7 +641,7 @@ class ImagesRemote(APIView):
 
         image = None # If its None still then it means that its an imageless post
         if (post.image_file != ''):
-            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + str(post.image_file)
+            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(post.image_file)
         elif (post.image_url != ''):
             image = post.image_url
         
