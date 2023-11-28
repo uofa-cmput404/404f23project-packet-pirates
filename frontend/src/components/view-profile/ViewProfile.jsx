@@ -263,8 +263,8 @@ export default function ViewProfile({ user }) {
     fetchPosts(); // Call the fetchPosts function
     // getConnections();
     // getNotifications();
-    getAuthorInfo();
-    checkFriendship();
+    // getAuthorInfo();
+    // checkFriendship();
     //location.reload()
     console.log("posts", posts);
   }, [author, is_pending, areFriends]);
