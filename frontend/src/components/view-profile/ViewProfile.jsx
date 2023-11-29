@@ -6,6 +6,7 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
+import RemotePost from "../../remote/RemotePosts";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function ViewProfile({ user }) {
@@ -61,6 +62,7 @@ export default function ViewProfile({ user }) {
       password: 'cmput404'
     }
   }
+ 
 
   useEffect(() => {
     const getUrl = "http://127.0.0.1:8000";
@@ -68,25 +70,25 @@ export default function ViewProfile({ user }) {
     console.log("author", author);
     console.log("user", user);
 
-    // const getConnections = async () => {
-    //   let connectionsUrl =
-    //     "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
-    //   const connectionsRes = await axios
-    //     .get(connectionsUrl, config)
-    //     .then((connectionsRes) => {
-    //       console.log("CONNECTSRES", connectionsRes.data);
-    //       setFriends(
-    //         <Profile
-    //           friends={connectionsRes.data.Friends}
-    //           // username={user.user.username}
-    //           user={user}
-    //         />
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting friends:", error);
-    //     });
-    // };
+    const getConnections = async () => {
+      let connectionsUrl =
+        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+      const connectionsRes = await axios
+        .get(connectionsUrl, config)
+        .then((connectionsRes) => {
+          console.log("CONNECTSRES", connectionsRes.data);
+          setFriends(
+            <Profile
+              friends={connectionsRes.data.Friends}
+              // username={user.user.username}
+              user={user}
+            />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting friends:", error);
+        });
+    };
 
     // const getProfile = async () => {
     //   try {
@@ -164,7 +166,7 @@ export default function ViewProfile({ user }) {
                   // As the user, want to be able to see your all your posts.
                   const image = responses[index]['data']
                   return (
-                    <Post
+                    <RemotePost
                       key={index}
                       user={user}
                       post_author={post.author}
@@ -193,7 +195,7 @@ export default function ViewProfile({ user }) {
                       image = responses[index]['data']
                   }
                   return (
-                    <Post
+                    <RemotePost
                       key={index}
                       user={user}
                       post_author={post.author}
@@ -267,28 +269,38 @@ export default function ViewProfile({ user }) {
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
-    // getConnections();
+    getConnections();
     // getNotifications();
-    // getAuthorInfo();
+    getAuthorInfo();
     // checkFriendship();
     //location.reload()
     console.log("posts", posts);
   }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
-    let authUrl = "http://127.0.0.1:8000/author/" + author + "/username";
+
+    let authUrl = location.state['api']
+    let auth = ''
+    let host = new URL(location.state['api']).hostname
+    
+    if (host.includes('packet-pirates')) {
+      console.log("PIRATE!")
+      auth = PP_auth
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth
+    }
 
     const authRes = await axios
-      .get(authUrl, config)
+      .get(authUrl, auth)
       .then((authRes) => {
-        setAuthorInfo((authorInfo) => authRes.data.Author);
-
+        console.log("DATA", authRes.data)
+        setAuthorInfo((authorInfo) => authRes.data);
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
               src={
-                "http://127.0.0.1:8000" + authRes.data.Author.profile_picture
+                authRes.data.profileImage
               }
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
