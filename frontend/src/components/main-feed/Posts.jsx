@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Cookies from 'universal-cookie'
+
 import { Navigate, useNavigate } from "react-router-dom";
 import Popup from 'reactjs-popup';
 import EditPost from "../main-feed/EditPost";
@@ -29,18 +31,29 @@ export default function Post({
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
 
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+  };
+
+  console.log(localStorage.getItem('access_token'))
+
   const handleEdit = () => {
     // Handle edit functionality
 
   };
 
+  
   const handleEditAccess = () => {
-    console.log("user", user);
-    console.log("post_author", post_author);
-    console.log(user.user.user_id == post_author);
+    try {
+      console.log("Edit User", user);
+      console.log("post_author", post_author);
+      console.log(user.user.user_id == post_author);
 
-    if (user.user.user_id == post_author) {
-      setIsEditable(true);
+      if (user.user.user_id == post_author) {
+        setIsEditable(true);
+      }
+     } catch {
+      console.log(":^]")
     }
   }
 
@@ -57,17 +70,13 @@ export default function Post({
     try {
       if (newLikeState) {
         // If liking, make a POST request to add a like
-        await axios.post(
-          "http://127.0.0.1:8000/author/" + id + "/postlikes",
-          {
-            post_object_id: id,
-            author: user,
-            like_count: newLikeCount,
-          },
-          {
-            withCredentials: true,
-          }
-        );
+        await axios.post("http://127.0.0.1:8000/author/" + id + "/postlikes", {
+          post_object_id: id,
+          author: user,
+          like_count: newLikeCount,
+        }, config, {
+          withCredentials: true,
+        });
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete("http://127.0.0.1:8000/author/" + id + "/postlikes", {
@@ -76,7 +85,10 @@ export default function Post({
             author: user,
             like_count: newLikeCount,
           },
-          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Token ' + localStorage.getItem('access_token'),
+          }
         });
       }
     } catch (error) {
@@ -93,7 +105,7 @@ export default function Post({
     // Check if the current user has liked the post
     const checkLikeStatus = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/author/" + id + "/postlikes");
+        const response = await axios.get("http://127.0.0.1:8000/author/" + id + "/postlikes", config);
         const likedByCurrentUser = response.data["Post Likes"].some((like) => like.author === user.user.user_id);
         setHasLiked(likedByCurrentUser);
       } catch (error) {
@@ -138,17 +150,18 @@ export default function Post({
     let authorUrl = "http://127.0.0.1:8000/author/" + user.user.user_id + "/simpleauthor"
 
     const authorRes = await axios
-    .get(authorUrl)
+    .get(authorUrl,config)
     .then(async (authorRes) => {
 
-      await axios.post(commentsUrl, 
-        { 
-          text: commentText,
-          author: user.user.user_id,
-          author_picture: "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
-          author_username: authorRes.data.Author.username,
-        
-      })
+      await axios.post(commentsUrl, { 
+        text: commentText,
+        author: user.user.user_id,
+        author_picture: "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
+        author_username: authorRes.data.Author.username,
+      
+    }, config, {
+      withCredentials: true
+    })
       .then(() => {
 
         getComments()
@@ -168,7 +181,7 @@ export default function Post({
     let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
 
     const commentsRes = await axios
-    .get(commentsUrl)
+    .get(commentsUrl,config)
     .then((commentsRes) => {
 
       //Result of comments query
@@ -218,7 +231,7 @@ export default function Post({
     let authorUrl = "http://127.0.0.1:8000/author/" + post_author + "/simpleauthor"
 
     const authorRes = await axios
-    .get(authorUrl)
+    .get(authorUrl,config)
     .then((authorRes) => {
 
       //Result of author query
@@ -272,7 +285,7 @@ export default function Post({
                   <Popup
                   trigger = {<button onClick={handleEdit} className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full">Edit</button>}
                   modal = {true}
-                  closeOnDocumentClick = {true}>
+                  closeOnDocumentClick = {false}>
                   
                   {close => (
                     <>

@@ -25,6 +25,13 @@ export default function Notifications({ notifications , user}) {
   );
 }
 
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+    'Authorization': 'Token ' + localStorage.getItem('access_token')
+  }
+};
+
 export function Notification({ user, index, notification }) {
   const isFollowRequest = notification.is_follow_notification;
 
@@ -48,7 +55,19 @@ export function Notification({ user, index, notification }) {
       recipient : user.user.user_id
     }
 
-    const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}})
+    const notifRes = await axios.delete(notificationUrl, {
+      data: {
+        data:notifData
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }})
+
+    // const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}, {config}})
+
+    // const requestRes = await axios.delete(notificationUrl, {data: notifData}, {config})
+
     .then((notifRes) => {
       window.location.reload(false);
     })
@@ -56,7 +75,19 @@ export function Notification({ user, index, notification }) {
       console.error("Error deleting notification:", err);
     })
 
-    const requestRes = await axios.delete(followrequestUrl, {data: {data: requestData}})
+    const requestRes = await axios.delete(followrequestUrl, {
+      data: {
+        data:requestData
+      }, 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }})
+
+    // const requestRes = await axios.delete(followrequestUrl, {data: requestData, config})
+
+    // const requestRes = await axios.delete(followrequestUrl, {data: requestData}, {config})
+
     .then((requestRes) => {
       
     })
@@ -87,7 +118,14 @@ export function Notification({ user, index, notification }) {
       recipient : user.user.user_id
     }
 
-    const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}})
+    const notifRes = await axios.delete(notificationUrl, {
+      data: {
+        data:notifData
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }})
     .then((notifRes) => {
       // window.location.reload(false);
     })
@@ -95,7 +133,14 @@ export function Notification({ user, index, notification }) {
       console.error("Error deleting notification:", err);
     })
 
-    const requestRes = await axios.delete(followrequestUrl, {data: {data: requestData}})
+    const requestRes = await axios.delete(followrequestUrl, {
+      data: { data:requestData
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Token ' + localStorage.getItem('access_token'),
+      }
+    })
     .then((requestRes) => {
       
     })
@@ -114,7 +159,7 @@ export function Notification({ user, index, notification }) {
       friend_username : notification.notif_author_username
     }
 
-    const friendRes = await axios.post(friendUrl, friendData)
+    const friendRes = await axios.post(friendUrl, friendData, config)
     .then((friendRes) => {
       window.location.reload(false);
     })

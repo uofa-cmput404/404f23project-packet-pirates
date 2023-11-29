@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model, login, logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
 from rest_framework import permissions, status
 from rest_framework import generics
 
@@ -45,7 +45,7 @@ class GetAllNotifications(APIView):
     Get all notifications that should show up in a given author's feed
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Get all notifications for a specific author",
                     operation_summary="Get All Author Notifications",
@@ -65,15 +65,41 @@ class GetUsers(APIView):
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
     
-        # no permission needed
+    # no permission needed
     permission_classes = (permissions.AllowAny,)
     authentication_classes = () 
     
     def get(self, request):
         query = request.GET.get('q')
-        users = AppAuthor.objects.filter(username__icontains = query)
-        serializer = AuthorSerializer(users, many = True)
-        return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
+
+        # Fetch and filter data from external API
+        basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+        # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
+        external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+
+        filtered_external_data = [
+            {
+                "id": author["id"],
+                "displayName": author["displayName"],
+                "profileImage": author["profileImage"]
+            }
+            for author in external_data.get("items", [])
+            if query.lower() in author.get('displayName', '').lower()
+        ]
+        users = AppAuthor.objects.filter(username__icontains=query)
+        serializer = AuthorSerializerRemote(users, many=True)
+        Users = {
+            "Users": serializer.data + filtered_external_data
+        }
+        print(Users)
+
+        return Response(Users, status=status.HTTP_200_OK)
+    
+    # def get(self, request):
+    #     query = request.GET.get('q')
+    #     users = AppAuthor.objects.filter(username__icontains = query)
+    #     serializer = AuthorSerializer(users, many = True)
+    #     return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
     
 class GetAllUsers(APIView):
     """Returns ALL users"""
@@ -90,7 +116,7 @@ class GetAllAuthorFriends(APIView):
     Get all friends of a given author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Get all friends of a specific author",
                     operation_summary="Get Author's Friends",
@@ -111,7 +137,7 @@ class GetAuthorFollowing(APIView):
     Get all authors an author follows
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
 
     @swagger_auto_schema(operation_description="Get all authors that a specific author follows",
@@ -133,7 +159,7 @@ class GetAuthorFollowers(APIView):
     Get all authors an following an author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
 
     @swagger_auto_schema(operation_description="Get all authors that follow a speciifc author",
@@ -155,7 +181,7 @@ class GetTrueFriends(APIView):
     Get all true friends of an author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Get all True Friends",
                     operation_summary="Get All True Friends",
@@ -212,7 +238,7 @@ class FollowRequestViews(APIView):
     Post, Delete
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
 
     @swagger_auto_schema(operation_description="Get a follow request object",
@@ -271,7 +297,7 @@ class FriendsViews(APIView):
     Creates a Friend Object
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Get a friend object",
         operation_summary="Get a friend object",
@@ -327,7 +353,7 @@ class NotificationViews(APIView):
     Creates a notification object
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Creates a notification object",
         operation_summary="Creates a notification object",
@@ -430,20 +456,23 @@ class InboxViewPosts(APIView):
                     t['image_url'] = image_req.json()
 
                     posts.append(t)
-                except:
+                except Exception as e:
                     print(e)
             else:
-                r = requests.get(x)
+                try:
+                    r = requests.get(x)
 
-                t = r.json().copy()
+                    t = r.json().copy()
 
-                t['image_url'] = x + "/image"
+                    t['image_url'] = x + "/image"
 
-                image_req = requests.get(t['image_url'], auth=basic)
+                    image_req = requests.get(t['image_url'], auth=basic)
 
-                t['image_url'] = image_req.json()
+                    t['image_url'] = image_req.json()
 
-                posts.append(t)
+                    posts.append(t)
+                except Exception as e:
+                    print(e)
     
         return Response(posts, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
@@ -649,6 +678,36 @@ class InboxViews(APIView):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class FollowersLocal(APIView):
+    '''
+    URL: ://service/authors/{AUTHOR_ID}/followers/{FOREIGN_AUTHOR_ID}
+    GET [local, remote] check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID
+    '''
+    # permission_classes = (permissions.AllowAny, )
+    # authentication_classes = ()
+    
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (TokenAuthentication, )
+
+    @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
+        operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
+        responses={200: FriendsSerializer()},
+        tags=['Remote'],)
+
+    def get(self, request, author_id, foreign_author_id):
+        author_id = uuid.UUID(author_id)
+
+        foreign_author_id = uuid.UUID(foreign_author_id)
+
+        friend = Friends.objects.filter(author = author_id).filter(friend = foreign_author_id)
+
+        serializer = FriendsSerializer(friend, many = True)
+
+        if (len(serializer.data) == 0):
+
+            return Response(False, status = status.HTTP_200_OK)
+        
+        return Response (True, status = status.HTTP_200_OK)
 
 # REMOTE VIEWS
 class GetAuthorsFollowersRemote(APIView):

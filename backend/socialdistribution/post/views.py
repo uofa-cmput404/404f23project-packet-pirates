@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework import permissions, status
 
 from post.models import Post, PostLike
@@ -47,7 +47,7 @@ class GetAuthorsPosts(APIView):
     Get posts that the specific author has posted in the database
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
 
     @swagger_auto_schema(operation_description="Get all posts from a specific author",
@@ -75,7 +75,7 @@ class GetUsers(APIView):
     """Returns a list of users, given query"""
     # no authentication needed
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     def get(self, request):
         query = request.GET.get('query')
@@ -122,7 +122,7 @@ class GetFeedPosts(APIView):
     Get posts that should show up in a author's feed
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
         
 
     @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
@@ -150,7 +150,7 @@ class PostViews(APIView):
     #authentication_classes = ()    
 
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     @swagger_auto_schema(operation_description="Create a post for a specific author",
                 operation_summary="Create Author Post",
@@ -197,13 +197,13 @@ class PostViews(APIView):
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
 
+class DeletePost(APIView):
     @swagger_auto_schema(operation_description="Delete a post for a specific author",
-            operation_summary="Delete Author Post",
-            responses={201: PostSerializer()},
-            tags=['Post'],)
+        operation_summary="Delete Author Post",
+        responses={201: PostSerializer()},
+        tags=['Post'],)
         
-    def delete(self, request):
-        pk = request.data['post_id']
+    def delete(self, request, pk):
         post_id = uuid.UUID(pk)
 
         post = Post.objects.filter(post_id = post_id)
@@ -220,7 +220,7 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     #authentication_classes = ()
 
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(operation_description="Edit Post of an Author",
                 operation_summary="Edit post",
@@ -271,7 +271,7 @@ class PostComments(APIView):
     # authentication_classes = ()
 
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(operation_description="Get all comments of a post",
                             operation_summary="Get comments",
@@ -343,7 +343,7 @@ class PostLikeViews(APIView):
     # permission_classes = (permissions.AllowAny,)
     
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication, )
 
         
     @swagger_auto_schema(operation_description="Get likes of a specific post",
@@ -367,6 +367,8 @@ class PostLikeViews(APIView):
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
+        
+        print(request.data['like_count'])
 
         post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
 
@@ -550,7 +552,7 @@ class PostCommentRemote(APIView):
 
             return Response (serializer.data[0], status=status.HTTP_200_OK)
         
-        return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Comment does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class PostRemote(APIView):
     '''
@@ -639,7 +641,7 @@ class ImagesRemote(APIView):
 
         image = None # If its None still then it means that its an imageless post
         if (post.image_file != ''):
-            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + str(post.image_file)
+            image = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/media/" + str(post.image_file)
         elif (post.image_url != ''):
             image = post.image_url
         

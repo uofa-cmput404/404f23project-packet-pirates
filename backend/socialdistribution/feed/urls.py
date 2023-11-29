@@ -14,6 +14,8 @@ urlpatterns = [
     path("<str:pk>/friends", views.FriendsViews.as_view(), name = "create_friend"),
     path("<str:sender>/followrequest/<str:recipient>/ispending", views.FollowRequestPending.as_view(), name = "follow_request_pending"),
     path("<str:author>/unfriend/<str:friend>", views.FriendsDelete.as_view(), name = "unfriend"),
+    path("authors/<str:author_id>/followers/<str:foreign_author_id>/local", views.FollowersLocal.as_view(), name ="Get Authors Followers Local"),
+
 
 
     # path("author/<str:pk>/friendrequest")
@@ -28,8 +30,8 @@ urlpatterns = [
 
     # REMOTE URLS
     path("authors/<str:author_id>/followers", views.GetAuthorsFollowersRemote.as_view(), name ="Get Authors Followers Remote"),
-    path("authors/<str:author_id>/followers/<str:foreign_author_id>", views.FollowersRemote.as_view(), name ="Get Authors Followers Remote"),
-    path("author/<str:author_id>/inbox", views.InboxViewsRemote.as_view(), name ='Inbox Remote'),
+    path("authors/<str:author_id>/followers/<str:foreign_author_id>", views.FollowersRemote.as_view(), name ="Boolean Authors Followers Remote"),
+    path("authors/<str:author_id>/inbox", views.InboxViewsRemote.as_view(), name ='Inbox Remote'),
 
 
 ]

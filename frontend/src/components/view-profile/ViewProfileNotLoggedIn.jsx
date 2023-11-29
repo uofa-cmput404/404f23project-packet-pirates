@@ -20,6 +20,7 @@ export default function ViewProfileNotLogged() {
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
     username: "fake_user",
+    user_id: "fake_id",
   };
 
   useEffect(() => {

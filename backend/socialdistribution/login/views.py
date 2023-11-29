@@ -2,16 +2,22 @@ from .serializer import AuthorSerializer
 # from .models import Author
 
 from django.shortcuts import render
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import get_user_model, login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework import permissions, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import authentication_classes, permission_classes
 
 from .validate import *
 from .serializer import *
-from .models import *
+
 
 from feed.serializer import InboxSerializer
 
@@ -74,7 +80,7 @@ class AuthorRegistration(APIView):
 
 class AuthorLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(
             operation_description="Log in an author using their credentials", 
@@ -87,12 +93,20 @@ class AuthorLogin(APIView):
         assert validate_username(data)
         assert validate_password(data)
         serializer = AuthorLoginSerializer(data = data)
+
+        
         if serializer.is_valid(raise_exception=True):
             author = serializer.validate_user(data)
+            token, created = Token.objects.get_or_create(user = author)
             login(request, author)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({
+                'token': token.key,
+                "User": serializer.data},
+                             status=status.HTTP_200_OK)
 
 class AuthorLogout(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(
         operation_description="Logs out an author", 
@@ -101,12 +115,23 @@ class AuthorLogout(APIView):
         tags=['Login'],)
     
     def get(self, request):
-        logout(request)
-        return Response(status = status.HTTP_200_OK)
+        try:
+            request.user.auth_token.delete()
+            # print(request)
+            return Response({'Message': 'You have successfully logged out'}, status=status.HTTP_200_OK)
+        
+        except (AttributeError, ObjectDoesNotExist):
+            return Response({"Error"}, status=status.HTTP_404_NOT_FOUND)
+
+    # def get(self, request):
+    #     logout(request)
+    #     return Response({'Message': 'You have successfully logged out'},status = status.HTTP_200_OK)
+
 
 class AuthorView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
+    # authentication_classes = (SessionAuthentication,)
 
     @swagger_auto_schema(
             operation_description="Get all authors", 
@@ -119,12 +144,13 @@ class AuthorView(APIView):
         return Response({'user': serializer.data}, status=status.HTTP_200_OK) # CHANGE LATER NO MORE JSON, REMOVE
         # return Response(serializer.data, status=status.HTTP_200_OK) # TO THIS
 
+
 class GetSingleAuthor(APIView):
     '''
     Get one single author
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(operation_description="Get one single author",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
@@ -160,7 +186,7 @@ class GetSingleAuthorByUsername(APIView):
     Get one single author by their username
     '''
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
     
     @swagger_auto_schema(operation_description="Get one single author by their username",
             operation_summary="This endpoint returns the username, user_id, first_name, last_name, and display_name of an author.",
@@ -195,8 +221,8 @@ class getAllAuthorsRemote(APIView):
         size: how big is a page
     '''
 
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get All Authors Remote",
             operation_summary="Get All Authors Remote",
@@ -218,8 +244,8 @@ class getSingleAuthorRemote(APIView):
     URL: ://service/authors/{AUTHOR_ID}/
     GET [local, remote]: retrieve AUTHOR_ID’s profile
     '''
-    # permission_classes = (permissions.IsAuthenticated, )
-    # authentication_classes = (BasicAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+    authentication_classes = (BasicAuthentication, )
 
     @swagger_auto_schema(operation_description="Get A Single Author Remote",
             operation_summary="Get a single author remote",

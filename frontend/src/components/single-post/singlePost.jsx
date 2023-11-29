@@ -13,6 +13,10 @@ export default function SinglePost({ user }) {
   const [friends, setFriends] = useState(null);
   const [notifications, setNotifications] = useState(null);
 
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+  };
+
   useEffect(() => {
 
     const getConnections = async () => {
@@ -21,7 +25,7 @@ export default function SinglePost({ user }) {
         user.user.user_id +
         "/truefriends";
       const connectionsRes = await axios
-        .get(connectionsUrl)
+        .get(connectionsUrl, config)
         .then((connectionsRes) => {
           console.log("CONNECTSRES", connectionsRes.data);
           setFriends(
@@ -43,7 +47,7 @@ export default function SinglePost({ user }) {
         "/authornotifications";
 
       const notifsRes = await axios
-        .get(notificationsUrl)
+        .get(notificationsUrl, config)
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
@@ -60,7 +64,7 @@ export default function SinglePost({ user }) {
         "http://127.0.0.1:8000/" + postID + "/viewpost";
 
       const postRes = await axios
-        .get(postUrl)
+        .get(postUrl, config)
         .then((postRes) => {
             console.log("post data", postRes.data.post);
             console.log("postRes", postRes);
@@ -102,7 +106,7 @@ export default function SinglePost({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/logout");
+      await axios.get("/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {

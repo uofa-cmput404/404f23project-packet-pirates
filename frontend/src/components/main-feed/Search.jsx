@@ -8,14 +8,18 @@ export default function SearchBar() {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
+  const config = {
+    headers: { Authorization: "Token " + localStorage.getItem("access_token") },
+  };
+
   const handleInputChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
     let url = "http://127.0.0.1:8000/author/search?q=" + value;
 
-    axios.get(url).then((res) => {
+    axios.get(url, config).then((res) => {
       //   console.log("res", res);
-      const userNames = res.data.Users.map((user) => user.username);
+      const userNames = res.data.Users.map((user) => user.displayName);
       //   setResults(res.data.Users);
       setResults(userNames);
     });

@@ -93,12 +93,12 @@ export default function CreatePost({ user }) {
     console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/postViews", formData, 
-      {
+      .post("http://127.0.0.1:8000/postViews", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           //"Content-Type": "application/json",
-        }
+          'Authorization': 'Token ' + localStorage.getItem('access_token'),
+        },
       })
       .then((response) => {
         console.log(response.data);

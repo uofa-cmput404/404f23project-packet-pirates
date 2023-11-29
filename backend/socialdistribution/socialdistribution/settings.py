@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import django_on_heroku
 from pathlib import Path
 import os
 
@@ -26,7 +27,26 @@ SECRET_KEY = 'django-insecure-tevwmg6#xw%yt!(4j3t0=2fyd)tz_l#9e9^3vdkin0vv&oqnq8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000']
+ALLOWED_HOSTS = ["*"]
+
+# COR_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+#     'http://127.0.0.1:3000',
+#     'https://packet-pirates-frontend-46271456b73c.herokuapp.com'
+# ]
+
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# SESSION_COOKIE_SAMESITE = 'Lax'
+# # CSRF_COOKIE_HTTPONLY = False  # False since we will grab it via universal-cookies
+# # SESSION_COOKIE_HTTPONLY = False  
+
+# CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 
+                        'https://packet-pirates-frontend-46271456b73c.herokuapp.com/', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/',
+                        'https://super-coding-team-89a5aa34a95f.herokuapp.com/']
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -41,14 +61,14 @@ INSTALLED_APPS = [
     'feed.apps.FeedConfig',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_yasg',
-
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -103,7 +123,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     )
 }
 
@@ -155,7 +175,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 SWAGGER_SETTINGS = {
    'DEFAULT_INFO': 'socialdistribution.urls.api_info',
 }
+
+django_on_heroku.settings(locals()) # bottom of the file

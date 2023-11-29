@@ -5,22 +5,29 @@ import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cookies from 'universal-cookie'
+
 import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "../main-feed/Search";
 
 export default function MainPage({ user }) {
   const navigate = useNavigate();
 
-  const [posts, setPosts] = useState(null);
-  const [friends, setFriends] = useState();
-  const [notifications, setNotifications] = useState();
+  const [posts, setPosts] = useState(null)
+  const cookies = new Cookies();
+  const [friends, setFriends] = useState()
+  const [notifications, setNotifications] = useState()
+
+  const config = {
+    headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
+  };
 
   const getPosts = async () => {
     let postsUrl =
       "http://127.0.0.1:8000/author/" + user.user.user_id + "/feedposts";
 
     const postsRes = await axios
-      .get(postsUrl)
+      .get(postsUrl, config)
       .then((postsRes) => {
         //Result of post query
         console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
@@ -63,7 +70,7 @@ export default function MainPage({ user }) {
       "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
 
     const connectionsRes = await axios
-      .get(connectionsUrl)
+      .get(connectionsUrl, config)
       .then((connectionsRes) => {
         console.log("CONNECTSRES", connectionsRes.data);
         setFriends(
@@ -82,7 +89,7 @@ export default function MainPage({ user }) {
       "/authornotifications";
 
     const notifsRes = await axios
-      .get(notificationsUrl)
+      .get(notificationsUrl, config)
       .then((notifsRes) => {
         console.log("NOTIFSRES", notifsRes.data.Notifications);
         setNotifications(
@@ -95,6 +102,14 @@ export default function MainPage({ user }) {
   };
 
   useEffect(() => {
+    var token = cookies.get('access_token')
+    console.log(token)
+
+    const config = {
+      headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    };
+    console.log(config)
+
     //Get data on homepage load
     console.log("user", user);
 
@@ -107,7 +122,7 @@ export default function MainPage({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("/logout");
+      await axios.get("http://127.0.0.1:8000/logout", config);
       window.location.reload(false);
       console.log("logged out");
     } catch (err) {

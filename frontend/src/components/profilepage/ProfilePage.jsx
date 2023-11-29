@@ -33,7 +33,8 @@ export default function ProfilePage({ user }) {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
-        'display_name' : dispName
+        'display_name' : dispName,
+        'Authorization': 'Token ' + localStorage.getItem('access_token')
     }
 
     const SaveProfile = async (event) => {
