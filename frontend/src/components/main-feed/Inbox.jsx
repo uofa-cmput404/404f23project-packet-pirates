@@ -32,63 +32,6 @@ export default function Inbox({ user }) {
 
   console.log(user);
 
-  const fetchCommentData = async (inbox) => {
-
-    try {
-
-      await axios
-        
-        .get("http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/comments", token)
-
-        .then((res) => {
-
-          console.log("TESTING COMMENTS", res)
-
-          setInboxComments(res.data.map((comment, index) => {
-
-            return(
-              <li className="mt-4" key={index}>
-                <div className="comments">
-                  <div className="comment flex flex-row">
-                    <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
-                      <img
-                        src={comment.author.profileImage}
-                        alt="profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="engagement flex flex-col ml-4">
-                      <div className="username">
-                        <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                          {comment.author.displayName}
-                        </span>
-                      </div>
-                      <div className="">
-                        <span>Likes</span>
-                        <span className="ml-3">{comment.likes}</span>
-                      </div>
-                    </div>
-                    <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
-                      <div className="comment">{comment.comment}</div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            )
-
-          }));
-
-        });
-
-    } catch (error) {
-
-      console.error("Error fetching comment data:", error);
-      throw error; // Rethrow the error to be caught by Promise.all
-
-    }
-
-  }
-
   const fetchPostData = async (inbox) => {
 
     let posts = inbox.posts
@@ -113,7 +56,6 @@ export default function Inbox({ user }) {
 
     }
 
-    console.log("ZONG TYPE SCENARIO", postUrls)
 
     //Send request for each url-auth
     const requests = postUrls.map(([url, auth]) =>
@@ -122,9 +64,10 @@ export default function Inbox({ user }) {
       .catch (error => console.error('Error', error))
     );
 
+
     Promise.all(requests)
     .then(responses => {
-      console.log(responses)
+
       //Get profile images
       const imageUrls = []
 
@@ -155,8 +98,6 @@ export default function Inbox({ user }) {
 
       Promise.all(imgRequests)
       .then(images => {
-
-        console.log("TESTIMAGES", images)
 
         setShowPost(() => [
           responses.map((res, index) => {
@@ -193,72 +134,11 @@ export default function Inbox({ user }) {
 
     })
 
-
-    // try {
-
-    //   await axios
-    //     .get(
-    //       "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local/posts", token
-    //     )
-
-    //     .then((res) => {
-    //       console.log("res", res);
-
-    //       setShowPost(() => [
-    //         res.data.map((post, index) => {
-    //           return (
-    //             <RemotePost
-    //               key={index}
-    //               user={user}
-    //               post_author={post.author}
-    //               title={post.title}
-    //               description={post.description}
-    //               content={post.content}
-    //               img={post.image_url}
-    //               likes={post.likes_count}
-    //             />
-    //           );
-    //         }),
-    //       ]);
-
-    //     });
-
-    // } catch (error) {
-
-    //   console.error("Error fetching post data:", error);
-
-    //   throw error; // Rethrow the error to be caught by Promise.all
-
-    // }
-
   };
 
   useEffect(() => {
     getInbox();
   }, []);
-
-  useEffect(() => {
-
-    //console.log("inbox111", inbox);
-    //const posts = Object.values(inbox.posts || {});
-    //const postComments = inbox.post_comments || {};
-    //const postLikes = inbox.post_likes || {};
-    //const followRequests = inbox.follow_requests || {};
-    //const notifications = inbox.notifications || [];
-
-    //console.log("posts", posts);
-    //console.log("postComments", postComments);
-    //console.log("postLikes", postLikes);
-    //console.log("followRequests", followRequests);
-    //console.log("notifications", notifications);
-    //console.log("inboxPosts", inboxPosts);
-
-    //fetchPostData()
-    //fetchCommentData()
-    //setPostsFetched(true);
-
-  }, []);
-
 
   const getInbox = async () => {
 
