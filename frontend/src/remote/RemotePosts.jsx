@@ -38,6 +38,7 @@ export default function RemotePost({
     console.log("content", content);
     console.log("img", img);
     console.log("likes", likes);
+    console.log("author", post_author)
   }, []);
 
   return (
