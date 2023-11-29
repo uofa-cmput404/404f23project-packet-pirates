@@ -156,7 +156,8 @@ export default function ViewProfile({ user }) {
           Promise.all(requests)
           .then(responses => {
             console.log("RESPONSES", responses);
-            console.log(responses[0]['data'])
+            console.log("RESPONSE", responses[0]['data']['image'])
+
             if ((author === user.user.username)) {
               setPosts(
                 postsRes.data.map((post, index) => {
@@ -184,7 +185,13 @@ export default function ViewProfile({ user }) {
                 postsRes.data.filter(
                   (post) => !post.unlisted && !post.is_private
                 ).map((post, index) => {
-                  const image = responses[index]['data']
+                  
+                 var image = ''
+                  if (host.includes('super-coding')) {
+                      image = responses[index]['data']['image']
+                  } else {
+                      image = responses[index]['data']
+                  }
                   return (
                     <Post
                       key={index}
