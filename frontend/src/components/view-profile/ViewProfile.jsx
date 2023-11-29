@@ -181,11 +181,10 @@ export default function ViewProfile({ user }) {
               );
             } else {
               setPosts(
-                postsRes.data.Posts.filter(
+                postsRes.data.filter(
                   (post) => !post.unlisted && !post.is_private
                 ).map((post, index) => {
                   const image = responses[index]['data']
-
                   return (
                     <Post
                       key={index}
@@ -263,7 +262,7 @@ export default function ViewProfile({ user }) {
     fetchPosts(); // Call the fetchPosts function
     // getConnections();
     // getNotifications();
-    getAuthorInfo();
+    // getAuthorInfo();
     // checkFriendship();
     //location.reload()
     console.log("posts", posts);
