@@ -76,7 +76,7 @@ class PostSerializerRemote(serializers.ModelSerializer):
         return num_comments
     
     def get_comments(self, instance):
-        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id) + "/comments/"
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id) + "/comments"
 
     def get_published(self, instance):
         return instance.date_time

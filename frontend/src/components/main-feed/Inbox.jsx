@@ -183,6 +183,7 @@ export default function Inbox({ user }) {
                 content={res.data.content}
                 img={image}
                 likes={res.data.likes_count}  
+                post_id = {res.data.id}
               />
             );
           }),
