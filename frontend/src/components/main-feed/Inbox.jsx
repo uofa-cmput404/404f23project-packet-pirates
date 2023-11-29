@@ -205,7 +205,7 @@ export default function Inbox({ user }) {
       .then((inboxRes) => {
 
         fetchPostData(inboxRes.data)
-        fetchCommentData(inboxRes.data)
+        // fetchCommentData(inboxRes.data)
 
       })
       .catch((err) => {
