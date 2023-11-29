@@ -100,27 +100,28 @@ export default function ViewProfile({ user }) {
     //   }
     // };
 
-    // const getNotifications = async () => {
-    //   let notificationsUrl =
-    //     "http://127.0.0.1:8000/author/" +
-    //     user.user.user_id +
-    //     "/authornotifications";
+    const getNotifications = async () => {
+      let notificationsUrl =
+        "http://127.0.0.1:8000/author/" +
+        user.user.user_id +
+        "/authornotifications";
 
-    //   const notifsRes = await axios
-    //     .get(notificationsUrl, config)
-    //     .then((notifsRes) => {
-    //       console.log("NOTIFSRES", notifsRes.data.Notifications);
-    //       setNotifications(
-    //         <Notifications
-    //           notifications={notifsRes.data.Notifications}
-    //           user={user}
-    //         />
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting notifications:", error);
-    //     });
-    // };
+      const notifsRes = await axios
+        .get(notificationsUrl, config)
+        .then((notifsRes) => {
+          console.log("NOTIFSRES", notifsRes.data.Notifications);
+          setNotifications(
+            <Notifications
+              notifications={notifsRes.data.Notifications}
+              user={user}
+            />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting notifications:", error);
+        });
+    };
+    
     let auth = ''
     const fetchPosts = async () => {
       let postsUrl =
@@ -270,7 +271,7 @@ export default function ViewProfile({ user }) {
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
-    // getNotifications();
+    getNotifications();
     getAuthorInfo();
     // checkFriendship();
     //location.reload()
