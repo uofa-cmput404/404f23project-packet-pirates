@@ -71,7 +71,7 @@ export default function SearchBar() {
     console.log("USER ID OF THIS " + resultIDs[index].split("/").pop());
 
     navigate("/user/" + friend, { state: { api: resultIDs[index] } });
-    // window.location.reload(false);
+    window.location.reload(false);
   }
 
   return (
