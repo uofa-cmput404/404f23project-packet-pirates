@@ -148,7 +148,7 @@ export default function ViewProfile({ user }) {
           console.log("URLS", urls)
 
           const requests = urls.map(url =>
-            axios.get(url)
+            axios.get(url, auth)
             .then(response => response)
             .catch (error => console.error('Error', error))
           );
@@ -263,7 +263,7 @@ export default function ViewProfile({ user }) {
     fetchPosts(); // Call the fetchPosts function
     // getConnections();
     // getNotifications();
-    // getAuthorInfo();
+    getAuthorInfo();
     // checkFriendship();
     //location.reload()
     console.log("posts", posts);
