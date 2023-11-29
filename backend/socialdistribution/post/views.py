@@ -647,5 +647,8 @@ class ImagesRemote(APIView):
         
         if (post and image != None):
             return Response (image, status = status.HTTP_200_OK)
-
-        return Response ({"Message": "Post/Image does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if (post): 
+            return Response (status=status.HTTP_200_OK)
+        
+        return Response ({"Error": "No Post Exists"}, status=status.HTTP_404_NOT_FOUND)
