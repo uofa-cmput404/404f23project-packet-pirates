@@ -6,6 +6,7 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
+import RemotePost from "../../remote/RemotePosts";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function ViewProfile({ user }) {
@@ -61,6 +62,7 @@ export default function ViewProfile({ user }) {
       password: 'cmput404'
     }
   }
+ 
 
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
@@ -68,25 +70,25 @@ export default function ViewProfile({ user }) {
     console.log("author", author);
     console.log("user", user);
 
-    // const getConnections = async () => {
-    //   let connectionsUrl =
-    //     "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
-    //   const connectionsRes = await axios
-    //     .get(connectionsUrl, config)
-    //     .then((connectionsRes) => {
-    //       console.log("CONNECTSRES", connectionsRes.data);
-    //       setFriends(
-    //         <Profile
-    //           friends={connectionsRes.data.Friends}
-    //           // username={user.user.username}
-    //           user={user}
-    //         />
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting friends:", error);
-    //     });
-    // };
+    const getConnections = async () => {
+      let connectionsUrl =
+        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+      const connectionsRes = await axios
+        .get(connectionsUrl, config)
+        .then((connectionsRes) => {
+          console.log("CONNECTSRES", connectionsRes.data);
+          setFriends(
+            <Profile
+              friends={connectionsRes.data.Friends}
+              // username={user.user.username}
+              user={user}
+            />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting friends:", error);
+        });
+    };
 
     // const getProfile = async () => {
     //   try {
@@ -98,27 +100,28 @@ export default function ViewProfile({ user }) {
     //   }
     // };
 
-    // const getNotifications = async () => {
-    //   let notificationsUrl =
-    //     "http://127.0.0.1:8000/author/" +
-    //     user.user.user_id +
-    //     "/authornotifications";
+    const getNotifications = async () => {
+      let notificationsUrl =
+        "http://127.0.0.1:8000/author/" +
+        user.user.user_id +
+        "/authornotifications";
 
-    //   const notifsRes = await axios
-    //     .get(notificationsUrl, config)
-    //     .then((notifsRes) => {
-    //       console.log("NOTIFSRES", notifsRes.data.Notifications);
-    //       setNotifications(
-    //         <Notifications
-    //           notifications={notifsRes.data.Notifications}
-    //           user={user}
-    //         />
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting notifications:", error);
-    //     });
-    // };
+      const notifsRes = await axios
+        .get(notificationsUrl, config)
+        .then((notifsRes) => {
+          console.log("NOTIFSRES", notifsRes.data.Notifications);
+          setNotifications(
+            <Notifications
+              notifications={notifsRes.data.Notifications}
+              user={user}
+            />
+          );
+        })
+        .catch((error) => {
+          console.error("Error getting notifications:", error);
+        });
+    };
+    
     let auth = ''
     const fetchPosts = async () => {
       let postsUrl =
@@ -148,7 +151,7 @@ export default function ViewProfile({ user }) {
           console.log("URLS", urls)
 
           const requests = urls.map(url =>
-            axios.get(url)
+            axios.get(url, auth)
             .then(response => response)
             .catch (error => console.error('Error', error))
           );
@@ -156,14 +159,15 @@ export default function ViewProfile({ user }) {
           Promise.all(requests)
           .then(responses => {
             console.log("RESPONSES", responses);
-            console.log(responses[0]['data'])
+            console.log("RESPONSE", responses[0]['data']['image'])
+
             if ((author === user.user.username)) {
               setPosts(
                 postsRes.data.map((post, index) => {
                   // As the user, want to be able to see your all your posts.
                   const image = responses[index]['data']
                   return (
-                    <Post
+                    <RemotePost
                       key={index}
                       user={user}
                       post_author={post.author}
@@ -181,13 +185,18 @@ export default function ViewProfile({ user }) {
               );
             } else {
               setPosts(
-                postsRes.data.Posts.filter(
+                postsRes.data.filter(
                   (post) => !post.unlisted && !post.is_private
                 ).map((post, index) => {
-                  const image = responses[index]['data']
-
+                  
+                 var image = ''
+                  if (host.includes('super-coding')) {
+                      image = responses[index]['data']['image']
+                  } else {
+                      image = responses[index]['data']
+                  }
                   return (
-                    <Post
+                    <RemotePost
                       key={index}
                       user={user}
                       post_author={post.author}
@@ -252,9 +261,9 @@ export default function ViewProfile({ user }) {
 
     // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
-    // getConnections();
-    // getNotifications();
-    // getAuthorInfo();
+    getConnections();
+    getNotifications();
+    getAuthorInfo();
     // checkFriendship();
     //location.reload()
     console.log("posts", posts);
@@ -262,19 +271,28 @@ export default function ViewProfile({ user }) {
 
   const getAuthorInfo = async () => {
 
-    let authUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/username";
+    let authUrl = location.state['api']
+    let auth = ''
+    let host = new URL(location.state['api']).hostname
+    
+    if (host.includes('packet-pirates')) {
+      console.log("PIRATE!")
+      auth = PP_auth
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth
+    }
 
     const authRes = await axios
-      .get(authUrl, config)
+      .get(authUrl, auth)
       .then((authRes) => {
-        setAuthorInfo((authorInfo) => authRes.data.Author);
-
+        console.log("DATA", authRes.data)
+        setAuthorInfo((authorInfo) => authRes.data);
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
               src={
-                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authRes.data.Author.profile_picture
+                authRes.data.profileImage
               }
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
