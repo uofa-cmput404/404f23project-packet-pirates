@@ -9,6 +9,7 @@ export default function RemotePost({
   content,
   img,
   likes,
+  post_id,
 }) {
   const [comments, setComments] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +18,20 @@ export default function RemotePost({
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [postAuthor, setPostAuthor] = useState("");
+
+  const SC_auth = {
+    auth: {
+      username: 'packet_pirates',
+      password: 'pass123$'
+    }
+  }
+
+  const PP_auth = {
+    auth: {
+      username: 'packetpirates',
+      password: 'cmput404'
+    }
+  }
 
   const handleEdit = () => {
     // Handle edit functionality
@@ -31,6 +46,87 @@ export default function RemotePost({
     console.log("share");
   };
 
+  const fetchCommentData = async () => {
+
+    //Comments url
+    let url = post_id + '/comments'
+
+    //Corresponding authorization
+    let auth = ''
+    if (url.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (url.includes("super-coding")) {
+      auth = SC_auth
+    }
+
+    try {
+
+      axios.get(url, auth)
+      
+      .then((response) => {
+
+        console.log("ZONGER", response.data)
+
+        //Unpack response
+        let postComments = []
+
+        if (url.includes("packet-pirates")){
+
+          postComments = response.data
+
+        } else if (url.includes("super-coding")){
+
+          postComments = response.data.comments
+
+        }
+
+        setComments(
+
+          postComments.map((comment, index) => {
+            
+            return(
+              <li className="mt-4" key={index}>
+                <div className="comments">
+                  <div className="comment flex flex-row">
+                    <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                      <img
+                        src={comment.author.profileImage}
+                        alt="profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="engagement flex flex-col ml-4">
+                      <div className="username">
+                        <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                          {comment.author.displayName}
+                        </span>
+                      </div>
+                      <div className="">
+                        <span>Likes</span>
+                        <span className="ml-3">{comment.likes}</span>
+                      </div>
+                    </div>
+                    <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
+                      <div className="comment">{comment.comment}</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            )
+
+          })
+        );
+
+      });
+
+    } catch (error) {
+
+      console.log(error)
+
+    } 
+
+  }
+
   useEffect(() => {
     console.log("user", user);
     console.log("title", title);
@@ -38,6 +134,8 @@ export default function RemotePost({
     console.log("content", content);
     console.log("img", img);
     console.log("likes", likes);
+    console.log("author", post_author)
+    fetchCommentData()
   }, []);
 
   return (
@@ -152,10 +250,10 @@ export default function RemotePost({
             </div>
           )}
 
-          {/* <div className="comment-section flex flex-col divide-y justify-start">
+          <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>
             <ul>{comments}</ul>
-          </div> */}
+          </div>
         </div>
       </li>
     </>

@@ -172,13 +172,11 @@ export default function ViewProfile({ user }) {
                       user={user}
                       post_author={post.author}
                       title={post.title}
-                      description={post.content}
+                      description={post.description}
+                      content={post.content}
                       img={image}
-                      img_url={post.image_url}
                       likes={post.likes_count}
-                      id={post.post_id}
-                      is_private={post.is_private}
-                      unlisted={post.unlisted}
+                      post_id = {post.id}
                     />
                   );
                 })
@@ -201,13 +199,11 @@ export default function ViewProfile({ user }) {
                       user={user}
                       post_author={post.author}
                       title={post.title}
-                      description={post.content}
+                      description={post.description}
+                      content={post.content}
                       img={image}
-                      img_url={post.image_url}
                       likes={post.likes_count}
-                      id={post.post_id}
-                      is_private={post.is_private}
-                      unlisted={post.unlisted}
+                      post_id = {post.id}
                     />
                   ); // end return
                 }) // end map
