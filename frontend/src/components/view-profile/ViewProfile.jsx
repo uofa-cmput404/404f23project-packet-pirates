@@ -72,7 +72,7 @@ export default function ViewProfile({ user }) {
 
     const getConnections = async () => {
       let connectionsUrl =
-        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
       const connectionsRes = await axios
         .get(connectionsUrl, config)
         .then((connectionsRes) => {
@@ -102,7 +102,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
