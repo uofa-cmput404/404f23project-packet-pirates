@@ -38,13 +38,10 @@ export default function Post({
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
 
-  console.log(localStorage.getItem('access_token'))
-
   const handleEdit = () => {
     // Handle edit functionality
   };
 
-  
   const handleEditAccess = () => {
     try {
       if (user.user.user_id == post_author) {
@@ -140,12 +137,20 @@ export default function Post({
   };
 
   async function handleShareToClick(author) {
-    console.log("CLICKED AUTHOR", author);
-    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox";
-    
+    console.log("SHARED TO FOLLOWER", author);
+    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local";
+
+    let shareData = {
+      'author': author,
+      'posts': {
+
+              }
+    }
 
     try {
-      const response = await axios.post(url, config);
+      const response = await axios.get(url, config);
+      console.log("RESPONSE",response);
+      console.log("DATA", response.data);
     }
     catch(err) {
       console.log("Error when sharing to followers inbox");

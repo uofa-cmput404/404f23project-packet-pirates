@@ -590,8 +590,8 @@ class InboxViews(APIView):
         inbox = Inbox.objects.get(author = pk)
 
         # inbox = Inbox.objects.get(author = request.data['author'])
-        print(inbox.posts)
-        # print("Inbox", inbox.author.user_id)
+        print("Inbox", inbox.author.user_id)
+        print("REQUEST\n", request)
 
         # print("Inbox", dict(inbox.posts))
 
