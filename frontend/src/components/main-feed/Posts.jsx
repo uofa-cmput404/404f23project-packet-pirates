@@ -138,17 +138,27 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local";
+    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
+    let API = window.location.origin + `/post/${id}`;
 
     let shareData = {
       'author': author,
       'posts': {
-
-              }
+        [id]: {
+          'origin': 'local',
+          'API': API,
+          'post author': post_author,
+        }
+      },
+      'post_comments': null,
+      'post_likes': {'count': likeCount},
+      'follow_requests': null,
     }
 
+    console.log("SHARED DATA WITH CLICKED AUTHOR", shareData);
+
     try {
-      const response = await axios.get(url, config);
+      const response = await axios.post(url, shareData, config);
       console.log("RESPONSE",response);
       console.log("DATA", response.data);
     }
