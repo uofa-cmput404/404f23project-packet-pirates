@@ -156,7 +156,7 @@ class GetAuthorFollowing(APIView):
 
 class GetAuthorFollowers(APIView):
     '''
-    Get all authors an following an author
+    Get all authors following an author
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -169,7 +169,7 @@ class GetAuthorFollowers(APIView):
     
     def get(self, request, pk):
 
-        friends = Friends.objects.filter(author_id = pk)
+        friends = Friends.objects.filter(author = pk)
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
