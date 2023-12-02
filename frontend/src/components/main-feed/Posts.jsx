@@ -22,6 +22,8 @@ export default function Post({
 }) {
 
   const [comments, setComments] = useState(null);
+  const [commentsData, setCommentsData] = useState({});
+  const [postLikes, setPostLikes] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [hasLiked, setHasLiked] = useState(false);
@@ -32,7 +34,7 @@ export default function Post({
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [sharingModalOpen, setSharingModalOpen] = useState(false);
-  const [shareableAuthors, setShareableAuthors] = useState([])
+  const [shareableAuthors, setShareableAuthors] = useState([]);
 
   const config = {
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
@@ -123,6 +125,8 @@ export default function Post({
     // this will be those you can directly dm to their inbox
     // ** double check though **
     let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+
+    console.log(commentsData);
     try {
       const response = await axios.get(url, config);
       setShareableAuthors(response.data["Friends"]);
@@ -138,8 +142,8 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
-    let API = window.location.origin + `/post/${id}`;
+    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local";
+    let API = window.location.origin + `/posts/${id}`;
 
     let shareData = {
       'author': author,
@@ -150,8 +154,8 @@ export default function Post({
           'post author': post_author,
         }
       },
-      'post_comments': null,
-      'post_likes': {'count': likeCount},
+      'post_comments': commentsData,
+      'post_likes': postLikes,
       'follow_requests': null,
     }
 
@@ -223,16 +227,55 @@ export default function Post({
 
   };
 
+  const getPostLikes = async () => {
+    let likesUrl = "http://127.0.0.1:8000/author/" + id + "/postlikes"
+
+    const likesRes = await axios.get(likesUrl, config)
+    .then((likesRes) => {
+      console.log("LIKE RES DATA", likesRes.data);
+      likesRes.data["Post Likes"].map((like) => {
+        console.log("INDIVIDUAL LIKE", like);
+        let singleLikeUrl = window.location.origin + `/author/${id}` + "/postlikes";
+        let nextLike = {
+          [like.like_id]: {
+            'post': id,
+            'API': singleLikeUrl,
+            'author': like.author,
+          }
+        };
+
+        setPostLikes(postLikes => ({
+          ...postLikes,
+          ...nextLike
+        }));
+      });
+    });
+
+  };
+
   const getComments = async () => {
 
     let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
 
-    const commentsRes = await axios
-    .get(commentsUrl,config)
+    const commentsRes = await axios.get(commentsUrl,config)
     .then((commentsRes) => {
+      //console.log("COMMENT RES DATA", commentsRes.data);
+      commentsRes.data.Comments.map((comment) => {
+        console.log("INDIVIDUAL COMMENT", comment);
+        let singleCommentUrl = window.location.origin + `/posts/${id}` + `/comments/${comment.comment_id}`;
+        let nextComment = {
+          [comment.comment_id]: {
+            'origin': 'local',
+            'API': singleCommentUrl,
+            'comment author': comment.author,
+          }
+        };
 
-      //Result of comments query
-      //console.log("COMMENTSRES", commentsRes.data.Comments)
+        setCommentsData(commentsData => ({
+          ...commentsData,
+          ...nextComment
+        }));
+      });
       
       setComments(commentsRes.data.Comments.map((comment, index) => (
         <li className="mt-4" key={index}>
@@ -297,6 +340,7 @@ export default function Post({
     handleEditAccess();
     getComments();
     getPostAuthor();
+    getPostLikes();
 
   }, []);
 
