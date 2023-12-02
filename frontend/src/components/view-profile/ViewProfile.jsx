@@ -342,6 +342,11 @@ export default function ViewProfile({ user }) {
       });
   };
 
+  const handleInboxClick = () => {
+    // Add logic to handle Inbox button click
+    console.log("Inbox button clicked!");
+  };
+
   const handleLogout = async (event) => {
     event.preventDefault();
 
@@ -500,6 +505,12 @@ export default function ViewProfile({ user }) {
                   style={{ position: "sticky", top: "20px" }}
                 >
                   {notifications}
+                  <button
+                    className="sticky bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
+                    onClick={handleInboxClick}
+                  >
+                    Inbox
+                  </button>
                 </div>
                 <button
                   onClick={handleLogout}
