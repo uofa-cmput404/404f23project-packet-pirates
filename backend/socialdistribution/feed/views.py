@@ -77,8 +77,10 @@ class GetUsers(APIView):
 
         # Fetch and filter data from external API
         basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+        basic2 = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
         # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
         external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+        external_data2 = requests.get(c.WW_ENDPOINT+"authors/", auth=basic2).json()
 
         filtered_external_data = [
             {
@@ -89,10 +91,21 @@ class GetUsers(APIView):
             for author in external_data.get("items", [])
             if query.lower() in author.get('displayName', '').lower()
         ]
+
+        filtered_external_data2 = [
+            {
+                "id": author["id"],
+                "displayName": author["displayName"],
+                "profileImage": author["profileImage"]
+            }
+            for author in external_data2.get("items", [])
+            if query.lower() in author.get('displayName', '').lower()
+        ]
+
         users = AppAuthor.objects.filter(username__icontains=query)
         serializer = AuthorSerializerRemote(users, many=True)
         Users = {
-            "Users": serializer.data + filtered_external_data
+            "Users": serializer.data + filtered_external_data + filtered_external_data2
         }
         print(Users)
 
@@ -591,6 +604,9 @@ class InboxViews(APIView):
         '''
         Update the inbox of an author
         '''
+
+        # author_id = uuid.UUID(author_id)
+
         inbox = Inbox.objects.get(author = pk)
 
         # inbox = Inbox.objects.get(author = request.data['author'])
@@ -607,7 +623,7 @@ class InboxViews(APIView):
 
         if (request.data['type'].lower() == 'post'):
             print("YES")
-       
+        
             key = str(uuid.uuid4())
             request.data['API'] = request.data['id']
             print(key)
@@ -629,7 +645,7 @@ class InboxViews(APIView):
             comment_id = uuid.uuid4()
 
             new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
-                           "author_username": request.data['author']['displayName'], "text": request.data['comment']}
+                            "author_username": request.data['author']['displayName'], "author_origin": request.data['author']['id'], "text": request.data['comment']}
             
             comment_serializer = CommentSerializer(data = new_comment)
 
@@ -637,10 +653,10 @@ class InboxViews(APIView):
                 comment_serializer.save()
                 print("Comment Valid")
 
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                             'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                             'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
-           
+            
             notification_serializer = NotificationsSerializer(data = notification)
 
             if (notification_serializer.is_valid(raise_exception=True)):
@@ -655,7 +671,8 @@ class InboxViews(APIView):
             like_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
 
-            new_like = {'like_id': uuid.uuid4(), 'author': request.data['author']['id'].split('/')[4], 'post_object': like_post.post_id}
+            new_like = {'like_id': uuid.uuid4(), 'author': request.data['author']['id'].split('/')[4], 
+                        'author_origin': request.data['author']['id'], 'post_object': like_post.post_id}
 
             like_serializer = LikeSerializer(data = new_like)
             if (like_serializer.is_valid(raise_exception=True)):
@@ -664,10 +681,10 @@ class InboxViews(APIView):
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
                 print("Like Valid")
 
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
-           
+            
             notification_serializer = NotificationsSerializer(data = notification)
 
             if (notification_serializer.is_valid(raise_exception=True)):
@@ -688,10 +705,10 @@ class InboxViews(APIView):
                 follow_serializer.save()
                 print("Follow Valid")
             
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notif_origin_author': request.data['actor']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
                 'message':'Requested to follow you', 'is_follow_notification': True} # Swap to heroku link later for pfp
-           
+            
             notification_serializer = NotificationsSerializer(data = notification)
 
             if (notification_serializer.is_valid(raise_exception=True)):
@@ -699,7 +716,7 @@ class InboxViews(APIView):
                 print("Notif Valid")
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
-                     'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
+                        'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
 
         serializer = InboxSerializer(inbox, new_inbox)
 
@@ -810,6 +827,11 @@ class FollowersRemote(APIView):
         return Response (True, status = status.HTTP_200_OK)
 
 
+class FollowObjectRemote(APIView):
+
+    def get(self, request, author_id):
+        pass
+
 class InboxViewsRemote(APIView):
     '''
     Inbox Post Remote
@@ -825,67 +847,126 @@ class InboxViewsRemote(APIView):
     
     def post(self, request, author_id):
         '''
-        Update the inbox of an author remotely
+        Update the inbox of an author
         '''
-        author_id = uuid.UUID(author_id)
-        
-        inbox = Inbox.objects.get(author_id = author_id) # We need to test this
+
+        # author_id = uuid.UUID(author_id)
+
+        inbox = Inbox.objects.get(author = author_id)
 
         # inbox = Inbox.objects.get(author = request.data['author'])
+        print("Inbox", inbox.author.user_id)
+        print("REQUEST\n", request.data)
 
-        author = request.data['author']
+        # author = request.data['author']
 
-        posts = request.data['posts']
+        # post_comments = request.data.get('post_comments')
 
-        post_comments = request.data['post_comments']
+        # post_likes = request.data.get('post_likes')
 
-        post_likes = request.data['post_likes']
+        # follow_requests = request.data.get('follow_requests')
 
-        follow_requests = request.data['follow_requests']
+        if (request.data['type'].lower() == 'post'):
+            print("YES")
         
-        if (posts is not None):
-            key = list(posts.keys())[0]
+            key = str(uuid.uuid4())
+            request.data['API'] = request.data['id']
+            print(key)
             if(inbox.posts == None):
-                inbox.posts = {key:posts[key]}
+                inbox.posts = {key: request.data}
                 print("New object", inbox.posts)
             else:
-                inbox.posts[key] = posts[key]
+                inbox.posts[key] = request.data
                 print("APPENDED", inbox.posts)
 
-        if (post_comments is not None):
-            key = list(post_comments.keys())[0]
-            if(inbox.post_comments == None):
-                inbox.post_comments = {key:post_comments[key]}
-                print("New object", inbox.post_comments)
-            else:
-                inbox.post_comments[key] = post_comments[key]
-                print("APPENDED", inbox.post_comments)
+        if (request.data['type'].lower() == 'comment'):
+            # Need to create comment object and notification
+            post_id = request.data['id'].split('/')[6]
+            comment_post = Post.objects.get(post_id = post_id)
+            author = request.data['author']['id'].split('/')[4]
+            print(request.data['author']['displayName'])
+            print(request.data['author']['profileImage'])
+            print(request.data['comment'])
+            comment_id = uuid.uuid4()
 
-        if (post_likes is not None):
-            key = list(post_likes.keys())[0]
-            if(inbox.post_likes == None):
-                inbox.post_likes = {key:post_likes[key]}
-                print("New object", inbox.post_likes)
-            else:
-                inbox.post_likes[key] = post_likes[key]
-                print("APPENDED", inbox.post_likes)
+            new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
+                            "author_username": request.data['author']['displayName'], "author_origin": request.data['author']['id'], "text": request.data['comment']}
+            
+            comment_serializer = CommentSerializer(data = new_comment)
 
-        if (follow_requests is not None):
-            key = list(follow_requests.keys())[0]
-            if(inbox.follow_requests == None):
-                inbox.follow_requests = {key:follow_requests[key]}
-                print("New object", inbox.follow_requests)
-            else:
-                inbox.follow_requests[key] = follow_requests[key]
-                print("APPENDED", inbox.follow_requests)
+            if (comment_serializer.is_valid(raise_exception=True)):
+                comment_serializer.save()
+                print("Comment Valid")
+
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
+                            'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
+                            'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+            
+            notification_serializer = NotificationsSerializer(data = notification)
+
+            if (notification_serializer.is_valid(raise_exception=True)):
+                notification_serializer.save()
+                print("Notif Valid")
+
+        
+        if (request.data['type'].lower() == 'like'):
+            # Need to create like object and notification
+            post_id = request.data['object'].split('/')[6]
+            
+            like_post = Post.objects.get(post_id = post_id)
+            author = request.data['author']['id'].split('/')[4]
+
+            new_like = {'like_id': uuid.uuid4(), 'author': request.data['author']['id'].split('/')[4], 
+                        'author_origin': request.data['author']['id'], 'post_object': like_post.post_id}
+
+            like_serializer = LikeSerializer(data = new_like)
+            if (like_serializer.is_valid(raise_exception=True)):
+                like_serializer.save()
+                new_like_count = like_post.likes_count + 1
+                Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
+                print("Like Valid")
+
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
+                'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
+                'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+            
+            notification_serializer = NotificationsSerializer(data = notification)
+
+            if (notification_serializer.is_valid(raise_exception=True)):
+                notification_serializer.save()
+                print("Notif Valid")
+
+
+        if (request.data['type'].lower() == 'follow'):
+            # Need to create follow object and notification
+            sender = request.data['actor']['id'].split('/')[4]
+            recipient = request.data['object']['id'].split('/')[4]
+
+            follow_request = {'sender': str(uuid.UUID(sender)), 'recipient': str(uuid.UUID(recipient)), 'sender_origin':request.data['actor']['id'], 'recipient_origin':request.data['object']['id']}
+
+            follow_serializer = FollowerRequestSerializer(data = follow_request)
+
+            if (follow_serializer.is_valid(raise_exception=True)):
+                follow_serializer.save()
+                print("Follow Valid")
+            
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
+                'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
+                'message':'Requested to follow you', 'is_follow_notification': True} # Swap to heroku link later for pfp
+            
+            notification_serializer = NotificationsSerializer(data = notification)
+
+            if (notification_serializer.is_valid(raise_exception=True)):
+                notification_serializer.save()
+                print("Notif Valid")
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
-                     'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
+                        'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
 
         serializer = InboxSerializer(inbox, new_inbox)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
-            return Response({'Message':"Inbox Successfully Updated"}, status = status.HTTP_200_OK)
+            return Response({'message':"Inbox Successfully Updated"}, status = status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)

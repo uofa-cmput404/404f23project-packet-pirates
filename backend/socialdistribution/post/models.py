@@ -11,6 +11,8 @@ class Post(models.Model):
     # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
     author = models.CharField(max_length=200, blank=True)
 
+    author_origin = models.CharField(max_length = 200, blank = True)
+
     title = models.CharField(max_length=50)
 
     is_private = models.BooleanField(default=False)
@@ -52,6 +54,8 @@ class Comment(models.Model):
 
     author_username = models.CharField(max_length=200, null=True, blank=True)
 
+    author_origin = models.CharField(max_length = 200, blank = True)
+
     text = models.TextField(max_length=256)
 
     date_time = models.DateTimeField(auto_now_add=True, null = True, blank = True)
@@ -60,6 +64,8 @@ class PostLike(models.Model): # Assume front-end restricts like
     like_id = models.UUIDField(default = uuid.uuid4, primary_key=True, unique=True)
 
     # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
-    author = models.CharField(max_length=200, blank=True)
+    author = models.CharField(max_length=200, blank=True) # Author who liked our post
+
+    author_origin = models.CharField(max_length = 200, blank = True)
 
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE)
