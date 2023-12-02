@@ -77,8 +77,10 @@ class GetUsers(APIView):
 
         # Fetch and filter data from external API
         basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+        basic2 = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
         # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
         external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+        external_data2 = requests.get(c.WW_ENDPOINT+"authors/", auth=basic2).json()
 
         filtered_external_data = [
             {
@@ -89,10 +91,21 @@ class GetUsers(APIView):
             for author in external_data.get("items", [])
             if query.lower() in author.get('displayName', '').lower()
         ]
+
+        filtered_external_data2 = [
+            {
+                "id": author["id"],
+                "displayName": author["displayName"],
+                "profileImage": author["profileImage"]
+            }
+            for author in external_data2.get("items", [])
+            if query.lower() in author.get('displayName', '').lower()
+        ]
+
         users = AppAuthor.objects.filter(username__icontains=query)
         serializer = AuthorSerializerRemote(users, many=True)
         Users = {
-            "Users": serializer.data + filtered_external_data
+            "Users": serializer.data + filtered_external_data + filtered_external_data2
         }
         print(Users)
 
