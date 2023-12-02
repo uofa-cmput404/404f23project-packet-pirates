@@ -823,6 +823,11 @@ class FollowersRemote(APIView):
         return Response (True, status = status.HTTP_200_OK)
 
 
+class FollowObjectRemote(APIView):
+
+    def get(self, request, author_id):
+        pass
+
 class InboxViewsRemote(APIView):
     '''
     Inbox Post Remote
