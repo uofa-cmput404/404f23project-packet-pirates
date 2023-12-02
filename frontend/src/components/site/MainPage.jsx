@@ -118,11 +118,6 @@ export default function MainPage({ user }) {
     getNotifications();
   }, []);
 
-  const handleInboxClick = () => {
-    // Add logic to handle Inbox button click
-    console.log("Inbox button clicked!");
-  };
-
   const handleLogout = async (event) => {
     event.preventDefault();
 
@@ -166,7 +161,7 @@ export default function MainPage({ user }) {
             </div>
             <button
               className="sticky top-[265px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
-              onClick={handleInboxClick}
+              onClick={() => navigate("/inbox")}
             >
               <span>Inbox</span>
               <img
