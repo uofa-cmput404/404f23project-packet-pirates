@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from 'universal-cookie'
 
+import { Avatar, Button, IconButton, RadioGroup, Modal, Box  } from "@mui/material";
 import { Navigate, useNavigate } from "react-router-dom";
 import Popup from 'reactjs-popup';
 import EditPost from "../main-feed/EditPost";
@@ -21,6 +22,8 @@ export default function Post({
 }) {
 
   const [comments, setComments] = useState(null);
+  const [commentsData, setCommentsData] = useState({});
+  const [postLikes, setPostLikes] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [hasLiked, setHasLiked] = useState(false);
@@ -30,25 +33,19 @@ export default function Post({
   const navigate = useNavigate();
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
+  const [sharingModalOpen, setSharingModalOpen] = useState(false);
+  const [shareableAuthors, setShareableAuthors] = useState([]);
 
   const config = {
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
 
-  console.log(localStorage.getItem('access_token'))
-
   const handleEdit = () => {
     // Handle edit functionality
-
   };
 
-  
   const handleEditAccess = () => {
     try {
-      console.log("Edit User", user);
-      console.log("post_author", post_author);
-      console.log(user.user.user_id == post_author);
-
       if (user.user.user_id == post_author) {
         setIsEditable(true);
       }
@@ -117,9 +114,62 @@ export default function Post({
   }, [id, user]);
 
 
-  const handleShare = () => {
+  const handleButtonShare = () => {
     setShowShareOptions((prev) => !prev);
   };
+
+  const handleShareModalOpen = async () => {
+    setSharingModalOpen(true);
+
+    // do request to retrieve all your followers
+    // this will be those you can directly dm to their inbox
+    // ** double check though **
+    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+
+    try {
+      const response = await axios.get(url, config);
+      setShareableAuthors(response.data["Friends"]);
+    }
+    catch(err) { // Handle err
+      console.log("Oh no, an error", err);
+    }
+  };
+
+  const handleShareModalClose = () => {
+    setSharingModalOpen(false);
+  };
+
+  async function handleShareToClick(author) {
+    console.log("SHARED TO FOLLOWER", author);
+    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
+    let API = window.location.origin + `/posts/${id}`;
+
+    let shareData = {
+      'author': author,
+      'posts': {
+        [id]: {
+          'origin': 'local',
+          'API': API,
+          'post author': post_author,
+        }
+      },
+      'post_comments': commentsData,
+      'post_likes': postLikes,
+      'follow_requests': null,
+    }
+
+    console.log("SHARED DATA WITH CLICKED AUTHOR", shareData);
+
+    try {
+      const response = await axios.post(url, shareData, config);
+      console.log("RESPONSE",response);
+      console.log("DATA", response.data);
+    }
+    catch(err) {
+      console.log("Error when sharing to followers inbox");
+    }
+    setSharingModalOpen(false);
+  }
 
   const handleCopyLink = () => {
     const postLink = window.location.origin + `/post/${id}`; // Construct link to post based on current URL
@@ -176,16 +226,55 @@ export default function Post({
 
   };
 
+  const getPostLikes = async () => {
+    let likesUrl = "http://127.0.0.1:8000/author/" + id + "/postlikes"
+
+    const likesRes = await axios.get(likesUrl, config)
+    .then((likesRes) => {
+      console.log("LIKE RES DATA", likesRes.data);
+      likesRes.data["Post Likes"].map((like) => {
+        console.log("INDIVIDUAL LIKE", like);
+        let singleLikeUrl = window.location.origin + `/author/${id}` + "/postlikes";
+        let nextLike = {
+          [like.like_id]: {
+            'post': id,
+            'API': singleLikeUrl,
+            'author': like.author,
+          }
+        };
+
+        setPostLikes(postLikes => ({
+          ...postLikes,
+          ...nextLike
+        }));
+      });
+    });
+
+  };
+
   const getComments = async () => {
 
     let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments"
 
-    const commentsRes = await axios
-    .get(commentsUrl,config)
+    const commentsRes = await axios.get(commentsUrl,config)
     .then((commentsRes) => {
+      //console.log("COMMENT RES DATA", commentsRes.data);
+      commentsRes.data.Comments.map((comment) => {
+        console.log("INDIVIDUAL COMMENT", comment);
+        let singleCommentUrl = window.location.origin + `/posts/${id}` + `/comments/${comment.comment_id}`;
+        let nextComment = {
+          [comment.comment_id]: {
+            'origin': 'local',
+            'API': singleCommentUrl,
+            'comment author': comment.author,
+          }
+        };
 
-      //Result of comments query
-      //console.log("COMMENTSRES", commentsRes.data.Comments)
+        setCommentsData(commentsData => ({
+          ...commentsData,
+          ...nextComment
+        }));
+      });
       
       setComments(commentsRes.data.Comments.map((comment, index) => (
         <li className="mt-4" key={index}>
@@ -250,6 +339,7 @@ export default function Post({
     handleEditAccess();
     getComments();
     getPostAuthor();
+    getPostLikes();
 
   }, []);
 
@@ -364,7 +454,7 @@ export default function Post({
             </button>
 
             <button
-              onClick={handleShare}
+              onClick={handleButtonShare}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
             >
               <img
@@ -379,7 +469,7 @@ export default function Post({
             <div className="share-options-box">
               <button
                 className="share-option-button send-post"
-                onClick={() => { /* handle send post */ }}
+                onClick={handleShareModalOpen}
               >
                 Send Post
               </button>
@@ -419,6 +509,56 @@ export default function Post({
           </div>
         </div>
       </li>
+
+      <Modal
+      open={sharingModalOpen}
+      onClose={handleShareModalClose}
+      aria-labelledby="followers-modal-title"
+      aria-describedby="followers-modal-description"
+      >
+
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        maxHeight: '80%',
+        overflowY: 'auto',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '20px',
+      }}>
+
+        <h2 id="followers-modal-title" style={{ color: '#0058A2' }}>Share To...</h2>
+        <ul id="followers-modal-description" className="followersList">
+          {shareableAuthors.map((author, index) => (
+            <li key={index}>
+              <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                <img
+                  src={author.friend_pfp}
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="username ml-5">
+                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                  {author.friend_username}
+                </span>
+              </div>
+              <button
+                  className="rounded-lg text-white bg-primary-dark w-min m-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                  onClick={() => handleShareToClick(author)}
+                >
+                  Share
+              </button>
+          </li>
+          ))}
+        </ul>
+      </Box>
+    </Modal>
     </>
   );
 

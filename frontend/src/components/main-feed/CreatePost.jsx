@@ -171,11 +171,11 @@ export default function CreatePost({ user }) {
         </div>
         <div className="menu">
           {/* upload photo, public, plaintext, post */}
-          <ul className="flex flex-row justify-between items-center">
+          <ul className="flex flex-row gap-2 justify-between items-center">
             <li>
             <label htmlFor="select-image">
               <div 
-                  className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+                  className="rounded-lg text-white bg-primary-dark w-full my-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in">
                   Upload Image
               </div>
             </label>
@@ -207,7 +207,7 @@ export default function CreatePost({ user }) {
             </li>
             <li>
               <button
-                className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+                className="rounded-lg text-white bg-primary-dark w-full my-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
                 onClick={handlePosting}
               >
                 Post
