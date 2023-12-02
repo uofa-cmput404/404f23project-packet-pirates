@@ -181,13 +181,13 @@ export default function RemotePost({
           id : post_id
         }
 
-        console.log(commentData)
+        await axios.post(boxUrl, commentData, auth)
+        .then(() => {
 
-        //await axios.post(boxUrl, commentData, auth)
-        //.then(() => {
-          //Refresh page?
-          //console.log("Successfully sent comment to inbox")
-        //})
+          fetchCommentData()
+          console.log("Successfully sent comment to inbox")
+
+        })
 
       })
 
