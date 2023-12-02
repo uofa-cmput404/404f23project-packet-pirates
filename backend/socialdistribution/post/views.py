@@ -451,7 +451,7 @@ class LikedRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response (serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     
 class GetLikesOnPostRemote(APIView):
@@ -483,7 +483,8 @@ class GetLikesOnPostRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response (serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     
 
@@ -519,7 +520,7 @@ class CommentsRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response (serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PostCommentRemote(APIView):
@@ -617,7 +618,7 @@ class AuthorPostsRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response (serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK) # Author has no posts
     
 class ImagesRemote(APIView):
     '''
