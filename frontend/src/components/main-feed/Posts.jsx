@@ -126,7 +126,6 @@ export default function Post({
     // ** double check though **
     let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
 
-    console.log(commentsData);
     try {
       const response = await axios.get(url, config);
       setShareableAuthors(response.data["Friends"]);
@@ -142,7 +141,7 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
+    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local";
     let API = window.location.origin + `/posts/${id}`;
 
     let shareData = {
