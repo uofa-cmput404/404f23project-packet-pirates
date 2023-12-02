@@ -912,7 +912,8 @@ class InboxViewsRemote(APIView):
             like_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
 
-            new_like = {'like_id': uuid.uuid4(), 'author': request.data['author']['id'].split('/')[4], 'post_object': like_post.post_id}
+            new_like = {'like_id': uuid.uuid4(), 'author': request.data['author']['id'].split('/')[4], 
+                        'author_origin': request.data['author']['id'], 'post_object': like_post.post_id}
 
             like_serializer = LikeSerializer(data = new_like)
             if (like_serializer.is_valid(raise_exception=True)):

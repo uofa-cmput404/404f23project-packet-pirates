@@ -60,6 +60,8 @@ class PostLike(models.Model): # Assume front-end restricts like
     like_id = models.UUIDField(default = uuid.uuid4, primary_key=True, unique=True)
 
     # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
-    author = models.CharField(max_length=200, blank=True)
+    author = models.CharField(max_length=200, blank=True) # Author who liked our post
+
+    author_origin = models.CharField(max_length = 200, blank = True)
 
     post_object = models.ForeignKey(Post, on_delete=models.CASCADE)
