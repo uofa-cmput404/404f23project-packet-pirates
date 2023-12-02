@@ -124,7 +124,7 @@ export default function Post({
     // do request to retrieve all your followers
     // this will be those you can directly dm to their inbox
     // ** double check though **
-    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/authorfollowers";
 
     try {
       const response = await axios.get(url, config);
@@ -141,7 +141,7 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
+    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author.friend + "/inbox/local";
     let API = window.location.origin + `/posts/${id}`;
 
     let shareData = {
@@ -227,7 +227,7 @@ export default function Post({
   };
 
   const getPostLikes = async () => {
-    let likesUrl = "http://127.0.0.1:8000/author/" + id + "/postlikes"
+    let likesUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes"
 
     const likesRes = await axios.get(likesUrl, config)
     .then((likesRes) => {
