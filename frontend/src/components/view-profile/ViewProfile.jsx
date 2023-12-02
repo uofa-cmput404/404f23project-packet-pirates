@@ -34,8 +34,8 @@ export default function ViewProfile({ user }) {
 
   let location = useLocation();
   console.log("location", location);
-  console.log("location host", location.state['api']);
-  console.log("HOSTNAME:", new URL(location.state['api']).hostname)
+  console.log("location host", location.state["api"]);
+  console.log("HOSTNAME:", new URL(location.state["api"]).hostname);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -51,25 +51,24 @@ export default function ViewProfile({ user }) {
 
   const SC_auth = {
     auth: {
-      username: 'packet_pirates',
-      password: 'pass123$'
-    }
-  }
+      username: "packet_pirates",
+      password: "pass123$",
+    },
+  };
 
   const PP_auth = {
     auth: {
-      username: 'packetpirates',
-      password: 'cmput404'
-    }
-  }
+      username: "packetpirates",
+      password: "cmput404",
+    },
+  };
 
   const WW_auth = {
     auth: {
-      username: 'packet-pirates',
-      password: '12345'
-    }
-  }
- 
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
 
   useEffect(() => {
     const getUrl = "http://127.0.0.1:8000";
@@ -128,61 +127,61 @@ export default function ViewProfile({ user }) {
           console.error("Error getting notifications:", error);
         });
     };
-    
-    let auth = ''
+
+    let auth = "";
     const fetchPosts = async () => {
       let postsUrl =
         // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
-        location.state['api'] + '/posts'
-      let host = new URL(location.state['api']).hostname
+        location.state["api"] + "/posts";
+      let host = new URL(location.state["api"]).hostname;
 
-      if (host.includes('packet-pirates')) {
-        console.log("PIRATE!")
-        auth = PP_auth
+      if (host.includes("packet-pirates")) {
+        console.log("PIRATE!");
+        auth = PP_auth;
       } else if (host.includes("super-coding")) {
-        auth = SC_auth
-      } else if (host.includes('web-weavers')) {
-        auth = WW_auth
-        postsUrl = postsUrl + '/'
+        auth = SC_auth;
+      } else if (host.includes("web-weavers")) {
+        auth = WW_auth;
+        postsUrl = postsUrl + "/";
       }
-    
+
       const postsRes = await axios
         .get(postsUrl, auth)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
           console.log("posts", postsRes.data);
-          const urls = []
+          const urls = [];
 
-          var postData = ''
+          var postData = "";
           if (postsRes.data.items) {
-            postData = postsRes.data.items
+            postData = postsRes.data.items;
           } else {
-            postData = postsRes.data
+            postData = postsRes.data;
           }
 
           for (let i = 0; i < postData.length; i++) {
-            console.log(postData[i]['id'] + '/image')
-            urls.push(postData[i]['id'] + '/image')
+            console.log(postData[i]["id"] + "/image");
+            urls.push(postData[i]["id"] + "/image");
           }
 
-          console.log("URLS", urls)
+          console.log("URLS", urls);
 
-          const requests = urls.map(url =>
-            axios.get(url, auth)
-            .then(response => response)
-            .catch (error => console.error('Error', error))
+          const requests = urls.map((url) =>
+            axios
+              .get(url, auth)
+              .then((response) => response)
+              .catch((error) => console.error("Error", error))
           );
 
-          Promise.all(requests)
-          .then(responses => {
+          Promise.all(requests).then((responses) => {
             // console.log("RESPONSES", responses);
             // console.log("RESPONSE", responses[0]['data']['image'])
 
-            if ((author === user.user.username)) {
+            if (author === user.user.username) {
               setPosts(
                 postData.map((post, index) => {
                   // As the user, want to be able to see your all your posts.
-                  const image = responses[index]['data']
+                  const image = responses[index]["data"];
                   return (
                     <RemotePost
                       key={index}
@@ -193,54 +192,52 @@ export default function ViewProfile({ user }) {
                       content={post.content}
                       img={image}
                       likes={post.likes_count}
-                      post_id = {post.id}
+                      post_id={post.id}
                     />
                   );
                 })
               );
             } else {
               setPosts(
-                postData.filter(
-                  (post) => !post.unlisted && !post.is_private
-                ).map((post, index) => {
-                  
-                 var image = ''
-                  if (host.includes('super-coding')) {
-                      image = responses[index]['data']['image']
-                  } else if (host.includes('web-weavers')) {
-                      image = 'https://picsum.photos/200/300'
-                  } else {
-                      image = responses[index]['data']
-                  }
-                  return (
-                    <RemotePost
-                      key={index}
-                      user={user}
-                      post_author={post.author}
-                      title={post.title}
-                      description={post.description}
-                      content={post.content}
-                      img={image}
-                      likes={post.likes_count}
-                      post_id = {post.id}
-                    />
-                  ); // end return
-                }) // end map
+                postData
+                  .filter((post) => !post.unlisted && !post.is_private)
+                  .map((post, index) => {
+                    var image = "";
+                    if (host.includes("super-coding")) {
+                      image = responses[index]["data"]["image"];
+                    } else if (host.includes("web-weavers")) {
+                      image = "https://picsum.photos/200/300";
+                    } else {
+                      image = responses[index]["data"];
+                    }
+                    return (
+                      <RemotePost
+                        key={index}
+                        user={user}
+                        post_author={post.author}
+                        title={post.title}
+                        description={post.description}
+                        content={post.content}
+                        img={image}
+                        likes={post.likes_count}
+                        post_id={post.id}
+                      />
+                    ); // end return
+                  }) // end map
               ); // end setPosts
             } // end else
-          })
-          })
+          });
+        })
 
-
-    .catch((error) => {
-      console.error("Error getting posts:", error);
-      setPosts(
-        <div className="flex justify-center items-center">
-          This user does not exists, did you enter the correct username?
-        </div>
-      );// end catch error
-    }); // 
-  }; // end fetchPosts 
+        .catch((error) => {
+          console.error("Error getting posts:", error);
+          setPosts(
+            <div className="flex justify-center items-center">
+              This user does not exists, did you enter the correct username?
+            </div>
+          ); // end catch error
+        }); //
+    }; // end fetchPosts
 
     const checkFriendship = async () => {
       let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
@@ -294,33 +291,29 @@ export default function ViewProfile({ user }) {
   }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
+    let authUrl = location.state["api"];
+    let auth = "";
+    let host = new URL(location.state["api"]).hostname;
 
-    let authUrl = location.state['api']
-    let auth = ''
-    let host = new URL(location.state['api']).hostname
-    
-    if (host.includes('packet-pirates')) {
-      console.log("PIRATE!")
-      auth = PP_auth
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
     } else if (host.includes("super-coding")) {
-      auth = SC_auth
-    } else if (host.includes('web-weavers')) {
-      auth = WW_auth
-      authUrl = authUrl + '/'
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      authUrl = authUrl + "/";
     }
 
     const authRes = await axios
       .get(authUrl, auth)
       .then((authRes) => {
-        console.log("DATA", authRes.data)
         setAuthorInfo((authorInfo) => authRes.data);
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
-              src={
-                authRes.data.profileImage
-              }
+              src={authRes.data.profileImage}
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
             />
@@ -459,47 +452,7 @@ export default function ViewProfile({ user }) {
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
-          {/* Spacer to push down content
-          <div className="invisible h-16"></div> */}
-
-          {/* Visible Box at the Top */}
-          {/* {profileHeader} */}
-
           <div>
-            {/* Profile Header Section */}
-            {/* {profile && (
-              <div className="profile-header mt-4 p-4 border border-gray-300 rounded-md text-center">
-                <img
-                  src={profile.profile_picture}
-                  alt={`${profile.username}'s Profile`}
-                  className="w-16 h-16 rounded-full object-cover mb-2"
-                />
-                <h2 className="text-xl font-semibold">{profile.username}</h2>
-                {areFriends && !is_pending && (
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
-                    
-                  >
-                    Unfollow
-                  </button>
-                )}
-
-                {!areFriends && !is_pending && (
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                    
-                  >
-                    Follow
-                  </button>
-                )}
-
-                {is_pending && !areFriends && (
-                  <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
-                    Pending
-                  </button>
-                )}
-              </div>
-            )} */}
             <div className="flex flex-row w-full mx-auto">
               <div
                 className="profile h-fit mx-auto"
