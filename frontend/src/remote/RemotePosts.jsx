@@ -11,6 +11,14 @@ export default function RemotePost({
   img,
   likes,
   post_id,
+  categories,
+  contentType,
+  count,
+  origin,
+  published,
+  source,
+  unlisted,
+  visibility,
 }) {
   const [comments, setComments] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,8 +160,8 @@ export default function RemotePost({
     //Inbox url
     let boxUrl = post_author.id + '/inbox'
 
-    //Author url
-    let authUrl = post_author.id
+    //Author url (Creating comment)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
 
     //Corresponding authorization
     let auth = ''
@@ -241,9 +249,67 @@ export default function RemotePost({
     setSharingModalOpen(false);
   };
 
-  //Share to specified author (Unimplemented)
+  //Share to specified author
   async function handleShareToClick( author ) {
     
+    //Inbox url
+    let boxUrl = author.id + '/inbox'
+
+    //Author url (Sending post)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
+
+    //Corresponding authorization
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    } else if (boxUrl.includes('web-weavers')) {
+      auth = WW_auth
+    }
+
+    //Get author, send post to inbox
+    try {
+
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let postData = {
+          type : 'post',
+          title : title,
+          id : post_id,
+          source : source,
+          origin : origin,
+          description : description,
+          contentType: contentType,
+          content : content,
+          author : post_author,
+          categories : categories,
+          comments : '',
+          published : published,
+          visibility : visibility,
+          unlisted : unlisted,
+          sent_by : authorResponse.data
+        }
+
+        console.log("TEsting sending post", postData)
+
+        // await axios.post(boxUrl, postData, auth)
+        // .then(() => {
+
+        //   console.log("Successfully sent post to inbox")
+
+        // })
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
   }
 
   useEffect(() => {

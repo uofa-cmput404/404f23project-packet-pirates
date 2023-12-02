@@ -181,6 +181,14 @@ export default function Inbox({ user }) {
                 img={image}
                 likes={res.data.likes_count}  
                 post_id = {res.data.id}
+                categories = {res.data.categories}
+                contentType = {res.data.contentType}
+                count = {res.data.count}
+                origin = {res.data.origin}
+                published = {res.data.published}
+                source = {res.data.source}
+                unlisted = {res.data.unlisted}
+                visibility = {res.data.visibility}
               />
             );
           }),
