@@ -11,6 +11,8 @@ class Post(models.Model):
     # author = models.ForeignKey(AppAuthor, on_delete=models.CASCADE)
     author = models.CharField(max_length=200, blank=True)
 
+    author_origin = models.CharField(max_length = 200, blank = True)
+
     title = models.CharField(max_length=50)
 
     is_private = models.BooleanField(default=False)
@@ -51,6 +53,8 @@ class Comment(models.Model):
     author_picture = models.URLField(max_length=200, null=True, blank=True)
 
     author_username = models.CharField(max_length=200, null=True, blank=True)
+
+    author_origin = models.CharField(max_length = 200, blank = True)
 
     text = models.TextField(max_length=256)
 
