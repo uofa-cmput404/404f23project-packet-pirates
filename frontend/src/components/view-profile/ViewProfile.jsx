@@ -62,6 +62,13 @@ export default function ViewProfile({ user }) {
       password: 'cmput404'
     }
   }
+
+  const WW_auth = {
+    auth: {
+      username: 'packet-pirates',
+      password: '12345'
+    }
+  }
  
 
   useEffect(() => {
@@ -134,6 +141,9 @@ export default function ViewProfile({ user }) {
         auth = PP_auth
       } else if (host.includes("super-coding")) {
         auth = SC_auth
+      } else if (host.includes('web-weavers')) {
+        auth = WW_auth
+        postsUrl = postsUrl + '/'
       }
     
       const postsRes = await axios
@@ -143,9 +153,16 @@ export default function ViewProfile({ user }) {
           console.log("posts", postsRes.data);
           const urls = []
 
-          for (let i = 0; i < postsRes.data.length; i++) {
-            console.log(postsRes.data[i]['id'] + '/image')
-            urls.push(postsRes.data[i]['id'] + '/image')
+          var postData = ''
+          if (postsRes.data.items) {
+            postData = postsRes.data.items
+          } else {
+            postData = postsRes.data
+          }
+
+          for (let i = 0; i < postData.length; i++) {
+            console.log(postData[i]['id'] + '/image')
+            urls.push(postData[i]['id'] + '/image')
           }
 
           console.log("URLS", urls)
@@ -158,12 +175,12 @@ export default function ViewProfile({ user }) {
 
           Promise.all(requests)
           .then(responses => {
-            console.log("RESPONSES", responses);
-            console.log("RESPONSE", responses[0]['data']['image'])
+            // console.log("RESPONSES", responses);
+            // console.log("RESPONSE", responses[0]['data']['image'])
 
             if ((author === user.user.username)) {
               setPosts(
-                postsRes.data.map((post, index) => {
+                postData.map((post, index) => {
                   // As the user, want to be able to see your all your posts.
                   const image = responses[index]['data']
                   return (
@@ -183,13 +200,15 @@ export default function ViewProfile({ user }) {
               );
             } else {
               setPosts(
-                postsRes.data.filter(
+                postData.filter(
                   (post) => !post.unlisted && !post.is_private
                 ).map((post, index) => {
                   
                  var image = ''
                   if (host.includes('super-coding')) {
                       image = responses[index]['data']['image']
+                  } else if (host.includes('web-weavers')) {
+                      image = 'https://picsum.photos/200/300'
                   } else {
                       image = responses[index]['data']
                   }
@@ -276,6 +295,9 @@ export default function ViewProfile({ user }) {
       auth = PP_auth
     } else if (host.includes("super-coding")) {
       auth = SC_auth
+    } else if (host.includes('web-weavers')) {
+      auth = WW_auth
+      authUrl = authUrl + '/'
     }
 
     const authRes = await axios

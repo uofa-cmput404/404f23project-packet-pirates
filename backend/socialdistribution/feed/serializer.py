@@ -18,6 +18,8 @@ class NotificationsSerializer(serializers.ModelSerializer):
         model = Notifications
         fields = "__all__"
 
+class FollowerRemoteSerializer(serializers.ModelSerializer):
+    pass
 
 class InboxSerializer(serializers.ModelSerializer):
     class Meta:
