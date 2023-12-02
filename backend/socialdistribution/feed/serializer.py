@@ -2,6 +2,11 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
+from login.serializer import AuthorSerializer, AuthorSerializerRemote
+
+import config as c
+import requests
+from requests.auth import HTTPBasicAuth
 
 class FollowerRequestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,7 +24,35 @@ class NotificationsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class FollowerRemoteSerializer(serializers.ModelSerializer):
-    pass
+    # author = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    items = serializers.SerializerMethodField()
+
+    def get_type(self, instance):
+        return 'followers'
+    def get_items(self, instance):
+       author_data = self.get_author(instance)
+       return [author_data]
+
+    def get_author(self, instance):
+        author = AppAuthor.objects.get(user_id = instance.user_id)
+        if (author):
+            serializer = AuthorSerializerRemote(author)
+            return serializer.data
+        else:
+            author_origin = instance.author_origin
+            if ("super-coding" in author_origin):
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
+            elif ("web-weavers" in author_origin): # Add other groups
+                basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()    
+    
+    class Meta:
+        model = AppAuthor
+        fields = ("type", "items")
 
 class InboxSerializer(serializers.ModelSerializer):
     class Meta:
