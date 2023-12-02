@@ -153,9 +153,16 @@ export default function ViewProfile({ user }) {
           console.log("posts", postsRes.data);
           const urls = []
 
-          for (let i = 0; i < postsRes.data.length; i++) {
-            console.log(postsRes.data[i]['id'] + '/image')
-            urls.push(postsRes.data[i]['id'] + '/image')
+          var postData = ''
+          if (postsRes.data.items) {
+            postData = postsRes.data.items
+          } else {
+            postData = postsRes.data
+          }
+
+          for (let i = 0; i < postData.length; i++) {
+            console.log(postData[i]['id'] + '/image')
+            urls.push(postData[i]['id'] + '/image')
           }
 
           console.log("URLS", urls)
@@ -168,12 +175,12 @@ export default function ViewProfile({ user }) {
 
           Promise.all(requests)
           .then(responses => {
-            console.log("RESPONSES", responses);
-            console.log("RESPONSE", responses[0]['data']['image'])
+            // console.log("RESPONSES", responses);
+            // console.log("RESPONSE", responses[0]['data']['image'])
 
             if ((author === user.user.username)) {
               setPosts(
-                postsRes.data.map((post, index) => {
+                postData.map((post, index) => {
                   // As the user, want to be able to see your all your posts.
                   const image = responses[index]['data']
                   return (
@@ -193,7 +200,7 @@ export default function ViewProfile({ user }) {
               );
             } else {
               setPosts(
-                postsRes.data.filter(
+                postData.filter(
                   (post) => !post.unlisted && !post.is_private
                 ).map((post, index) => {
                   

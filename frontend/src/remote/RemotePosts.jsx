@@ -33,6 +33,13 @@ export default function RemotePost({
     }
   }
 
+  const WW_auth = {
+    auth: {
+      username: 'packet-pirates',
+      password: '12345'
+    }
+  }
+
   const handleEdit = () => {
     // Handle edit functionality
   };
@@ -57,6 +64,9 @@ export default function RemotePost({
       auth = PP_auth
     } else if (url.includes("super-coding")) {
       auth = SC_auth
+    } else if (url.includes('web-weavers')) {
+      auth = WW_auth
+      url = url + '/'
     }
 
     try {
