@@ -141,7 +141,7 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/inbox/local";
+    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
     let API = window.location.origin + `/posts/${id}`;
 
     let shareData = {
