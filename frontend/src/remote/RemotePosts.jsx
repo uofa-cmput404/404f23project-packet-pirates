@@ -152,31 +152,43 @@ export default function RemotePost({
     //Inbox url
     let boxUrl = post_author.id + '/inbox'
 
+    //Author url
+    let authUrl = post_author.id
+
     //Corresponding authorization
     let auth = ''
     if (boxUrl.includes('packet-pirates')) {
       auth = PP_auth
     } else if (boxUrl.includes("super-coding")) {
       auth = SC_auth
+    } else if (boxUrl.includes('web-weavers')) {
+      auth = WW_auth
     }
 
-    //NOT SURE YET
-    let commentData = {
-      type : 'comment',
-      author : user,
-      comment : commentText,
-      contentType : "text/plain",
-      published : Date.now(),
-      id : post_id + uuid
-    }
-
-    //Send comment to inbox
+    //Get author, send comment to inbox
     try {
 
-      await axios.post(boxUrl, commentData, auth)
-      .then(() => {
-        //Refresh page?
-        console.log("Successfully sent comment to inbox")
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let commentData = {
+          type : 'comment',
+          author : authorResponse.data,
+          comment : commentText,
+          contentType : "text/plain",
+          published : ":)",
+          id : post_id
+        }
+
+        console.log(commentData)
+
+        //await axios.post(boxUrl, commentData, auth)
+        //.then(() => {
+          //Refresh page?
+          //console.log("Successfully sent comment to inbox")
+        //})
+
       })
 
     } catch (error) {
