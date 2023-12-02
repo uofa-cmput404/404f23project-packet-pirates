@@ -48,14 +48,17 @@ export default function RemotePost({
     }
   }
 
-  const handleEdit = () => {
-    // Handle edit functionality
-  };
+
   
   //No remote DELETE like
   const handleLike = async () => {
     //TBD
   };
+
+  //Unimplemented
+  const handleEdit = async () => {
+
+  }
 
   const fetchCommentData = async () => {
 
@@ -203,7 +206,7 @@ export default function RemotePost({
     setShowShareOptions(false); // Close share options
   };
 
-  //Open "share to" popup
+  //Open "share to" popup (This does not work with remote friends)
   const handleShareModalOpen = async () => {
     setSharingModalOpen(true);
 
@@ -226,8 +229,8 @@ export default function RemotePost({
     setSharingModalOpen(false);
   };
 
-  //Share to specified author
-  async function handleShareToClick(author) {
+  //Share to specified author (Unimplemented)
+  async function handleShareToClick( author ) {
     
   }
 
