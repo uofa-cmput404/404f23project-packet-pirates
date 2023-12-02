@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { unstable_useId } from "@mui/material";
 
 export default function RemotePost({
   user,
@@ -18,6 +19,9 @@ export default function RemotePost({
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [postAuthor, setPostAuthor] = useState("");
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [sharingModalOpen, setSharingModalOpen] = useState(false);
+  const [shareableAuthors, setShareableAuthors] = useState([]);
 
   const SC_auth = {
     auth: {
@@ -43,14 +47,10 @@ export default function RemotePost({
   const handleEdit = () => {
     // Handle edit functionality
   };
+  
+  //No remote DELETE like
   const handleLike = async () => {
-    // placeholder
-    console.log("like");
-  };
-
-  const handleShare = async () => {
-    // placeholder
-    console.log("share");
+    //TBD
   };
 
   const fetchCommentData = async () => {
@@ -135,7 +135,67 @@ export default function RemotePost({
 
     } 
 
-  }
+  };
+
+  //Not Finished -- need to determine POST format (Comment ID undetermined when request is sent)
+  const handleCommentSubmit = async () => {
+    
+    setIsCommenting(false); // Hide comment input field
+
+    //Inbox url
+    let boxUrl = post_author.id + '/inbox'
+
+    //Corresponding authorization
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    }
+
+    //NOT SURE YET
+    let commentData = {
+      type : 'comment',
+      author : user,
+      comment : commentText,
+      contentType : "text/plain",
+      published : Date.now(),
+      id : post_id + uuid
+    }
+
+    //Send comment to inbox
+    try {
+
+      await axios.post(boxUrl, commentData, auth)
+      .then(() => {
+        //Refresh page?
+        console.log("Successfully sent comment to inbox")
+      })
+
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
+  };
+
+  const handleButtonShare = () => {
+    setShowShareOptions((prev) => !prev);
+  };
+
+  const handleCopyLink = () => {
+    
+    navigator.clipboard.writeText(post_id) // Copy link to clipboard
+      .then(() => {
+        console.log('Link copied to clipboard:', post_id);
+      })
+      .catch((error) => {
+        console.error('Error copying link to clipboard:', error);
+      });
+  
+    setShowShareOptions(false); // Close share options
+  };
 
   useEffect(() => {
     console.log("user", user);
@@ -228,7 +288,7 @@ export default function RemotePost({
             </button>
 
             <button
-              onClick={handleShare}
+              onClick={handleButtonShare}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
             >
               <img
@@ -238,6 +298,23 @@ export default function RemotePost({
               />
             </button>
           </div>
+
+          {showShareOptions && (
+            <div className="share-options-box">
+              <button
+                className="share-option-button send-post"
+                onClick={handleShareModalOpen}
+              >
+                Send Post
+              </button>
+              <button
+                className="share-option-button copy-link"
+                onClick={handleCopyLink}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
 
           {isCommenting && (
             <div
