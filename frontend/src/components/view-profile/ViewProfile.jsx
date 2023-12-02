@@ -62,6 +62,13 @@ export default function ViewProfile({ user }) {
       password: 'cmput404'
     }
   }
+
+  const WW_auth = {
+    auth: {
+      username: 'packet-pirates',
+      password: '12345'
+    }
+  }
  
 
   useEffect(() => {
@@ -134,6 +141,9 @@ export default function ViewProfile({ user }) {
         auth = PP_auth
       } else if (host.includes("super-coding")) {
         auth = SC_auth
+      } else if (host.includes('web-weavers')) {
+        auth = WW_auth
+        postsUrl = postsUrl + '/'
       }
     
       const postsRes = await axios
@@ -190,6 +200,8 @@ export default function ViewProfile({ user }) {
                  var image = ''
                   if (host.includes('super-coding')) {
                       image = responses[index]['data']['image']
+                  } else if (host.includes('web-weavers')) {
+                      image = 'https://picsum.photos/200/300'
                   } else {
                       image = responses[index]['data']
                   }
@@ -285,6 +297,9 @@ export default function ViewProfile({ user }) {
       auth = PP_auth
     } else if (host.includes("super-coding")) {
       auth = SC_auth
+    } else if (host.includes('web-weavers')) {
+      auth = WW_auth
+      authUrl = authUrl + '/'
     }
 
     const authRes = await axios
