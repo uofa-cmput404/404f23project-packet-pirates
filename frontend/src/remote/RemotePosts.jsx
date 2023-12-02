@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { unstable_useId } from "@mui/material";
+import { Avatar, Button, IconButton, RadioGroup, Modal, Box, unstable_useId } from "@mui/material";
 
 export default function RemotePost({
   user,
@@ -22,6 +22,10 @@ export default function RemotePost({
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [sharingModalOpen, setSharingModalOpen] = useState(false);
   const [shareableAuthors, setShareableAuthors] = useState([]);
+
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+  };
 
   const SC_auth = {
     auth: {
@@ -180,10 +184,12 @@ export default function RemotePost({
 
   };
 
+  //Show/hide share options
   const handleButtonShare = () => {
     setShowShareOptions((prev) => !prev);
   };
 
+  //Copy to clipboard
   const handleCopyLink = () => {
     
     navigator.clipboard.writeText(post_id) // Copy link to clipboard
@@ -196,6 +202,34 @@ export default function RemotePost({
   
     setShowShareOptions(false); // Close share options
   };
+
+  //Open "share to" popup
+  const handleShareModalOpen = async () => {
+    setSharingModalOpen(true);
+
+    // do request to retrieve all your followers
+    // this will be those you can directly dm to their inbox
+    // ** double check though **
+    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+
+    try {
+      const response = await axios.get(url, config);
+      setShareableAuthors(response.data["Friends"]);
+    }
+    catch(err) { // Handle err
+      console.log("Oh no, an error", err);
+    }
+  };
+
+  //Close "share to" popup
+  const handleShareModalClose = () => {
+    setSharingModalOpen(false);
+  };
+
+  //Share to specified author
+  async function handleShareToClick(author) {
+    
+  }
 
   useEffect(() => {
     console.log("user", user);
@@ -343,6 +377,57 @@ export default function RemotePost({
           </div>
         </div>
       </li>
+
+      <Modal
+      open={sharingModalOpen}
+      onClose={handleShareModalClose}
+      aria-labelledby="followers-modal-title"
+      aria-describedby="followers-modal-description"
+      >
+
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        maxHeight: '80%',
+        overflowY: 'auto',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '20px',
+      }}>
+
+        <h2 id="followers-modal-title" style={{ color: '#0058A2' }}>Share To...</h2>
+        <ul id="followers-modal-description" className="followersList">
+          {shareableAuthors.map((author, index) => (
+            <li key={index}>
+              <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                <img
+                  src={author.friend_pfp}
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="username ml-5">
+                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                  {author.friend_username}
+                </span>
+              </div>
+              <button
+                  className="rounded-lg text-white bg-primary-dark w-min m-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                  onClick={() => handleShareToClick(author)}
+                >
+                  Share
+              </button>
+          </li>
+          ))}
+        </ul>
+      </Box>
+    </Modal>
+
     </>
   );
 }
