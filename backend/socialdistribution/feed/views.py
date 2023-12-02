@@ -650,7 +650,7 @@ class InboxViews(APIView):
                 comment_serializer.save()
                 print("Comment Valid")
 
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                             'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                             'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
@@ -678,7 +678,7 @@ class InboxViews(APIView):
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
                 print("Like Valid")
 
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
            
@@ -702,7 +702,7 @@ class InboxViews(APIView):
                 follow_serializer.save()
                 print("Follow Valid")
             
-            notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notif_origin_author': request.data['actor']['id'],
+            notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
                 'message':'Requested to follow you', 'is_follow_notification': True} # Swap to heroku link later for pfp
            
@@ -895,7 +895,7 @@ class InboxViewsRemote(APIView):
                 comment_serializer.save()
                 print("Comment Valid")
 
-            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                             'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                             'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
             
@@ -923,7 +923,7 @@ class InboxViewsRemote(APIView):
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
                 print("Like Valid")
 
-            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notif_origin_author': request.data['author']['id'],
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
                 'message':'Liked your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
             
@@ -947,7 +947,7 @@ class InboxViewsRemote(APIView):
                 follow_serializer.save()
                 print("Follow Valid")
             
-            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notif_origin_author': request.data['actor']['id'],
+            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
                 'message':'Requested to follow you', 'is_follow_notification': True} # Swap to heroku link later for pfp
             
