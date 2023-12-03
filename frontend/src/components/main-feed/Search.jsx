@@ -8,6 +8,11 @@ export default function SearchBar() {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
+  var userNames = [];
+  var userIds = [];
+
+  const [resultIDs, setResultIDs] = useState([]);
+
   const config = {
     headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
@@ -19,9 +24,13 @@ export default function SearchBar() {
 
     axios.get(url, config).then((res) => {
       //   console.log("res", res);
-      const userNames = res.data.Users.map((user) => user.displayName);
+      // console.log("res.data", res.data);
+      // const users = res.data.Users;
+      userIds = res.data.Users.map((user) => user.id);
+      userNames = res.data.Users.map((user) => user.displayName);
       //   setResults(res.data.Users);
       setResults(userNames);
+      setResultIDs(userIds);
     });
     setShowResults(true);
   };
@@ -48,8 +57,20 @@ export default function SearchBar() {
   //   };
   function handleFriendClick(friend) {
     // console.log(friend);
-    console.log("HANDLE FRIEND CLICK" + friend);
-    navigate("/user/" + friend);
+    // const userId = user.id;
+    // console.log(userId + "AUISDHIAUSHDIUASHDIUASHDIUAHSUIDHAIUSD");
+    // console.log("HANDLE FRIEND CLICK" + friend);
+    // get the index of friend in userNames
+
+    const index = results.indexOf(friend);
+    console.log(index);
+    console.log(friend);
+    console.log(userNames);
+    console.log(results);
+    console.log("USER ID OF THIS " + resultIDs[index]);
+    console.log("USER ID OF THIS " + resultIDs[index].split("/").pop());
+
+    navigate("/user/" + friend, { state: { api: resultIDs[index] } });
     window.location.reload(false);
   }
 
@@ -82,3 +103,32 @@ export default function SearchBar() {
     </>
   );
 }
+
+//   {
+//     "type": "Follow",
+//     "summary":"Greg wants to follow Lara",
+//     "actor":{
+//         "type":"author",
+//         "id":"http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
+//         "url":"http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
+//         "host":"http://127.0.0.1:5454/",
+//         "displayName":"Greg Johnson",
+//         "github": "http://github.com/gjohnson",
+//         "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+//     },
+//     "object":{
+//         "type":"author",
+//         # ID of the Author
+//         "id":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+//         # the home host of the author
+//         "host":"http://127.0.0.1:5454/",
+//         # the display name of the author
+//         "displayName":"Lara Croft",
+//         # url to the authors profile
+//         "url":"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+//         # HATEOS url for Github API
+//         "github": "http://github.com/laracroft",
+//         # Image from a public domain
+//         "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+//     }
+// }

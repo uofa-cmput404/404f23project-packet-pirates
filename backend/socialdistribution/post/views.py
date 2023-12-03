@@ -451,7 +451,7 @@ class LikedRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response({"message": "Likes do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     
 class GetLikesOnPostRemote(APIView):
@@ -483,7 +483,8 @@ class GetLikesOnPostRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response({"message": "Likes do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     
 
@@ -519,7 +520,7 @@ class CommentsRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response({"message": "Comments do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PostCommentRemote(APIView):
@@ -617,7 +618,7 @@ class AuthorPostsRemote(APIView):
 
             return Response (serializer.data, status=status.HTTP_200_OK)
         
-        return Response({"message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK) # Author has no posts
     
 class ImagesRemote(APIView):
     '''
@@ -647,5 +648,8 @@ class ImagesRemote(APIView):
         
         if (post and image != None):
             return Response (image, status = status.HTTP_200_OK)
-
-        return Response ({"Message": "Post/Image does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if (post): 
+            return Response (status=status.HTTP_200_OK)
+        
+        return Response ({"Error": "No Post Exists"}, status=status.HTTP_404_NOT_FOUND)

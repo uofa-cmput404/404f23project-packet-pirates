@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Avatar, Button, IconButton, RadioGroup, Modal, Box, unstable_useId } from "@mui/material";
 
 export default function RemotePost({
   user,
@@ -9,6 +10,15 @@ export default function RemotePost({
   content,
   img,
   likes,
+  post_id,
+  categories,
+  contentType,
+  count,
+  origin,
+  published,
+  source,
+  unlisted,
+  visibility,
 }) {
   const [comments, setComments] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,19 +27,296 @@ export default function RemotePost({
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [postAuthor, setPostAuthor] = useState("");
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [sharingModalOpen, setSharingModalOpen] = useState(false);
+  const [shareableAuthors, setShareableAuthors] = useState([]);
 
-  const handleEdit = () => {
-    // Handle edit functionality
+  const config = {
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
+
+  const SC_auth = {
+    auth: {
+      username: 'packet_pirates',
+      password: 'pass123$'
+    }
+  }
+
+  const PP_auth = {
+    auth: {
+      username: 'packetpirates',
+      password: 'cmput404'
+    }
+  }
+
+  const WW_auth = {
+    auth: {
+      username: 'packet-pirates',
+      password: '12345'
+    }
+  }
+
+
+  
+  //No remote DELETE like
   const handleLike = async () => {
-    // placeholder
-    console.log("like");
+    //TBD
   };
 
-  const handleShare = async () => {
-    // placeholder
-    console.log("share");
+  //Unimplemented
+  const handleEdit = async () => {
+
+  }
+
+  const fetchCommentData = async () => {
+
+    //Comments url
+    let url = post_id + '/comments'
+
+    //Corresponding authorization
+    let auth = ''
+    if (url.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (url.includes("super-coding")) {
+      auth = SC_auth
+    } else if (url.includes('web-weavers')) {
+      auth = WW_auth
+      url = url + '/'
+    }
+
+    try {
+
+      axios.get(url, auth)
+      
+      .then((response) => {
+
+        console.log("ZONGER", response.data)
+
+        //Unpack response
+        let postComments = []
+
+        if (url.includes("packet-pirates")){
+
+          postComments = response.data
+
+        } else if (url.includes("super-coding")){
+
+          postComments = response.data.comments
+
+        }
+
+        setComments(
+
+          postComments.map((comment, index) => {
+            
+            return(
+              <li className="mt-4" key={index}>
+                <div className="comments">
+                  <div className="comment flex flex-row">
+                    <div className="pfp image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                      <img
+                        src={comment.author.profileImage}
+                        alt="profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="engagement flex flex-col ml-4">
+                      <div className="username">
+                        <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                          {comment.author.displayName}
+                        </span>
+                      </div>
+                      <div className="">
+                        <span>Likes</span>
+                        <span className="ml-3">{comment.likes}</span>
+                      </div>
+                    </div>
+                    <div className="comment-container border border-black rounded-lg p-2 mb-4 w-full ml-5">
+                      <div className="comment">{comment.comment}</div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            )
+
+          })
+        );
+
+      });
+
+    } catch (error) {
+
+      console.log(error)
+
+    } 
+
   };
+
+  //Not Finished -- need to determine POST format (Comment ID undetermined when request is sent)
+  const handleCommentSubmit = async () => {
+    
+    setIsCommenting(false); // Hide comment input field
+
+    //Inbox url
+    let boxUrl = post_author.id + '/inbox'
+
+    //Author url (Creating comment)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
+
+    //Corresponding authorization
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    } else if (boxUrl.includes('web-weavers')) {
+      auth = WW_auth
+    }
+
+    //Get author, send comment to inbox
+    try {
+
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let commentData = {
+          type : 'comment',
+          author : authorResponse.data,
+          comment : commentText,
+          contentType : "text/plain",
+          published : ":)",
+          id : post_id
+        }
+
+        await axios.post(boxUrl, commentData, auth)
+        .then(() => {
+
+          fetchCommentData()
+          console.log("Successfully sent comment to inbox")
+
+        })
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
+  };
+
+  //Show/hide share options
+  const handleButtonShare = () => {
+    setShowShareOptions((prev) => !prev);
+  };
+
+  //Copy to clipboard
+  const handleCopyLink = () => {
+    
+    navigator.clipboard.writeText(post_id) // Copy link to clipboard
+      .then(() => {
+        console.log('Link copied to clipboard:', post_id);
+      })
+      .catch((error) => {
+        console.error('Error copying link to clipboard:', error);
+      });
+  
+    setShowShareOptions(false); // Close share options
+  };
+
+  //Open "share to" popup (This does not work with remote friends)
+  const handleShareModalOpen = async () => {
+    setSharingModalOpen(true);
+
+    // do request to retrieve all your followers
+    // this will be those you can directly dm to their inbox
+    // ** double check though **
+    let followersUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id + '/followers'
+
+    try {
+      const response = await axios.get(followersUrl, PP_auth);
+      console.log(response)
+      setShareableAuthors(response.data["items"]);
+    }
+    catch(err) { // Handle err
+      console.log("Oh no, an error", err);
+    }
+  };
+
+  //Close "share to" popup
+  const handleShareModalClose = () => {
+    setSharingModalOpen(false);
+  };
+
+  //Share to specified author
+  async function handleShareToClick( author ) {
+    
+    //Inbox url 
+    let boxUrl = author.id + '/inbox'
+    console.log("BOX URL", boxUrl)
+    //Author url (Sending post)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
+
+    let auth = PP_auth
+    //Get author, send post to inbox
+    
+    try {
+
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let postData = {
+          type : 'post',
+          title : title,
+          id : post_id,
+          source : source,
+          origin : origin,
+          description : description,
+          contentType: contentType,
+          content : content,
+          author : post_author,
+          categories : categories,
+          comments : '',
+          published : published,
+          visibility : visibility,
+          unlisted : unlisted,
+          sent_by : authorResponse.data
+        }
+
+        console.log("TEsting sending post", postData)
+
+        //Corresponding authorization
+        if (boxUrl.includes('packet-pirates')) {
+          auth = PP_auth
+        } else if (boxUrl.includes("super-coding")) {
+          auth = SC_auth
+        } else if (boxUrl.includes('web-weavers')) {
+          auth = WW_auth
+          boxUrl = boxUrl + "/"
+        }
+        
+        console.log("BOX URL", boxUrl)
+        console.log("AUTH FOR POSTING", auth)
+        await axios.post(boxUrl, postData, auth)
+        .then(() => {
+          console.log("POSTED")
+          setSharingModalOpen(false);
+          console.log("Successfully sent post to inbox")
+
+        })
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
+  }
 
   useEffect(() => {
     console.log("user", user);
@@ -38,6 +325,8 @@ export default function RemotePost({
     console.log("content", content);
     console.log("img", img);
     console.log("likes", likes);
+    console.log("author", post_author)
+    fetchCommentData()
   }, []);
 
   return (
@@ -120,7 +409,7 @@ export default function RemotePost({
             </button>
 
             <button
-              onClick={handleShare}
+              onClick={handleButtonShare}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full share-button"
             >
               <img
@@ -130,6 +419,23 @@ export default function RemotePost({
               />
             </button>
           </div>
+
+          {showShareOptions && (
+            <div className="share-options-box">
+              <button
+                className="share-option-button send-post"
+                onClick={handleShareModalOpen}
+              >
+                Send Post
+              </button>
+              <button
+                className="share-option-button copy-link"
+                onClick={handleCopyLink}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
 
           {isCommenting && (
             <div
@@ -152,12 +458,63 @@ export default function RemotePost({
             </div>
           )}
 
-          {/* <div className="comment-section flex flex-col divide-y justify-start">
+          <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>
             <ul>{comments}</ul>
-          </div> */}
+          </div>
         </div>
       </li>
+
+      <Modal
+      open={sharingModalOpen}
+      onClose={handleShareModalClose}
+      aria-labelledby="followers-modal-title"
+      aria-describedby="followers-modal-description"
+      >
+
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        maxHeight: '80%',
+        overflowY: 'auto',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '20px',
+      }}>
+
+        <h2 id="followers-modal-title" style={{ color: '#0058A2' }}>Share To...</h2>
+        <ul id="followers-modal-description" className="followersList">
+          {shareableAuthors.map((author, index) => (
+            <li key={index}>
+              <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
+                <img
+                  src={author.profileImage}
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="username ml-5">
+                <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
+                  {author.displayName}
+                </span>
+              </div>
+              <button
+                  className="rounded-lg text-white bg-primary-dark w-min m-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                  onClick={() => handleShareToClick(author)}
+                >
+                  Share
+              </button>
+          </li>
+          ))}
+        </ul>
+      </Box>
+    </Modal>
+
     </>
   );
 }

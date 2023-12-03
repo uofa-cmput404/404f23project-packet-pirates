@@ -6,6 +6,10 @@ from django.core.exceptions import ValidationError
 AuthorModel = get_user_model()
 from login.serializer import AuthorSerializer, AuthorSerializerRemote
 
+import config as c
+import requests
+from requests.auth import HTTPBasicAuth
+
 class PostSerializer(serializers.ModelSerializer):
     # author = serializers.PrimaryKeyRelatedField(queryset=AppAuthor.objects.all(), pk_field = serializers.UUIDField(format ='hex_verbose'))
     # author = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -76,7 +80,7 @@ class PostSerializerRemote(serializers.ModelSerializer):
         return num_comments
     
     def get_comments(self, instance):
-        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id) + "/comments/"
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id) + "/comments"
 
     def get_published(self, instance):
         return instance.date_time
@@ -110,8 +114,20 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     
     def get_author(self,instance):
         author = AppAuthor.objects.get(user_id = instance.author)
-        serializer = AuthorSerializerRemote(author)
-        return serializer.data
+        if (author):
+            serializer = AuthorSerializerRemote(author)
+            return serializer.data
+
+        else:
+            author_origin = instance.author_origin
+            if ("super-coding" in author_origin):
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
+            elif ("web-weavers" in author_origin): # Add other groups
+                basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
     
     def get_summary(self,instance):
         return ''
@@ -145,10 +161,21 @@ class CommentSerializerRemote(serializers.ModelSerializer):
         return 'comment'
     
     def get_author(self,instance):
-        print(instance.author)
         author = AppAuthor.objects.get(user_id = instance.author)
-        serializer = AuthorSerializerRemote(author)
-        return serializer.data
+        if (author):
+            serializer = AuthorSerializerRemote(author)
+            return serializer.data
+        else:
+            author_origin = instance.author_origin
+
+            if ("super-coding" in author_origin):
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
+            elif ("web-weavers" in author_origin): # Add other groups
+                basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
 
     def get_comment(self, instance):
         return instance.text
