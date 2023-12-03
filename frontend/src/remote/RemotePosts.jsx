@@ -11,6 +11,7 @@ import {
   unstable_useId,
 } from "@mui/material";
 
+
 export default function RemotePost({
   user,
   post_author,
@@ -214,13 +215,31 @@ export default function RemotePost({
     // the id of the post, used as the last part of url
     console.log(id);
 
+    let postData = {
+      type: "post",
+      title: title,
+      id: post_id,
+      source: source,
+      origin: origin,
+      description: description,
+      contentType: contentType,
+      content: content,
+      author: post_author,
+      categories: categories,
+      comments: "",
+      published: published,
+      visibility: visibility,
+      unlisted: unlisted,
+    };
+
+    cookies.set('postData', JSON.stringify(postData))
     var post_link = "http://127.0.0.1:3000/post/" + id;
     console.log(post_link);
 
     navigator.clipboard
       .writeText(post_link) // Copy link to clipboard
       .then(() => {
-        console.log("Link copied to clipboard:", post_id);
+        console.log("Link copied to clipboard:", post_link);
       })
       .catch((error) => {
         console.error("Error copying link to clipboard:", error);
@@ -437,12 +456,14 @@ export default function RemotePost({
               >
                 Send Post
               </button>
+              {post_id.includes('packet-pirates') ? (
               <button
                 className="share-option-button copy-link"
                 onClick={handleCopyLink}
               >
                 Copy Link
               </button>
+              ): true}
             </div>
           )}
 
@@ -471,6 +492,7 @@ export default function RemotePost({
             {/* <div className="likes">
               <span>Likes: {likeCount}</span>
             </div> */}
+            {post_id.includes("packet-pirates") ? (
             <button
               onClick={handleView}
               className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-lm-custom-black rounded-full view-button"
@@ -482,6 +504,7 @@ export default function RemotePost({
                 className="view-button-img"
               />
             </button>
+            ): true}
           </div>
 
           <div className="comment-section flex flex-col divide-y justify-start">
