@@ -26,6 +26,13 @@ export default function Inbox({ user }) {
     }
   }
 
+  const WW_auth = {
+    auth: {
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
+
   const token = {
     headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
   };
@@ -107,6 +114,9 @@ export default function Inbox({ user }) {
         auth = PP_auth
       } else if (url.includes("super-coding")) {
         auth = SC_auth
+      } else if (url.includes("web-weavers")) {
+        auth = WW_auth;
+        url = url + "/";
       }
 
       postUrls.push([url, auth])
@@ -139,6 +149,9 @@ export default function Inbox({ user }) {
           auth = PP_auth
         } else if (url.includes("super-coding")) {
           auth = SC_auth
+        } else if (url.includes("web-weavers")) {
+          auth = WW_auth;
+          url = url + "/";
         }
 
         imageUrls.push([url, auth])
@@ -154,7 +167,7 @@ export default function Inbox({ user }) {
 
       Promise.all(imgRequests)
       .then(images => {
-
+        
         setShowPost(() => [
           responses.map((res, index) => {
 
@@ -168,6 +181,8 @@ export default function Inbox({ user }) {
 
               image = images[index]['data']['image']
 
+            } else if (res.data.id.includes("web-weavers")) {
+              image = "https://picsum.photos/200/300";
             }
 
             return (

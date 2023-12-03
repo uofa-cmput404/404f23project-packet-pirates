@@ -253,23 +253,15 @@ export default function RemotePost({
   //Share to specified author
   async function handleShareToClick( author ) {
     
-    //Inbox url
+    //Inbox url 
     let boxUrl = author.id + '/inbox'
-
+    console.log("BOX URL", boxUrl)
     //Author url (Sending post)
     let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
 
-    //Corresponding authorization
-    let auth = ''
-    if (boxUrl.includes('packet-pirates')) {
-      auth = PP_auth
-    } else if (boxUrl.includes("super-coding")) {
-      auth = SC_auth
-    } else if (boxUrl.includes('web-weavers')) {
-      auth = WW_auth
-    }
-
+    let auth = PP_auth
     //Get author, send post to inbox
+    
     try {
 
       await axios.get(authUrl, auth)
@@ -296,9 +288,21 @@ export default function RemotePost({
 
         console.log("TEsting sending post", postData)
 
+        //Corresponding authorization
+        if (boxUrl.includes('packet-pirates')) {
+          auth = PP_auth
+        } else if (boxUrl.includes("super-coding")) {
+          auth = SC_auth
+        } else if (boxUrl.includes('web-weavers')) {
+          auth = WW_auth
+          boxUrl = boxUrl + "/"
+        }
+        
+        console.log("BOX URL", boxUrl)
+        console.log("AUTH FOR POSTING", auth)
         await axios.post(boxUrl, postData, auth)
         .then(() => {
-
+          console.log("POSTED")
           setSharingModalOpen(false);
           console.log("Successfully sent post to inbox")
 
