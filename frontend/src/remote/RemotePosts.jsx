@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Avatar, Button, IconButton, RadioGroup, Modal, Box, unstable_useId } from "@mui/material";
 
@@ -30,6 +31,7 @@ export default function RemotePost({
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [sharingModalOpen, setSharingModalOpen] = useState(false);
   const [shareableAuthors, setShareableAuthors] = useState([]);
+  const navigate = useNavigate();
 
   const config = {
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
@@ -318,6 +320,12 @@ export default function RemotePost({
 
   }
 
+  const handleView = () => {
+    console.log(post_id)
+    navigate("/post/" + post_id);
+    window.location.reload(false);
+  }
+
   useEffect(() => {
     console.log("user", user);
     console.log("title", title);
@@ -457,6 +465,23 @@ export default function RemotePost({
               </button>
             </div>
           )}
+
+          <div className="flex flex-row justify-between mt-2">
+            <div className="likes">
+              <span>Likes: {likeCount}</span>
+            </div>
+            <button 
+              onClick={handleView}
+              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-lm-custom-black rounded-full view-button"
+              >
+              View
+              <img
+                src="/view-button.png"
+                alt="View"
+                className="view-button-img"
+              />
+            </button>
+          </div>
 
           <div className="comment-section flex flex-col divide-y justify-start">
             <h1>Comments</h1>
