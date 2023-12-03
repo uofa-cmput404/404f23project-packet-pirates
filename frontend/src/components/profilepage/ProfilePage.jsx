@@ -11,6 +11,13 @@ export default function ProfilePage({ user }) {
     
     var user = JSON.parse(localStorage.getItem('author'))
 
+    const config = {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      };
+
     const handlePassChange = event => {
         setPass(event.target.value);
         console.log('user value is:', event.target.value);
@@ -33,21 +40,28 @@ export default function ProfilePage({ user }) {
         setdispName(event.target.value);
         console.log('user value is:', event.target.value);
     };
-
+    
     const info = {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
         'display_name' : dispName,
-        'Authorization': 'Token ' + localStorage.getItem('access_token')
     }
+
 
     const SaveProfile = async (event) => {
         event.preventDefault()
-        console.log(info)
+
+        const formData = new FormData();
+        formData.append('password', info['password'])
+        formData.append('github', info['github'])
+        formData.append('profile_picture', info['profile_picture'])
+        formData.append('display_name', info['display_name'])
+
+        console.log("FORM DATA", formData)
 
         try {
-            const res = await axios.post("http://127.0.0.1:8000/something", info);
+            const res = await axios.post("http://127.0.0.1:8000/author/" + user.user.user_id + "/editprofile", formData, config);
             console.log(res.data);
           } catch (error) {
             console.error("Error saving profile:", error);

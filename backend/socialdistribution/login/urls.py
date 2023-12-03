@@ -12,7 +12,7 @@ urlpatterns = [
     path('author/<str:pk>/username', views.GetSingleAuthorByUsername.as_view(), name = "get_author_by_username_in_path"),
     path('author/username', views.GetSingleAuthorByUsername.as_view(), name = "get_author_by_username"),
     path('nodes', views.getNodes.as_view(), name = "get_nodes"),
-    path('author/<str:pk/editprofile', views.EditProfile.as_view(), name ="edit_profile"),
+    path('author/<str:pk>/editprofile', views.EditProfile.as_view(), name ="edit_profile"),
 
 
     # Remote URLS
