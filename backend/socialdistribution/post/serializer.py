@@ -58,10 +58,10 @@ class PostSerializerRemote(serializers.ModelSerializer):
         return serializer.data
 
     def get_source(self, instance):
-        return 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com'
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id)
     
     def get_origin(self, instance):
-        return 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com'
+        return "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_id)
     
     def get_description(self, instance):
         return instance.content
