@@ -233,11 +233,12 @@ export default function RemotePost({
     // do request to retrieve all your followers
     // this will be those you can directly dm to their inbox
     // ** double check though **
-    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+    let followersUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id + '/followers'
 
     try {
-      const response = await axios.get(url, config);
-      setShareableAuthors(response.data["Friends"]);
+      const response = await axios.get(followersUrl, PP_auth);
+      console.log(response)
+      setShareableAuthors(response.data["items"]);
     }
     catch(err) { // Handle err
       console.log("Oh no, an error", err);
@@ -298,6 +299,7 @@ export default function RemotePost({
         // await axios.post(boxUrl, postData, auth)
         // .then(() => {
 
+        //   setSharingModalOpen(false);
         //   console.log("Successfully sent post to inbox")
 
         // })
@@ -487,14 +489,14 @@ export default function RemotePost({
             <li key={index}>
               <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                 <img
-                  src={author.friend_pfp}
+                  src={author.profileImage}
                   alt="profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="username ml-5">
                 <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                  {author.friend_username}
+                  {author.displayName}
                 </span>
               </div>
               <button
