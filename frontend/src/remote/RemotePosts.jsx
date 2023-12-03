@@ -11,6 +11,14 @@ export default function RemotePost({
   img,
   likes,
   post_id,
+  categories,
+  contentType,
+  count,
+  origin,
+  published,
+  source,
+  unlisted,
+  visibility,
 }) {
   const [comments, setComments] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -152,31 +160,43 @@ export default function RemotePost({
     //Inbox url
     let boxUrl = post_author.id + '/inbox'
 
+    //Author url (Creating comment)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
+
     //Corresponding authorization
     let auth = ''
     if (boxUrl.includes('packet-pirates')) {
       auth = PP_auth
     } else if (boxUrl.includes("super-coding")) {
       auth = SC_auth
+    } else if (boxUrl.includes('web-weavers')) {
+      auth = WW_auth
     }
 
-    //NOT SURE YET
-    let commentData = {
-      type : 'comment',
-      author : user,
-      comment : commentText,
-      contentType : "text/plain",
-      published : Date.now(),
-      id : post_id + uuid
-    }
-
-    //Send comment to inbox
+    //Get author, send comment to inbox
     try {
 
-      await axios.post(boxUrl, commentData, auth)
-      .then(() => {
-        //Refresh page?
-        console.log("Successfully sent comment to inbox")
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let commentData = {
+          type : 'comment',
+          author : authorResponse.data,
+          comment : commentText,
+          contentType : "text/plain",
+          published : ":)",
+          id : post_id
+        }
+
+        await axios.post(boxUrl, commentData, auth)
+        .then(() => {
+
+          fetchCommentData()
+          console.log("Successfully sent comment to inbox")
+
+        })
+
       })
 
     } catch (error) {
@@ -213,11 +233,12 @@ export default function RemotePost({
     // do request to retrieve all your followers
     // this will be those you can directly dm to their inbox
     // ** double check though **
-    let url = "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+    let followersUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id + '/followers'
 
     try {
-      const response = await axios.get(url, config);
-      setShareableAuthors(response.data["Friends"]);
+      const response = await axios.get(followersUrl, PP_auth);
+      console.log(response)
+      setShareableAuthors(response.data["items"]);
     }
     catch(err) { // Handle err
       console.log("Oh no, an error", err);
@@ -229,9 +250,68 @@ export default function RemotePost({
     setSharingModalOpen(false);
   };
 
-  //Share to specified author (Unimplemented)
+  //Share to specified author
   async function handleShareToClick( author ) {
     
+    //Inbox url
+    let boxUrl = author.id + '/inbox'
+
+    //Author url (Sending post)
+    let authUrl = 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id
+
+    //Corresponding authorization
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    } else if (boxUrl.includes('web-weavers')) {
+      auth = WW_auth
+    }
+
+    //Get author, send post to inbox
+    try {
+
+      await axios.get(authUrl, auth)
+      .then(async (authorResponse) => {
+
+        //NOT SURE YET
+        let postData = {
+          type : 'post',
+          title : title,
+          id : post_id,
+          source : source,
+          origin : origin,
+          description : description,
+          contentType: contentType,
+          content : content,
+          author : post_author,
+          categories : categories,
+          comments : '',
+          published : published,
+          visibility : visibility,
+          unlisted : unlisted,
+          sent_by : authorResponse.data
+        }
+
+        console.log("TEsting sending post", postData)
+
+        await axios.post(boxUrl, postData, auth)
+        .then(() => {
+
+          setSharingModalOpen(false);
+          console.log("Successfully sent post to inbox")
+
+        })
+
+      })
+
+    } catch (error) {
+
+      console.log(error)
+      
+    }
+
   }
 
   useEffect(() => {
@@ -409,14 +489,14 @@ export default function RemotePost({
             <li key={index}>
               <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                 <img
-                  src={author.friend_pfp}
+                  src={author.profileImage}
                   alt="profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="username ml-5">
                 <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                  {author.friend_username}
+                  {author.displayName}
                 </span>
               </div>
               <button

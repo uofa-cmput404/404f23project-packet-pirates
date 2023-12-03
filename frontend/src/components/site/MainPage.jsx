@@ -160,8 +160,19 @@ export default function MainPage({ user }) {
               {notifications}
             </div>
             <button
+              className="sticky top-[265px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+              onClick={() => navigate("/inbox")}
+            >
+              <span>Inbox</span>
+              <img
+                src="/inbox-button.png"
+                alt="Inbox"
+                className="inbox-button-img ml-3 h-7.5 w-10"
+              />
+            </button>
+            <button
               onClick={handleLogout}
-              className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+              className="sticky top-[320px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
             >
               Logout
             </button>
