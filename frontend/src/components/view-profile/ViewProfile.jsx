@@ -332,38 +332,75 @@ export default function ViewProfile({ user }) {
     // console.log(user.user.username);
     // console.log(imgUrl);
     event.preventDefault();
-    console.log("POSTING");
+    // var apiString = location.state['api'];
+    var profile_author_id = location.state['api'].split('/')[4]
+    console.log("POSTING", location.state['api'], profile_author_id);
 
-    const responseData = {
-      type: "Follow",
-      summary: user.user.username + " wants to follow " + author,
-      actor: {
-        type: "author",
-        id:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
-          user.user.user_id,
-        url:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
-          user.user.user_id,
-        host: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com",
-        displayName: user.user.username,
-        github: user.user.github,
-        profileImage:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
-          user.user.profile_picture,
-      },
-      object: {
-        type: "author",
-        id: location.state["api"],
-        url: location.state["api"],
-        host: new URL(location.state["api"]).hostname,
-        displayName: author,
-        github: "",
-        profileImage: imgUrl,
-      },
-    };
+    var auth_github = ''
+
+    if (user.user.github) {
+      auth_github = user.user.github
+    } else {
+      auth_github = ''
+    }
+
+    var responseData = ''
+    if (host.includes("web-weavers")) {
+        responseData = {
+          type: "Follow",
+          summary: user.user.username + " wants to follow " + author,
+          actor: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id,
+          object: location.state["api"]
+          }
+
+    } else {
+      responseData = {
+        type: "Follow",
+        summary: user.user.username + " wants to follow " + author,
+        actor: {
+          type: "author",
+          uuid: user.user.user_id,
+          id:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+            user.user.user_id,
+          url:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+            user.user.user_id,
+          host: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/",
+          displayName: user.user.username,
+          github: auth_github,
+          profileImage:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+            user.user.profile_picture,
+        },
+        object: {
+          type: "author",
+          uuid: profile_author_id,
+          id: location.state["api"],
+          url: location.state["api"],
+          host: "https://" + new URL(location.state["api"]).hostname + "/",
+          displayName: author,
+          github: "",
+          profileImage: imgUrl,
+        },
+      };
+    }
+
+   
+
+    var url = location.state["api"] + "/inbox"
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      url = url + '/';
+    }
+    
     console.log("RESPONSE DATA", responseData);
-    axios.post(location.state["api"] + "/inbox", responseData, auth);
+    axios.post(url, responseData, auth);
   };
 
   return (
