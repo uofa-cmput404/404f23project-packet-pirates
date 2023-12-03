@@ -789,9 +789,13 @@ class GetAuthorsFollowersRemote(APIView):
         serializer = FollowerRemoteSerializer(authors, many = True)
 
         # serializer = FriendsSerializer(friends, many=True)
+        print(serializer.data)
+
+
+        data = [item['author'] for item in serializer.data]
 
         if (authors):
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"type": "followers", "items": data}, status=status.HTTP_200_OK)
         
         return Response({"message": "Author's Followers do not exist"}, status=status.HTTP_404_NOT_FOUND)
 
