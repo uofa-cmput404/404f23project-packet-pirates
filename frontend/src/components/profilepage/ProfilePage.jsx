@@ -6,7 +6,10 @@ export default function ProfilePage({ user }) {
     const navigate = useNavigate();
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
+
+    const [dispPic, setDispPic] = useState('');
     const [profPic, setProfPic] = useState('');
+
     const [dispName, setdispName] = useState('');
     
     var user = JSON.parse(localStorage.getItem('author'))
@@ -31,7 +34,8 @@ export default function ProfilePage({ user }) {
     const handleProfPicChange = event => {
         const file = event.target.files[0];
         if (file) {
-            setProfPic(URL.createObjectURL(file));
+            setProfPic(file);
+            setDispPic(URL.createObjectURL(event.target.files[0]))
         }
         console.log('user value is:', event.target.files);
     };
@@ -55,6 +59,7 @@ export default function ProfilePage({ user }) {
         const formData = new FormData();
         formData.append('password', info['password'])
         formData.append('github', info['github'])
+        console.log(info['profile_picture'])
         formData.append('profile_picture', info['profile_picture'])
         formData.append('display_name', info['display_name'])
 
@@ -63,6 +68,7 @@ export default function ProfilePage({ user }) {
         try {
             const res = await axios.post("http://127.0.0.1:8000/author/" + user.user.user_id + "/editprofile", formData, config);
             console.log(res.data);
+            window.location.reload(false)
           } catch (error) {
             console.error("Error saving profile:", error);
           }
@@ -80,7 +86,7 @@ export default function ProfilePage({ user }) {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <div className="image-container w-24 h-24 my-6 ml-12 mr-8 rounded-full overflow-hidden bg-black">
                                     <img
-                                        src={profPic || "http://127.0.0.1:8000" + user.user.profile_picture}
+                                        src={dispPic || "http://127.0.0.1:8000" + user.user.profile_picture}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />
