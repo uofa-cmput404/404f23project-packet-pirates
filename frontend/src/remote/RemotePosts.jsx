@@ -296,13 +296,13 @@ export default function RemotePost({
 
         console.log("TEsting sending post", postData)
 
-        // await axios.post(boxUrl, postData, auth)
-        // .then(() => {
+        await axios.post(boxUrl, postData, auth)
+        .then(() => {
 
-        //   setSharingModalOpen(false);
-        //   console.log("Successfully sent post to inbox")
+          setSharingModalOpen(false);
+          console.log("Successfully sent post to inbox")
 
-        // })
+        })
 
       })
 
