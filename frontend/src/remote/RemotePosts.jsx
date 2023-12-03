@@ -207,8 +207,18 @@ export default function RemotePost({
 
   //Copy to clipboard
   const handleCopyLink = () => {
+    console.log(post_id);
+    // post_id is the endpoint to get the post
+    var id = post_id;
+    var id = post_id.split("/").pop();
+    // the id of the post, used as the last part of url
+    console.log(id);
+
+    var post_link = "http://127.0.0.1:3000/post/" + id;
+    console.log(post_link);
+
     navigator.clipboard
-      .writeText(post_id) // Copy link to clipboard
+      .writeText(post_link) // Copy link to clipboard
       .then(() => {
         console.log("Link copied to clipboard:", post_id);
       })
