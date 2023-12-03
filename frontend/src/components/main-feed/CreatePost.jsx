@@ -41,21 +41,21 @@ export default function CreatePost({ user }) {
     console.log("Sent text is:", event.target.value);
   };
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState("");
   const handleImageUrlTextChange = (event) => {
     setImageUrl(event.target.value);
     console.log("Sent Image URL is:", event.target.value);
-  }
+  };
 
   const handleImageUpload = (event) => {
     setImageFile(event.target.files[0]);
 
     const file = new FileReader();
     file.onloadend = () => {
-        setImageBase64(file.result);
+      setImageBase64(file.result);
     };
     file.readAsDataURL(event.target.files[0]);
-};
+  };
 
   const handleContentTypeChange = (option) => {
     setContentType(option.value);
@@ -77,18 +77,18 @@ export default function CreatePost({ user }) {
   const handlePosting = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('author', user.user.user_id);
-    formData.append('title', title);
-    formData.append('content_type', contentType);
-    formData.append('content', text);
-    formData.append('source', user.user.user_id)
-    formData.append('origin', user.user.user_id)
-    formData.append('unlisted', isUnlisted)
-    formData.append('is_private', isPrivate)
-    formData.append('image_file', imageFile)
-    formData.append('image_url', imageUrl)
-    formData.append('visibility', visibility)
-    formData.append('url', "")
+    formData.append("author", user.user.user_id);
+    formData.append("title", title);
+    formData.append("content_type", contentType);
+    formData.append("content", text);
+    formData.append("source", user.user.user_id);
+    formData.append("origin", user.user.user_id);
+    formData.append("unlisted", isUnlisted);
+    formData.append("is_private", isPrivate);
+    formData.append("image_file", imageFile);
+    formData.append("image_url", imageUrl);
+    formData.append("visibility", visibility);
+    formData.append("url", "");
 
     console.log("Data", formData);
 
@@ -97,7 +97,7 @@ export default function CreatePost({ user }) {
         headers: {
           "Content-Type": "multipart/form-data",
           //"Content-Type": "application/json",
-          'Authorization': 'Token ' + localStorage.getItem('access_token'),
+          Authorization: "Token " + localStorage.getItem("access_token"),
         },
       })
       .then((response) => {
@@ -139,17 +139,21 @@ export default function CreatePost({ user }) {
             />
 
             {/* Post Body Input */}
-            <input
+            <textarea
               id="content"
               name="content"
               type="text"
               placeholder="Anything you want to discuss?"
-              className="border border-black rounded-lg p-2 h- mb-4"
+              className="border border-black rounded-lg p-2 h- mb-4 overflow-hidden"
               onChange={handleTextChange}
-            ></input>
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+            ></textarea>
 
-             {/* Post Body Input */}
-                      <input
+            {/* Post Body Input */}
+            <input
               id="content"
               name="content"
               type="text"
@@ -160,32 +164,31 @@ export default function CreatePost({ user }) {
           </form>
         </div>
         <div className="imgPreviewBox">
-            {/* show the image in a preview box */}
-            <div className="imgPreview">
-                {imageBase64 && (
-                    <div className="imgContainer">
-                        <img src={imageBase64} alt="Image Preview" />
-                    </div>
-                )}
-            </div>
+          {/* show the image in a preview box */}
+          <div className="imgPreview">
+            {imageBase64 && (
+              <div className="imgContainer">
+                <img src={imageBase64} alt="Image Preview" />
+              </div>
+            )}
+          </div>
         </div>
         <div className="menu">
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row gap-2 justify-between items-center">
             <li>
-            <label htmlFor="select-image">
-              <div 
-                  className="rounded-lg text-white bg-primary-dark w-full my-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in">
+              <label htmlFor="select-image">
+                <div className="rounded-lg text-white bg-primary-dark w-full my-4 p-2 shadow-md hover:bg-primary-color transition duration-200 ease-in">
                   Upload Image
-              </div>
-            </label>
-            <input
+                </div>
+              </label>
+              <input
                 type="file"
                 accept="image/*"
                 id="select-image"
                 style={{ display: "none" }}
                 onChange={handleImageUpload}
-            />
+              />
             </li>
             <li>
               <div className="chooseVisibility">
