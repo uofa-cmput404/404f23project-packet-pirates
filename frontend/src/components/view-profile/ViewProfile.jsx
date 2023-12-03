@@ -14,9 +14,6 @@ export default function ViewProfile({ user }) {
     console.log("user", user);
     console.log("user.user", user.user);
   }, []);
-  // check if author exists
-  // if not, return 404
-  // if yes, return profile
   const { author } = useParams();
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState(null);
@@ -32,10 +29,14 @@ export default function ViewProfile({ user }) {
 
   const [followButtons, setFollowButtons] = useState(null);
 
+  // const [imgUrl, setImgUrl] = useState(null);
+
+  var imgUrl = "";
+
   let location = useLocation();
   console.log("location", location);
-  console.log("location host", location.state['api']);
-  console.log("HOSTNAME:", new URL(location.state['api']).hostname)
+  console.log("location host", location.state["api"]);
+  console.log("HOSTNAME:", new URL(location.state["api"]).hostname);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -51,25 +52,37 @@ export default function ViewProfile({ user }) {
 
   const SC_auth = {
     auth: {
-      username: 'packet_pirates',
-      password: 'pass123$'
-    }
-  }
+      username: "packet_pirates",
+      password: "pass123$",
+    },
+  };
 
   const PP_auth = {
     auth: {
-      username: 'packetpirates',
-      password: 'cmput404'
-    }
-  }
+      username: "packetpirates",
+      password: "cmput404",
+    },
+  };
 
   const WW_auth = {
     auth: {
-      username: 'packet-pirates',
-      password: '12345'
-    }
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
+
+  var auth = "";
+  var host = new URL(location.state["api"]).hostname;
+
+  if (host.includes("packet-pirates")) {
+    console.log("PIRATE!");
+    auth = PP_auth;
+  } else if (host.includes("super-coding")) {
+    auth = SC_auth;
+  } else if (host.includes("web-weavers")) {
+    auth = WW_auth;
+    authUrl = authUrl + "/";
   }
- 
 
   useEffect(() => {
     const getUrl = "http://127.0.0.1:8000";
@@ -97,16 +110,6 @@ export default function ViewProfile({ user }) {
         });
     };
 
-    // const getProfile = async () => {
-    //   try {
-    //     const profileUrl = `${getUrl}/user/${author}`;
-    //     const profileRes = await axios.get(profileUrl, config);
-    //     setProfile(profileRes.data);
-    //   } catch (error) {
-    //     console.error("Error getting profile:", error);
-    //   }
-    // };
-
     const getNotifications = async () => {
       let notificationsUrl =
         "http://127.0.0.1:8000/author/" +
@@ -128,61 +131,61 @@ export default function ViewProfile({ user }) {
           console.error("Error getting notifications:", error);
         });
     };
-    
-    let auth = ''
+
+    let auth = "";
     const fetchPosts = async () => {
       let postsUrl =
         // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
-        location.state['api'] + '/posts'
-      let host = new URL(location.state['api']).hostname
+        location.state["api"] + "/posts";
+      let host = new URL(location.state["api"]).hostname;
 
-      if (host.includes('packet-pirates')) {
-        console.log("PIRATE!")
-        auth = PP_auth
+      if (host.includes("packet-pirates")) {
+        console.log("PIRATE!");
+        auth = PP_auth;
       } else if (host.includes("super-coding")) {
-        auth = SC_auth
-      } else if (host.includes('web-weavers')) {
-        auth = WW_auth
-        postsUrl = postsUrl + '/'
+        auth = SC_auth;
+      } else if (host.includes("web-weavers")) {
+        auth = WW_auth;
+        postsUrl = postsUrl + "/";
       }
-    
+
       const postsRes = await axios
         .get(postsUrl, auth)
         .then((postsRes) => {
           console.log("POSTSRES", postsRes.status);
           console.log("posts", postsRes.data);
-          const urls = []
+          const urls = [];
 
-          var postData = ''
+          var postData = "";
           if (postsRes.data.items) {
-            postData = postsRes.data.items
+            postData = postsRes.data.items;
           } else {
-            postData = postsRes.data
+            postData = postsRes.data;
           }
 
           for (let i = 0; i < postData.length; i++) {
-            console.log(postData[i]['id'] + '/image')
-            urls.push(postData[i]['id'] + '/image')
+            console.log(postData[i]["id"] + "/image");
+            urls.push(postData[i]["id"] + "/image");
           }
 
-          console.log("URLS", urls)
+          console.log("URLS", urls);
 
-          const requests = urls.map(url =>
-            axios.get(url, auth)
-            .then(response => response)
-            .catch (error => console.error('Error', error))
+          const requests = urls.map((url) =>
+            axios
+              .get(url, auth)
+              .then((response) => response)
+              .catch((error) => console.error("Error", error))
           );
 
-          Promise.all(requests)
-          .then(responses => {
+          Promise.all(requests).then((responses) => {
             // console.log("RESPONSES", responses);
             // console.log("RESPONSE", responses[0]['data']['image'])
 
-            if ((author === user.user.username)) {
+            if (author === user.user.username) {
               setPosts(
                 postData.map((post, index) => {
                   // As the user, want to be able to see your all your posts.
-                  const image = responses[index]['data']
+                  const image = responses[index]["data"];
                   return (
                     <RemotePost
                       key={index}
@@ -193,134 +196,78 @@ export default function ViewProfile({ user }) {
                       content={post.content}
                       img={image}
                       likes={post.likes_count}
-                      post_id = {post.id}
+                      post_id={post.id}
                     />
                   );
                 })
               );
             } else {
               setPosts(
-                postData.filter(
-                  (post) => !post.unlisted && !post.is_private
-                ).map((post, index) => {
-                  
-                 var image = ''
-                  if (host.includes('super-coding')) {
-                      image = responses[index]['data']['image']
-                  } else if (host.includes('web-weavers')) {
-                      image = 'https://picsum.photos/200/300'
-                  } else {
-                      image = responses[index]['data']
-                  }
-                  return (
-                    <RemotePost
-                      key={index}
-                      user={user}
-                      post_author={post.author}
-                      title={post.title}
-                      description={post.description}
-                      content={post.content}
-                      img={image}
-                      likes={post.likes_count}
-                      post_id = {post.id}
-                    />
-                  ); // end return
-                }) // end map
+                postData
+                  .filter((post) => !post.unlisted && !post.is_private)
+                  .map((post, index) => {
+                    var image = "";
+                    if (host.includes("super-coding")) {
+                      image = responses[index]["data"]["image"];
+                    } else if (host.includes("web-weavers")) {
+                      image = "https://picsum.photos/200/300";
+                    } else {
+                      image = responses[index]["data"];
+                    }
+                    return (
+                      <RemotePost
+                        key={index}
+                        user={user}
+                        post_author={post.author}
+                        title={post.title}
+                        description={post.description}
+                        content={post.content}
+                        img={image}
+                        likes={post.likes_count}
+                        post_id={post.id}
+                      />
+                    ); // end return
+                  }) // end map
               ); // end setPosts
             } // end else
-          })
-          })
+          });
+        })
 
+        .catch((error) => {
+          console.error("Error getting posts:", error);
+          setPosts(
+            <div className="flex justify-center items-center">
+              This user does not exists, did you enter the correct username?
+            </div>
+          ); // end catch error
+        }); //
+    }; // end fetchPosts
 
-    .catch((error) => {
-      console.error("Error getting posts:", error);
-      setPosts(
-        <div className="flex justify-center items-center">
-          This user does not exists, did you enter the correct username?
-        </div>
-      );// end catch error
-    }); // 
-  }; // end fetchPosts 
-
-    const checkFriendship = async () => {
-      let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
-      const authReso = await axios
-        .get(authorUrl, config)
-        .then(async (authReso) => {
-          const followersUrl =
-            "http://127.0.0.1:8000/authors/" +
-            authReso.data.Author.user_id +
-            "/followers/" +
-            user.user.user_id +
-            "/local";
-
-          const followReqUrl =
-            "http://127.0.0.1:8000/" +
-            user.user.user_id +
-            "/followrequest/" +
-            authReso.data.Author.user_id +
-            "/ispending";
-
-          try {
-            const response = await axios
-              .get(followersUrl, config)
-              .then(async (data) => {
-                setAreFriends(data["data"]);
-                console.log("FFF", data["data"]);
-                console.log("FRIENDS?", areFriends);
-                // console.log(response.data)
-              });
-
-            const followReqResponse = await axios
-              .get(followReqUrl, config)
-              .then(async (data) => {
-                set_is_pending(data["data"]);
-                console.log("PENDING?", is_pending);
-              });
-          } catch (error) {
-            console.error("Error checking friendship:", error);
-          }
-        });
-    };
-
-    // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
-    // checkFriendship();
-    //location.reload()
     console.log("posts", posts);
   }, [author, is_pending, areFriends]);
 
   const getAuthorInfo = async () => {
-
-    let authUrl = location.state['api']
-    let auth = ''
-    let host = new URL(location.state['api']).hostname
-    
-    if (host.includes('packet-pirates')) {
-      console.log("PIRATE!")
-      auth = PP_auth
-    } else if (host.includes("super-coding")) {
-      auth = SC_auth
-    } else if (host.includes('web-weavers')) {
-      auth = WW_auth
-      authUrl = authUrl + '/'
-    }
+    let authUrl = location.state["api"];
 
     const authRes = await axios
       .get(authUrl, auth)
       .then((authRes) => {
-        console.log("DATA", authRes.data)
+        console.log("DATA", authRes.data);
+        console.log(authRes.data.profileImage);
+        // setImgUrl(authRes.data.profileImage);
+        imgUrl = authRes.data.profileImage;
+        console.log("IMGURL", imgUrl);
         setAuthorInfo((authorInfo) => authRes.data);
+        // console.log("AUTHORINFO", authorInfo);
         setProfileHeader(
           <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
             {/* User's Profile Picture */}
             <img
-              src={
-                authRes.data.profileImage
-              }
+              src={authRes.data.profileImage}
               alt={`${user.user.username}'s Profile`}
               className="w-12 h-12 rounded-full object-cover mb-4"
             />
@@ -376,130 +323,52 @@ export default function ViewProfile({ user }) {
     }
   };
 
-  // console.log("AUTHOR INFO", authorInfo)
-
   const handleFollow = async (event) => {
+    // console.log("FOLLOWING");
+    // console.log(author);
+    // console.log("this is the user" + user.user);
+    // console.log(user.user.username);
+    // console.log(imgUrl);
     event.preventDefault();
+    console.log("POSTING");
 
-    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
-
-    let notificationUrl =
-      "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
-
-    let followrequestUrl =
-      "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
-
-    const authReso = await axios
-      .get(authorUrl, config)
-      .then(async (authReso) => {
-        const notifdata = {
-          author: author,
-          notification_author: user.user.user_id,
-          notif_author_pfp: "http://127.0.0.1:8000" + user.user.profile_picture,
-          notif_author_username: user.user.username,
-          message: "Requested to follow you",
-          is_follow_notification: true,
-          url: "",
-        };
-
-        const requestdata = {
-          sender: user.user.user_id,
-          recipient: authReso.data.Author.user_id,
-          is_pending: true,
-        };
-
-        try {
-          const res1 = await axios
-            .post(notificationUrl, notifdata, config)
-            .then((res1) => {
-              console.log(res1.data);
-            });
-
-          const res2 = await axios
-            .post(followrequestUrl, requestdata, config)
-            .then((res2) => {
-              console.log(res2.data);
-              // set_is_pending(true); // Set is_pending to true since a follow request is pending
-              // setAreFriends(false); // Set areFriends to false since a follow request is pending
-            });
-        } catch (err) {
-          console.log(err);
-          // set_is_pending(false); // If there's an error, set isPending back to false
-        }
-        window.location.reload(false);
-      });
-  };
-
-  const handleUnfollow = async (event) => {
-    event.preventDefault();
-
-    let authorUrl = "http://127.0.0.1:8000/author/" + author + "/username";
-
-    const authReso = await axios
-      .get(authorUrl, config)
-      .then(async (authReso) => {
-        let unfollowUrl =
-          "http://127.0.0.1:8000/" +
-          authReso.data.Author.user_id +
-          "/unfriend/" +
-          user.user.user_id;
-
-        try {
-          const res = await axios.delete(unfollowUrl, config).then((res) => {
-            console.log(res.data);
-            setAreFriends(false);
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      });
+    const responseData = {
+      type: "Follow",
+      summary: user.user.username + " wants to follow " + author,
+      actor: {
+        type: "author",
+        id:
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+          user.user.user_id,
+        url:
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+          user.user.user_id,
+        host: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com",
+        displayName: user.user.username,
+        github: user.user.github,
+        profileImage:
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+          user.user.profile_picture,
+      },
+      object: {
+        type: "author",
+        id: location.state["api"],
+        url: location.state["api"],
+        host: new URL(location.state["api"]).hostname,
+        displayName: author,
+        github: "",
+        profileImage: imgUrl,
+      },
+    };
+    console.log("RESPONSE DATA", responseData);
+    axios.post(location.state["api"] + "/inbox", responseData, auth);
   };
 
   return (
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
-          {/* Spacer to push down content
-          <div className="invisible h-16"></div> */}
-
-          {/* Visible Box at the Top */}
-          {/* {profileHeader} */}
-
           <div>
-            {/* Profile Header Section */}
-            {/* {profile && (
-              <div className="profile-header mt-4 p-4 border border-gray-300 rounded-md text-center">
-                <img
-                  src={profile.profile_picture}
-                  alt={`${profile.username}'s Profile`}
-                  className="w-16 h-16 rounded-full object-cover mb-2"
-                />
-                <h2 className="text-xl font-semibold">{profile.username}</h2>
-                {areFriends && !is_pending && (
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
-                    
-                  >
-                    Unfollow
-                  </button>
-                )}
-
-                {!areFriends && !is_pending && (
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                    
-                  >
-                    Follow
-                  </button>
-                )}
-
-                {is_pending && !areFriends && (
-                  <button className="bg-gray-500 text-white px-4 py-2 rounded-md" disabled>
-                    Pending
-                  </button>
-                )}
-              </div>
-            )} */}
             <div className="flex flex-row w-full mx-auto">
               <div
                 className="profile h-fit mx-auto"
@@ -510,6 +379,7 @@ export default function ViewProfile({ user }) {
               <div className="feed flex flex-col ml-5 w-full mx-auto">
                 <div className="feed_content mt-[-20px]">
                   {profileHeader}
+                  {/* this is where the follow shit is */}
                   <ul>{posts}</ul>
                 </div>
               </div>
