@@ -158,7 +158,7 @@ export function Notification({ user, index, notification }) {
       friend_pfp : notification.notif_author_pfp,
       friend_username : notification.notif_author_username,
       author_origin : 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id,
-      friend_origin : notification.friend_origin
+      friend_origin : notification.notification_author_origin
     }
 
     const friendRes = await axios.post(friendUrl, friendData, config)

@@ -779,19 +779,37 @@ class GetAuthorsFollowersRemote(APIView):
         friends = Friends.objects.filter(author = author_id)
 
         friend_list = []
-        
+        friend_origin_list = []
         for friend in friends:
 
             friend_list.append(uuid.UUID(friend.friend))
+            friend_origin_list.append(friend.friend_origin)
 
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
+
+        external_data = []
+        print(friend_origin_list)
+        for origin in friend_origin_list:
+            if ("super-coding" in origin):
+                basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
+                req = requests.get(origin, auth=basic)
+                external_data.append(req.json())
+            elif ("web-weavers" in origin): # Add other groups
+                basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
+                req = requests.get(origin, auth=basic)
+                external_data.append(req.json())
+    
+        # Another query to get all foreign authors info
 
         serializer = AuthorSerializerRemote(authors, many = True)
 
         # serializer = FriendsSerializer(friends, many=True)
+        print(serializer.data)
+
+        # data = [item['author'] for item in serializer.data]
 
         if (authors):
-            return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
+            return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
         return Response({"message": "Author's Followers do not exist"}, status=status.HTTP_404_NOT_FOUND)
 

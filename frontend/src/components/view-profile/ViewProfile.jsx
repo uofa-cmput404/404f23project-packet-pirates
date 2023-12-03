@@ -2,7 +2,7 @@ import CreatePost from "../main-feed/CreatePost";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
@@ -28,6 +28,7 @@ export default function ViewProfile({ user }) {
   const [areFriends, setAreFriends] = useState(null);
 
   const [followButtons, setFollowButtons] = useState(null);
+  const navigate = useNavigate();
 
   // const [imgUrl, setImgUrl] = useState(null);
 
@@ -74,15 +75,6 @@ export default function ViewProfile({ user }) {
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
 
-  if (host.includes("packet-pirates")) {
-    console.log("PIRATE!");
-    auth = PP_auth;
-  } else if (host.includes("super-coding")) {
-    auth = SC_auth;
-  } else if (host.includes("web-weavers")) {
-    auth = WW_auth;
-    authUrl = authUrl + "/";
-  }
 
   useEffect(() => {
     const getUrl = "http://127.0.0.1:8000";
@@ -91,24 +83,92 @@ export default function ViewProfile({ user }) {
     console.log("user", user);
 
     const getConnections = async () => {
-      let connectionsUrl =
-        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
-      const connectionsRes = await axios
-        .get(connectionsUrl, config)
-        .then((connectionsRes) => {
-          console.log("CONNECTSRES", connectionsRes.data);
+    // let connectionsUrl =
+    //   "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
+
+    // const connectionsRes = await axios
+    //   .get(connectionsUrl, config)
+    //   .then((connectionsRes) => {
+    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
+    //     setFriends(
+    //       <Profile friends={connectionsRes.data.Friends} user={user} />
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting friends:", error);
+    //   });
+
+    var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
+    const connectionTest = await axios
+    .get(url, PP_auth)
+    .then((connectionRes) => {
+      console.log('connectionTestRes', connectionRes.data);
+      const followers = [];
+      
+      for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
+        // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+        followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+      }
+
+      console.log(followers)
+      var auth = ''
+      const requests = followers.map((url) => {
+        
+        if (url.includes("packet-pirates")) {
+          console.log("PIRATE!");
+          auth = PP_auth;
+        } else if (url.includes("super-coding")) {
+          auth = SC_auth;
+        } else if (url.includes("web-weavers")) {
+          auth = WW_auth;
+          url = url + "/";
+        }
+
+        return axios
+          .get(url, auth)
+          .then((response) => response)
+          .catch((error) => console.error("Error", error))
+      }
+    );
+
+      Promise.all(requests).then((responses) => {
+        console.log("RESPONSES", responses)
+        console.log(responses.length)
+        const Friends = []
+        
+        for (let i = 0; i < responses.length; i++) {
+
+          if (responses[i].data['is_follower']) { // For Web Weavers
+            if (responses[i].data['is_follower'] == true) {
+              let userProfile = {
+                friend_username: connectionRes.data.items[i].displayName,
+                friend_pfp: connectionRes.data.items[i].profileImage
+              }
+                console.log("friend_username", connectionRes.data.items[i].displayName)
+                console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+              Friends.push(userProfile)
+            }
+          }
+
+          if (responses[i].data == true) {
+            let userProfile = {
+              friend_username: connectionRes.data.items[i].displayName,
+              friend_pfp: connectionRes.data.items[i].profileImage
+            }
+              console.log("friend_username", connectionRes.data.items[i].displayName)
+              console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+            Friends.push(userProfile)
+          }  
+
+          console.log("FRIENDS", Friends)
           setFriends(
-            <Profile
-              friends={connectionsRes.data.Friends}
-              // username={user.user.username}
-              user={user}
-            />
+            <Profile friends={Friends} user={user} />
           );
-        })
-        .catch((error) => {
-          console.error("Error getting friends:", error);
-        });
-    };
+        } // end for
+      }); // end Promise
+
+    }); // end Then
+}; // end async
 
     const getNotifications = async () => {
       let notificationsUrl =
@@ -253,6 +313,16 @@ export default function ViewProfile({ user }) {
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
 
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      authUrl = authUrl + "/";
+    }
+
     const authRes = await axios
       .get(authUrl, auth)
       .then((authRes) => {
@@ -330,38 +400,75 @@ export default function ViewProfile({ user }) {
     // console.log(user.user.username);
     // console.log(imgUrl);
     event.preventDefault();
-    console.log("POSTING");
+    // var apiString = location.state['api'];
+    var profile_author_id = location.state['api'].split('/')[4]
+    console.log("POSTING", location.state['api'], profile_author_id);
 
-    const responseData = {
-      type: "Follow",
-      summary: user.user.username + " wants to follow " + author,
-      actor: {
-        type: "author",
-        id:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
-          user.user.user_id,
-        url:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
-          user.user.user_id,
-        host: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com",
-        displayName: user.user.username,
-        github: user.user.github,
-        profileImage:
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
-          user.user.profile_picture,
-      },
-      object: {
-        type: "author",
-        id: location.state["api"],
-        url: location.state["api"],
-        host: new URL(location.state["api"]).hostname,
-        displayName: author,
-        github: "",
-        profileImage: imgUrl,
-      },
-    };
+    var auth_github = ''
+
+    if (user.user.github) {
+      auth_github = user.user.github
+    } else {
+      auth_github = ''
+    }
+
+    var responseData = ''
+    if (host.includes("web-weavers")) {
+        responseData = {
+          type: "Follow",
+          summary: user.user.username + " wants to follow " + author,
+          actor: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id,
+          object: location.state["api"]
+          }
+
+    } else {
+      responseData = {
+        type: "Follow",
+        summary: user.user.username + " wants to follow " + author,
+        actor: {
+          type: "author",
+          uuid: user.user.user_id,
+          id:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+            user.user.user_id,
+          url:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+            user.user.user_id,
+          host: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/",
+          displayName: user.user.username,
+          github: auth_github,
+          profileImage:
+            "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+            user.user.profile_picture,
+        },
+        object: {
+          type: "author",
+          uuid: profile_author_id,
+          id: location.state["api"],
+          url: location.state["api"],
+          host: "https://" + new URL(location.state["api"]).hostname + "/",
+          displayName: author,
+          github: "",
+          profileImage: imgUrl,
+        },
+      };
+    }
+
+   
+
+    var url = location.state["api"] + "/inbox"
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      url = url + '/';
+    }
+    
     console.log("RESPONSE DATA", responseData);
-    axios.post(location.state["api"] + "/inbox", responseData, auth);
+    axios.post(url, responseData, auth);
   };
 
   return (
@@ -394,8 +501,19 @@ export default function ViewProfile({ user }) {
                   {notifications}
                 </div>
                 <button
+                  className="sticky top-[265px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+                  onClick={() => navigate("/inbox")}
+                >
+                  <span>Inbox</span>
+                  <img
+                    src="/inbox-button.png"
+                    alt="Inbox"
+                    className="inbox-button-img ml-3 h-7.5 w-10"
+                  />
+                </button>
+                <button
                   onClick={handleLogout}
-                  className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                  className="sticky top-[320px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
                 >
                   Logout
                 </button>
