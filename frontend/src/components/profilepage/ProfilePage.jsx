@@ -9,6 +9,8 @@ export default function ProfilePage({ user }) {
     const [profPic, setProfPic] = useState('');
     const [dispName, setdispName] = useState('');
     
+    var user = JSON.parse(localStorage.getItem('author'))
+
     const handlePassChange = event => {
         setPass(event.target.value);
         console.log('user value is:', event.target.value);

@@ -212,6 +212,17 @@ class getNodes(APIView):
 
         return Response (serializer.data, status=status.HTTP_200_OK)
 
+class EditProfile(APIView):
+    '''
+    Edit a profile
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    
+    def post(self, request, pk):
+        print(request.data)
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
 # REMOTE VIEWS
 class getAllAuthorsRemote(APIView):
     '''
