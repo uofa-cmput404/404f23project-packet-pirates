@@ -45,7 +45,7 @@ export default function ProfilePage({ user }) {
         console.log(info)
 
         try {
-            const res = await axios.post("http://127.0.0.1:8000/something", info);
+            const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/something", info);
             console.log(res.data);
           } catch (error) {
             console.error("Error saving profile:", error);
@@ -64,7 +64,7 @@ export default function ProfilePage({ user }) {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <div className="image-container w-24 h-24 my-6 ml-12 mr-8 rounded-full overflow-hidden bg-black">
                                     <img
-                                        src={profPic || "http://127.0.0.1:8000" + user.user.profile_picture}
+                                        src={profPic || "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />
