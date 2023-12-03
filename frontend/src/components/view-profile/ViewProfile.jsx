@@ -75,15 +75,6 @@ export default function ViewProfile({ user }) {
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
 
-  if (host.includes("packet-pirates")) {
-    console.log("PIRATE!");
-    auth = PP_auth;
-  } else if (host.includes("super-coding")) {
-    auth = SC_auth;
-  } else if (host.includes("web-weavers")) {
-    auth = WW_auth;
-    authUrl = authUrl + "/";
-  }
 
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
@@ -253,6 +244,16 @@ export default function ViewProfile({ user }) {
 
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
+
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      authUrl = authUrl + "/";
+    }
 
     const authRes = await axios
       .get(authUrl, auth)
