@@ -155,11 +155,11 @@ export default function MainPage({ user }) {
             setFriends(
               <Profile friends={Friends} user={user} />
             );
-          }
-        });
+          } // end for
+        }); // end Promise
 
-      })
-  };
+      }); // end Then
+  }; // end async
 
   const getNotifications = async () => {
     let notificationsUrl =
