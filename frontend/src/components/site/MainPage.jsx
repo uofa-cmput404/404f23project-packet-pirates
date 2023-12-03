@@ -139,8 +139,21 @@ export default function MainPage({ user }) {
           console.log("RESPONSES", responses)
           console.log(responses.length)
           const Friends = []
-
+          
           for (let i = 0; i < responses.length; i++) {
+
+            if (responses[i].data['is_follower']) { // For Web Weavers
+              if (responses[i].data['is_follower'] == true) {
+                let userProfile = {
+                  friend_username: connectionRes.data.items[i].displayName,
+                  friend_pfp: connectionRes.data.items[i].profileImage
+                }
+                  console.log("friend_username", connectionRes.data.items[i].displayName)
+                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+                Friends.push(userProfile)
+              }
+            }
+
             if (responses[i].data == true) {
               let userProfile = {
                 friend_username: connectionRes.data.items[i].displayName,
@@ -149,7 +162,7 @@ export default function MainPage({ user }) {
                 console.log("friend_username", connectionRes.data.items[i].displayName)
                 console.log("friend_pfp", connectionRes.data.items[i].profileImage)
               Friends.push(userProfile)
-            }
+            }  
 
             console.log("FRIENDS", Friends)
             setFriends(
