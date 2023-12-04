@@ -5,7 +5,6 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
-import RemotePost from "../../remote/RemotePosts";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function SinglePost({ user }) {
@@ -15,12 +14,9 @@ export default function SinglePost({ user }) {
   const [notifications, setNotifications] = useState(null);
 
   const config = {
-    headers: { Authorization: "Token " + localStorage.getItem("access_token") },
+    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
 
-  let location = useLocation();
-  console.log("location", location.state.api);
-  var api = location.state.api;
   const SC_auth = {
     auth: {
       username: "packet_pirates",
@@ -41,28 +37,100 @@ export default function SinglePost({ user }) {
       password: "12345",
     },
   };
-
-  var auth = "";
+  
   useEffect(() => {
+
     const getConnections = async () => {
-      let connectionsUrl =
-        "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
-      const connectionsRes = await axios
-        .get(connectionsUrl, config)
-        .then((connectionsRes) => {
-          console.log("CONNECTSRES", connectionsRes.data);
+    // let connectionsUrl =
+    //   "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
+
+    // const connectionsRes = await axios
+    //   .get(connectionsUrl, config)
+    //   .then((connectionsRes) => {
+    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
+    //     setFriends(
+    //       <Profile friends={connectionsRes.data.Friends} user={user} />
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting friends:", error);
+    //   });
+
+    var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
+    const connectionTest = await axios
+    .get(url, PP_auth)
+    .then((connectionRes) => {
+      console.log('connectionTestRes', connectionRes.data);
+      const followers = [];
+      
+      for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
+        // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+        followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+      }
+
+      console.log(followers)
+      var auth = ''
+      const requests = followers.map((url) => {
+        
+        if (url.includes("packet-pirates")) {
+          console.log("PIRATE!");
+          auth = PP_auth;
+        } else if (url.includes("super-coding")) {
+          auth = SC_auth;
+        } else if (url.includes("web-weavers")) {
+          auth = WW_auth;
+          url = url + "/";
+        }
+
+        return axios
+          .get(url, auth)
+          .then((response) => response)
+          .catch((error) => console.error("Error", error))
+      }
+    );
+
+      Promise.all(requests).then((responses) => {
+        console.log("RESPONSES", responses)
+        console.log(responses.length)
+        const Friends = []
+        
+        for (let i = 0; i < responses.length; i++) {
+
+          if (responses[i].data['is_follower']) { // For Web Weavers
+            if (responses[i].data['is_follower'] == true) {
+              let userProfile = {
+                friend_username: connectionRes.data.items[i].displayName,
+                friend_pfp: connectionRes.data.items[i].profileImage
+              }
+                console.log("friend_username", connectionRes.data.items[i].displayName)
+                console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+              Friends.push(userProfile)
+            }
+          }
+
+          if (responses[i].data == true) {
+            let userProfile = {
+              friend_username: connectionRes.data.items[i].displayName,
+              friend_pfp: connectionRes.data.items[i].profileImage
+            }
+              console.log("friend_username", connectionRes.data.items[i].displayName)
+              console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+            Friends.push(userProfile)
+          }  
+
+          console.log("FRIENDS", Friends)
           setFriends(
-            <Profile friends={connectionsRes.data.Friends} user={user} />
+            <Profile friends={Friends} user={user} />
           );
-        })
-        .catch((error) => {
-          console.error("Error getting friends:", error);
-        });
-    };
+        } // end for
+      }); // end Promise
+
+    }); // end Then
+}; // end async
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -71,10 +139,7 @@ export default function SinglePost({ user }) {
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
-            <Notifications
-              notifications={notifsRes.data.Notifications}
-              user={user}
-            />
+            <Notifications notifications={notifsRes.data.Notifications} user = {user} />
           );
         })
         .catch((error) => {
@@ -83,59 +148,32 @@ export default function SinglePost({ user }) {
     };
 
     const fetchPost = async () => {
-      // let postsUrl = "http://127.0.0.1:8000/" + postID + "/viewpost";
-      let postsUrl = api;
-
-      if (postsUrl.includes("packet-pirates")) {
-        console.log("PIRATE!");
-        auth = PP_auth;
-      } else if (postsUrl.includes("super-coding")) {
-        auth = SC_auth;
-      } else if (postsUrl.includes("web-weavers")) {
-        auth = WW_auth;
-        // postsUrl = postsUrl + "/";
-      }
+      let postUrl =
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + postID + "/viewpost";
 
       const postRes = await axios
-        .get(postsUrl, auth)
+        .get(postUrl, config)
         .then((postRes) => {
-          console.log("post data", postRes.data.post);
-          console.log("postRes", postRes);
+            console.log("post data", postRes.data.post);
+            console.log("postRes", postRes);
 
-          let singlePost = postRes.data;
-          console.log(singlePost);
-          var img = "";
-          axios.get(singlePost.id + "/image", auth).then((imgRes) => {
-            console.log("imgRes", imgRes.data.image);
-            img = imgRes.data.image;
+            let singlePost = postRes.data.post;
+            const image_conditions = singlePost.image_url === '' && singlePost.image_file != ''
+            const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + singlePost.image_file : singlePost.image_url
+
             setPost(
-              <RemotePost
-                key={api}
+                <Post
                 user={user}
                 post_author={singlePost.author}
                 title={singlePost.title}
                 description={singlePost.content}
-                content={singlePost.content}
-                img={img}
+                img={image}
+                img_url={singlePost.image_url}
                 likes={singlePost.likes_count}
-                post_id={api}
-              />
+                id={singlePost.post_id}
+                is_private={singlePost.is_private}
+                unlisted={singlePost.unlisted}/>
             );
-          });
-          // console.log("img1111111111111111111111111", img);
-          // setPost(
-          //   <RemotePost
-          //     key={api}
-          //     user={user}
-          //     post_author={singlePost.author}
-          //     title={singlePost.title}
-          //     description={singlePost.content}
-          //     content={singlePost.content}
-          //     img={img}
-          //     likes={singlePost.likes_count}
-          //     post_id={api}
-          //   />
-          // );
         })
         .catch((error) => {
           console.error("Error getting posts:", error);
@@ -168,6 +206,7 @@ export default function SinglePost({ user }) {
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
+
           <div>
             <div className="flex flex-row w-full mx-auto">
               <div
