@@ -17,6 +17,8 @@ class Post(models.Model):
 
     is_private = models.BooleanField(default=False)
 
+    is_friends = models.BooleanField(default = False)
+
     url = models.CharField(max_length=200, blank = True, null= True)
 
     likes_count = models.IntegerField(default=0)
