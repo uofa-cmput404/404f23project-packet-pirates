@@ -26,6 +26,7 @@ export default function ViewProfile({ user }) {
 
   const [is_pending, set_is_pending] = useState(null);
   const [areFriends, setAreFriends] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(null);
 
   const [followButtons, setFollowButtons] = useState(null);
   const navigate = useNavigate();
@@ -323,12 +324,67 @@ export default function ViewProfile({ user }) {
         }); //
     }; // end fetchPosts
 
+
+    const checkFriendship = async () => {
+      // Check if Sasuke is a friend of Packet, if so, we want to let packet be able to remove them as a follower
+      const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" 
+                              + user.user.user_id  + "/followers/" + location.state['api'].split('/')[4];
+      
+      // Check if Sasuke follow request to Packet still exists, if it does, disable the remove follower button.
+      const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" 
+                              + user.user.user_id + "/followrequest/" + location.state['api'].split('/')[4] + "/ispending"
+      
+      // We can check if packet pirates is a friend of Sasuke
+      var followingUrl = location.state['api'] + "/followers/" + user.user.user_id 
+
+      try {
+        const response = await axios.get(followersUrl).then(async (data) => {
+          setAreFriends(data['data']);
+          console.log("FFF", data['data'])
+          console.log("FRIENDS?", areFriends)
+          // console.log(response.data)
+        });
+        
+        const followReqResponse = await axios.get(followReqUrl).then(async (data) => {
+          set_is_pending(data['data'])
+          console.log("PENDING?", is_pending)
+        });
+
+        if (host.includes("packet-pirates")) {
+          console.log("PIRATE!");
+          auth = PP_auth;
+        } else if (host.includes("super-coding")) {
+          auth = SC_auth;
+        } else if (host.includes("web-weavers")) {
+          auth = WW_auth;
+          followingUrl = followingUrl + "/";
+        } else if (host.includes("node-net")) {
+          auth = NN_auth;
+        }
+
+        const followingResponse = await axios.get(followingUrl, auth).then (async (data) => {
+          if (host.includes("packet-pirates")) {
+            setIsFollowing(data['data'])
+            console.log("DATA RESPONSE", isFollowing)
+          } else {
+            setIsFollowing(data['data']['is_follower'])
+            console.log("DATA RESPONSE", isFollowing)
+          }
+        })
+
+        console.log("RESPONSES", is_pending, areFriends, isFollowing)
+      } catch (error) {
+        console.error("Error checking friendship:", error);
+      }
+     }  
+
     fetchPosts(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
+    checkFriendship();
     console.log("posts", posts);
-  }, [author, is_pending, areFriends]);
+  }, [author, is_pending, areFriends, isFollowing]);
 
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
@@ -493,6 +549,21 @@ export default function ViewProfile({ user }) {
     
     console.log("RESPONSE DATA", responseData);
     axios.post(url, responseData, auth);
+  };
+
+  const handleUnfollow = async (event) => {
+    event.preventDefault();
+  
+    let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
+
+    try {
+      const res = await axios.delete(unfollowUrl).then((res) => {
+        console.log(res.data);
+        setAreFriends(false);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
