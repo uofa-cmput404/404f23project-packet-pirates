@@ -282,7 +282,7 @@ export default function ViewProfile({ user }) {
             } else {
               setPosts(
                 postData
-                  .filter((post) => !post.unlisted && !post.is_private)
+                  .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
                   .map((post, index) => {
                     var image = "";
                     if (host.includes("super-coding")) {
