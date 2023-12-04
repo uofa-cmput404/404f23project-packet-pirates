@@ -3,14 +3,15 @@ import { useParams, useLocation } from "react-router-dom";
 import { config } from "../../config";
 import axios from "axios";
 import RemotePost from "../../remote/RemotePosts";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Inbox({ user }) {
   //const [inbox, setInbox] = useState({});
   const [inboxPosts, setInboxPosts] = useState([]);
   const [showPost, setShowPost] = useState([]);
   const [postsFetched, setPostsFetched] = useState(false);
-
   const [inboxComments, setInboxComments] = useState([])
+  const navigate = useNavigate();
 
   const SC_auth = {
     auth: {

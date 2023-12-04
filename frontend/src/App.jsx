@@ -5,9 +5,8 @@ import MainPage from "./components/site/MainPage";
 import CreatePost from "./components/main-feed/CreatePost";
 import Post from "./components/main-feed/Posts";
 import Profile from "./components/main-feed/Profile";
-import Cookies from 'universal-cookie'
+import Cookies from "universal-cookie";
 import SinglePost from "./components/single-post/singlePost";
-
 
 // routing
 import {
@@ -52,14 +51,13 @@ function App() {
   // const navigate = useNavigate();
 
   useEffect(() => {
-
-    var token = cookies.get('access_token')
-    console.log(token)
+    var token = cookies.get("access_token");
+    console.log(token);
 
     const config = {
-      headers: {Authorization: 'token ' + token}
+      headers: { Authorization: "token " + token },
     };
-    console.log(config)
+    console.log(config);
 
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
@@ -94,7 +92,7 @@ function App() {
               <ViewProfile user={authorInfo} />
             ) : (
               // <ViewProfileNotLogged />
-              <Landing/>
+              <Landing />
             )
           }
         />
@@ -102,16 +100,10 @@ function App() {
           path="/inbox"
           element={isLoggedIn ? <Inbox user={authorInfo} /> : <Landing />}
         />
-        
+
         <Route
           path="/post/:postID"
-          element={
-            isLoggedIn ? (
-              <SinglePost user={authorInfo} />
-            ) : (
-              <Landing />
-            )
-          }
+          element={isLoggedIn ? <SinglePost user={authorInfo} /> : <Landing />}
         />
         <Route
           path="/profilepage"
