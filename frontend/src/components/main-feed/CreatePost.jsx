@@ -17,6 +17,7 @@ export default function CreatePost({ user }) {
 
   const visibilityOptions = [
     { value: "Public", label: "Public" },
+    { value: "Friends", label: "Friends"},
     { value: "Private", label: "Private" },
     { value: "Unlisted", label: "Unlisted" },
   ];
@@ -24,6 +25,7 @@ export default function CreatePost({ user }) {
 
   const [isUnlisted, setIsUnlisted] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isFriends, setIsFriends] = useState(false);
 
   const contentOptions = [
     { value: "text/plain", label: "Plaintext" },
@@ -69,6 +71,8 @@ export default function CreatePost({ user }) {
       setIsPrivate(true);
     } else if (value["value"] === "Unlisted") {
       setIsUnlisted(true);
+    } else if (value["value"] === "Friends") {
+      setIsFriends(true);
     }
 
     console.log("Sent visibility is:", value);
@@ -85,6 +89,7 @@ export default function CreatePost({ user }) {
     formData.append("origin", user.user.user_id);
     formData.append("unlisted", isUnlisted);
     formData.append("is_private", isPrivate);
+    formData.append("is_friends", isFriends);
     formData.append("image_file", imageFile);
     formData.append("image_url", imageUrl);
     formData.append("visibility", visibility);
