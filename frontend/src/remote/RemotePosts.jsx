@@ -156,7 +156,6 @@ export default function RemotePost({
     }
   };
 
-  //Not Finished -- need to determine POST format (Comment ID undetermined when request is sent)
   const handleCommentSubmit = async () => {
     setIsCommenting(false); // Hide comment input field
 
@@ -180,7 +179,7 @@ export default function RemotePost({
 
     //Get author, send comment to inbox
     try {
-      await axios.get(authUrl, auth).then(async (authorResponse) => {
+      await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
         let commentData = {
           type: "comment",
@@ -285,11 +284,17 @@ export default function RemotePost({
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
       user.user.user_id;
 
-    let auth = PP_auth;
-    //Get author, send post to inbox
-
+    if (boxUrl.includes("packet-pirates")) {
+      auth = PP_auth;
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (boxUrl.includes("web-weavers")) {
+      auth = WW_auth;
+      boxUrl = boxUrl + "/";
+    }
+    
     try {
-      await axios.get(authUrl, auth).then(async (authorResponse) => {
+      await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
         let postData = {
           type: "post",
@@ -312,14 +317,7 @@ export default function RemotePost({
         console.log("TEsting sending post", postData);
 
         //Corresponding authorization
-        if (boxUrl.includes("packet-pirates")) {
-          auth = PP_auth;
-        } else if (boxUrl.includes("super-coding")) {
-          auth = SC_auth;
-        } else if (boxUrl.includes("web-weavers")) {
-          auth = WW_auth;
-          boxUrl = boxUrl + "/";
-        }
+
 
         console.log("BOX URL", boxUrl);
         console.log("AUTH FOR POSTING", auth);
