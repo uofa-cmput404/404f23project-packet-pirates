@@ -72,6 +72,13 @@ export default function ViewProfile({ user }) {
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+  
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
 

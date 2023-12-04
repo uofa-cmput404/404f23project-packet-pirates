@@ -67,6 +67,13 @@ export default function RemotePost({
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+
   var auth = "";
 
   if (post_id.includes("packet-pirates")) {
@@ -76,6 +83,8 @@ export default function RemotePost({
   } else if (post_id.includes("web-weavers")) {
     auth = WW_auth;
     // post_id = post_id + "/";
+  } else if (boxUrl.includes("node-net")) {
+    auth = NN_auth;
   }
 
   //No remote DELETE like
@@ -99,6 +108,8 @@ export default function RemotePost({
     // } else if (url.includes("web-weavers")) {
     //   auth = WW_auth;
     //   url = url + "/";
+    // }  else if (url.includes("node-net")) {
+      // auth = NN_auth;
     // }
 
     try {
@@ -116,6 +127,11 @@ export default function RemotePost({
           } else if (url.includes("super-coding")) {
             postComments = response.data.comments;
           }
+          // } else if (url.includes("web-weavers")) {
+
+          // } else if (url.includes("node-net")) {
+
+          // }
 
           setComments(
             postComments.map((comment, index) => {
@@ -175,6 +191,8 @@ export default function RemotePost({
       auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
       auth = WW_auth;
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
     }
 
     //Get author, send comment to inbox
@@ -291,6 +309,8 @@ export default function RemotePost({
     } else if (boxUrl.includes("web-weavers")) {
       auth = WW_auth;
       boxUrl = boxUrl + "/";
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
     }
     
     try {
