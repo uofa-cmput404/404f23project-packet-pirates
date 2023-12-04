@@ -79,7 +79,7 @@ class GetUsers(APIView):
         basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
         basic2 = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
         # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
-        external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
+        # external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
         external_data2 = requests.get(c.WW_ENDPOINT+"authors/", auth=basic2).json()
 
         filtered_external_data = [
@@ -88,7 +88,7 @@ class GetUsers(APIView):
                 "displayName": author["displayName"],
                 "profileImage": author["profileImage"]
             }
-            for author in external_data.get("items", [])
+            for author in external_data2.get("items", [])
             if query.lower() in author.get('displayName', '').lower()
         ]
 
