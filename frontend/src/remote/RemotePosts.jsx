@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ReactMarkdown from 'react-markdown';
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -67,6 +68,13 @@ export default function RemotePost({
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+
   var auth = "";
 
   if (post_id.includes("packet-pirates")) {
@@ -76,11 +84,135 @@ export default function RemotePost({
   } else if (post_id.includes("web-weavers")) {
     auth = WW_auth;
     // post_id = post_id + "/";
+  } else if (post_id.includes("node-net")) {
+    auth = NN_auth;
   }
 
-  //No remote DELETE like
-  const handleLike = async () => {
-    //TBD
+  const handleLikeLocal = async () => {
+
+    const newLikeState = !hasLiked;
+
+    // Calculate the new like count based on the like state
+    const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
+
+    // Update the like status
+    setLikeCount(newLikeCount);
+    setHasLiked(newLikeState);
+
+    const post_uuid = post_id.split('/')[6]
+
+    console.log(post_id)
+    console.log(post_uuid)
+
+    try {
+      if (newLikeState) {
+        // If liking, make a POST request to add a like
+        await axios.post(
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
+          {
+            post_object_id: post_uuid,
+            author: user,
+            like_count: newLikeCount,
+          },
+          config,
+          {
+            withCredentials: true,
+          }
+        );
+      } else {
+        // If unliking, make a DELETE request to remove the like
+        await axios.delete(
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
+          {
+            data: {
+              post_object_id: post_uuid,
+              author: user,
+              like_count: newLikeCount,
+            },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Token " + localStorage.getItem("access_token"),
+            },
+          }
+        );
+      }
+    } catch (error) {
+      // If error found, revert any changes made
+      console.error("Error updating like status:", error);
+
+      // Revert changes
+      setLikeCount(likeCount); // Reset like count
+      setHasLiked(!hasLiked); // Toggle like state back
+    }
+
+  };
+
+  const handleLikeRemote = async () => {
+
+    if (!hasLiked) {
+
+      const newLikeState = !hasLiked;
+
+      // Calculate the new like count based on the like state
+      const newLikeCount = newLikeState ? likeCount + 1 : likeCount - 1;
+
+      // Update the like status
+      setLikeCount(newLikeCount);
+      setHasLiked(newLikeState);
+
+      //Inbox url
+      let boxUrl = post_author.id + "/inbox";
+
+      //Author url (Creating like)
+      let authUrl =
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+        user.user.user_id;
+
+      //Corresponding authorization
+      let auth = "";
+      if (boxUrl.includes("packet-pirates")) {
+        auth = PP_auth;
+      } else if (boxUrl.includes("super-coding")) {
+        auth = SC_auth;
+      } else if (boxUrl.includes("web-weavers")) {
+        auth = WW_auth;
+      } else if (boxUrl.includes("node-net")) {
+        auth = NN_auth;
+      }
+
+      //Get author, send comment to inbox
+      try {
+
+        await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
+          
+          //NOT SURE YET
+          let likeData = {
+            context : "",
+            type: "Like",
+            author: authorResponse.data,
+            summary : user.user.username + ' likes your post',
+            object: post_id,
+          };
+
+          await axios.post(boxUrl, likeData, auth)
+          .then(() => {
+            console.log('Like sent to inbox')
+          })
+
+        });
+
+      } catch (error) {
+
+        console.log(error);
+
+        // Revert changes
+        setLikeCount(likeCount); // Reset like count
+        setHasLiked(!hasLiked); // Toggle like state back
+
+      }
+
+    }
+
   };
 
   //Unimplemented
@@ -99,6 +231,8 @@ export default function RemotePost({
     // } else if (url.includes("web-weavers")) {
     //   auth = WW_auth;
     //   url = url + "/";
+    // }  else if (url.includes("node-net")) {
+      // auth = NN_auth;
     // }
 
     try {
@@ -116,6 +250,11 @@ export default function RemotePost({
           } else if (url.includes("super-coding")) {
             postComments = response.data.comments;
           }
+          // } else if (url.includes("web-weavers")) {
+
+          // } else if (url.includes("node-net")) {
+
+          // }
 
           setComments(
             postComments.map((comment, index) => {
@@ -156,7 +295,6 @@ export default function RemotePost({
     }
   };
 
-  //Not Finished -- need to determine POST format (Comment ID undetermined when request is sent)
   const handleCommentSubmit = async () => {
     setIsCommenting(false); // Hide comment input field
 
@@ -176,11 +314,13 @@ export default function RemotePost({
       auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
       auth = WW_auth;
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
     }
 
     //Get author, send comment to inbox
     try {
-      await axios.get(authUrl, auth).then(async (authorResponse) => {
+      await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
         let commentData = {
           type: "comment",
@@ -284,11 +424,19 @@ export default function RemotePost({
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
       user.user.user_id;
 
-    let auth = PP_auth;
-    //Get author, send post to inbox
-
+    if (boxUrl.includes("packet-pirates")) {
+      auth = PP_auth;
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (boxUrl.includes("web-weavers")) {
+      auth = WW_auth;
+      boxUrl = boxUrl + "/";
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
+    }
+    
     try {
-      await axios.get(authUrl, auth).then(async (authorResponse) => {
+      await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
         let postData = {
           type: "post",
@@ -311,14 +459,7 @@ export default function RemotePost({
         console.log("TEsting sending post", postData);
 
         //Corresponding authorization
-        if (boxUrl.includes("packet-pirates")) {
-          auth = PP_auth;
-        } else if (boxUrl.includes("super-coding")) {
-          auth = SC_auth;
-        } else if (boxUrl.includes("web-weavers")) {
-          auth = WW_auth;
-          boxUrl = boxUrl + "/";
-        }
+
 
         console.log("BOX URL", boxUrl);
         console.log("AUTH FOR POSTING", auth);
@@ -345,6 +486,54 @@ export default function RemotePost({
     window.location.reload(false);
   };
 
+  async function checkLikeStatus () {
+    
+    //Likes url
+    let likUrl = post_id + '/likes'
+
+    //Corresponding authorization
+    let auth = ''
+    if (post_id.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (post_id.includes("super-coding")) {
+      auth = SC_auth
+    } else if (post_id.includes("web-weavers")) {
+      auth = WW_auth;
+      likUrl = likUrl + "/";
+    } else if (post_id.includes("node-net")) {
+      auth = NN_auth;
+    }
+
+    await axios.get(likUrl, auth)
+    .then((likeResponse) => {
+
+      let likesList = []
+
+      if (post_id.includes("web-weavers")) {
+
+        likesList = likeResponse['data']['items']
+
+      } else {
+
+        likesList = likeResponse['data']
+
+      }
+
+      for (let like in likesList){
+        console.log(':(', likesList[like])
+
+        if (likesList[like]['author']['id'].split('/')[4] === user.user.user_id){
+
+          setHasLiked(true);
+
+        }
+
+      }
+
+    })
+
+  };
+
   useEffect(() => {
     console.log("user", user);
     console.log("title", title);
@@ -354,6 +543,8 @@ export default function RemotePost({
     console.log("likes", likes);
     console.log("author", post_author);
     fetchCommentData();
+    checkLikeStatus();
+
   }, []);
 
   return (
@@ -400,7 +591,11 @@ export default function RemotePost({
           </div> */}
 
           <div className="description-section flex justify-center items-center">
-            <p>{description}</p>
+          {contentType === "text/markdown" ?
+              <p><ReactMarkdown>{description}</ReactMarkdown></p>
+              :
+              <p>{description}</p>
+            }
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
             <img src={img} alt="" className="w-full h-full object-cover" />
@@ -411,8 +606,8 @@ export default function RemotePost({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
-            <button
-              onClick={handleLike}
+          <button
+              onClick={post_id.includes("packet-pirates") ? handleLikeLocal : handleLikeRemote}
               className={`border border-[#395B64] ${
                 hasLiked ? "liked-button" : "not-liked-button"
               } w-fit pl-3 pr-3 text-white rounded-full`}

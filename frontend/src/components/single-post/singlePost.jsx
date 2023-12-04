@@ -37,12 +37,19 @@ export default function SinglePost({ user }) {
       password: "12345",
     },
   };
+
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
   
   useEffect(() => {
 
     const getConnections = async () => {
     // let connectionsUrl =
-    //   "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
+    //   "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
 
     // const connectionsRes = await axios
     //   .get(connectionsUrl, config)
@@ -80,6 +87,8 @@ export default function SinglePost({ user }) {
         } else if (url.includes("web-weavers")) {
           auth = WW_auth;
           url = url + "/";
+        } else if (url.includes("node-net")) {
+          auth = NN_auth;
         }
 
         return axios
@@ -94,10 +103,27 @@ export default function SinglePost({ user }) {
         console.log(responses.length)
         const Friends = []
         
-        for (let i = 0; i < responses.length; i++) {
+        if (responses.length == 0) {
+          setFriends(
+            <Profile friends={Friends} user={user} />
+          );
+        } else {
+        
+          for (let i = 0; i < responses.length; i++) {
 
-          if (responses[i].data['is_follower']) { // For Web Weavers
-            if (responses[i].data['is_follower'] == true) {
+            if (responses[i].data['is_follower']) { // For Web Weavers
+              if (responses[i].data['is_follower'] == true) {
+                let userProfile = {
+                  friend_username: connectionRes.data.items[i].displayName,
+                  friend_pfp: connectionRes.data.items[i].profileImage
+                }
+                  console.log("friend_username", connectionRes.data.items[i].displayName)
+                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+                Friends.push(userProfile)
+              }
+            }
+
+            if (responses[i].data == true) {
               let userProfile = {
                 friend_username: connectionRes.data.items[i].displayName,
                 friend_pfp: connectionRes.data.items[i].profileImage
@@ -105,23 +131,13 @@ export default function SinglePost({ user }) {
                 console.log("friend_username", connectionRes.data.items[i].displayName)
                 console.log("friend_pfp", connectionRes.data.items[i].profileImage)
               Friends.push(userProfile)
-            }
+            }  
+
+            console.log("FRIENDS", Friends)
+            setFriends(
+              <Profile friends={Friends} user={user} />
+            );
           }
-
-          if (responses[i].data == true) {
-            let userProfile = {
-              friend_username: connectionRes.data.items[i].displayName,
-              friend_pfp: connectionRes.data.items[i].profileImage
-            }
-              console.log("friend_username", connectionRes.data.items[i].displayName)
-              console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-            Friends.push(userProfile)
-          }  
-
-          console.log("FRIENDS", Friends)
-          setFriends(
-            <Profile friends={Friends} user={user} />
-          );
         } // end for
       }); // end Promise
 
