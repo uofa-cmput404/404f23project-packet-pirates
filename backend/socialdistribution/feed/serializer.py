@@ -26,9 +26,11 @@ class NotificationsSerializer(serializers.ModelSerializer):
 class FollowerRemoteSerializer(serializers.Serializer):
     author = serializers.SerializerMethodField()
     
-    def get_author(self, instance):
-        author = AppAuthor.objects.get(user_id = instance.user_id)
-        if (author):
+    def get_author(self,instance):
+        author = AppAuthor.objects.filter(user_id = instance.user_id)
+
+        if (len(author) > 0):
+            author = author[0]
             serializer = AuthorSerializerRemote(author)
             return serializer.data
         else:
@@ -40,7 +42,7 @@ class FollowerRemoteSerializer(serializers.Serializer):
             elif ("web-weavers" in author_origin): # Add other groups
                 basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
                 req = requests.get(author_origin, auth=basic)
-                return req.json() 
+                return req.json()
     
     def to_representation(self, instance):
         rep = super().to_representation(instance)

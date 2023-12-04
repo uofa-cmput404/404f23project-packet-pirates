@@ -1,7 +1,7 @@
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
@@ -17,32 +17,120 @@ export default function SinglePost({ user }) {
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
   };
 
+  const SC_auth = {
+    auth: {
+      username: "packet_pirates",
+      password: "pass123$",
+    },
+  };
+
+  const PP_auth = {
+    auth: {
+      username: "packetpirates",
+      password: "cmput404",
+    },
+  };
+
+  const WW_auth = {
+    auth: {
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
+  
   useEffect(() => {
 
     const getConnections = async () => {
-      let connectionsUrl =
-        "http://127.0.0.1:8000/author/" +
-        user.user.user_id +
-        "/truefriends";
-      const connectionsRes = await axios
-        .get(connectionsUrl, config)
-        .then((connectionsRes) => {
-          console.log("CONNECTSRES", connectionsRes.data);
+    // let connectionsUrl =
+    //   "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
+
+    // const connectionsRes = await axios
+    //   .get(connectionsUrl, config)
+    //   .then((connectionsRes) => {
+    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
+    //     setFriends(
+    //       <Profile friends={connectionsRes.data.Friends} user={user} />
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error getting friends:", error);
+    //   });
+
+    var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
+    const connectionTest = await axios
+    .get(url, PP_auth)
+    .then((connectionRes) => {
+      console.log('connectionTestRes', connectionRes.data);
+      const followers = [];
+      
+      for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
+        // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+        followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+      }
+
+      console.log(followers)
+      var auth = ''
+      const requests = followers.map((url) => {
+        
+        if (url.includes("packet-pirates")) {
+          console.log("PIRATE!");
+          auth = PP_auth;
+        } else if (url.includes("super-coding")) {
+          auth = SC_auth;
+        } else if (url.includes("web-weavers")) {
+          auth = WW_auth;
+          url = url + "/";
+        }
+
+        return axios
+          .get(url, auth)
+          .then((response) => response)
+          .catch((error) => console.error("Error", error))
+      }
+    );
+
+      Promise.all(requests).then((responses) => {
+        console.log("RESPONSES", responses)
+        console.log(responses.length)
+        const Friends = []
+        
+        for (let i = 0; i < responses.length; i++) {
+
+          if (responses[i].data['is_follower']) { // For Web Weavers
+            if (responses[i].data['is_follower'] == true) {
+              let userProfile = {
+                friend_username: connectionRes.data.items[i].displayName,
+                friend_pfp: connectionRes.data.items[i].profileImage
+              }
+                console.log("friend_username", connectionRes.data.items[i].displayName)
+                console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+              Friends.push(userProfile)
+            }
+          }
+
+          if (responses[i].data == true) {
+            let userProfile = {
+              friend_username: connectionRes.data.items[i].displayName,
+              friend_pfp: connectionRes.data.items[i].profileImage
+            }
+              console.log("friend_username", connectionRes.data.items[i].displayName)
+              console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+            Friends.push(userProfile)
+          }  
+
+          console.log("FRIENDS", Friends)
           setFriends(
-            <Profile
-              friends={connectionsRes.data.Friends}
-              user={user}
-            />
+            <Profile friends={Friends} user={user} />
           );
-        })
-        .catch((error) => {
-          console.error("Error getting friends:", error);
-        });
-    };
+        } // end for
+      }); // end Promise
+
+    }); // end Then
+}; // end async
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
@@ -61,7 +149,7 @@ export default function SinglePost({ user }) {
 
     const fetchPost = async () => {
       let postUrl =
-        "http://127.0.0.1:8000/" + postID + "/viewpost";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + postID + "/viewpost";
 
       const postRes = await axios
         .get(postUrl, config)
@@ -71,7 +159,7 @@ export default function SinglePost({ user }) {
 
             let singlePost = postRes.data.post;
             const image_conditions = singlePost.image_url === '' && singlePost.image_file != ''
-            const image = image_conditions ? 'http://127.0.0.1:8000' + singlePost.image_file : singlePost.image_url
+            const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + singlePost.image_file : singlePost.image_url
 
             setPost(
                 <Post

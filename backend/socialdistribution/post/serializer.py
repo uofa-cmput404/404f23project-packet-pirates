@@ -113,11 +113,12 @@ class LikeSerializerRemote(serializers.ModelSerializer):
         return "Like"
     
     def get_author(self,instance):
-        author = AppAuthor.objects.get(user_id = instance.author)
-        if (author):
+        author = AppAuthor.objects.filter(user_id = instance.author)
+
+        if (len(author) > 0):
+            author = author[0]
             serializer = AuthorSerializerRemote(author)
             return serializer.data
-
         else:
             author_origin = instance.author_origin
             if ("super-coding" in author_origin):
@@ -137,10 +138,9 @@ class LikeSerializerRemote(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        author = AppAuthor.objects.get(user_id = instance.author)
-
+        author = self.get_author(instance)
         representation['@context'] = "https://www.w3.org/ns/activitystreams"
-        representation['summary'] = author.username + " liked your post"
+        representation['summary'] = author['displayName'] + " liked your post"
         representation['object'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + str(instance.author) + "/posts/" + str(instance.post_object.post_id)
         return representation
     
@@ -161,13 +161,14 @@ class CommentSerializerRemote(serializers.ModelSerializer):
         return 'comment'
     
     def get_author(self,instance):
-        author = AppAuthor.objects.get(user_id = instance.author)
-        if (author):
+        author = AppAuthor.objects.filter(user_id = instance.author)
+       
+        if (len(author) > 0):
+            author = author[0]
             serializer = AuthorSerializerRemote(author)
             return serializer.data
         else:
             author_origin = instance.author_origin
-
             if ("super-coding" in author_origin):
                 basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
                 req = requests.get(author_origin, auth=basic)
