@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Cookies from 'universal-cookie'
+import ReactMarkdown from 'react-markdown'
 
 import { Navigate, useNavigate } from "react-router-dom";
 import Popup from 'reactjs-popup';
@@ -11,6 +11,7 @@ export default function Post({
   user,
   post_author,
   title,
+  content_type,
   description,
   img,
   img_url,
@@ -317,7 +318,11 @@ export default function Post({
           </div>
 
           <div className="description-section flex justify-center items-center">
-            <p>{description}</p>
+            {content_type === "text/markdown" ?
+              <p><ReactMarkdown>{description}</ReactMarkdown></p>
+              :
+              <p>{description}</p>
+            }
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
             <img src={img} alt="" className="w-full h-full object-cover" />
