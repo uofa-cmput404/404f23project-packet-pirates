@@ -66,7 +66,7 @@ export default function ProfilePage({ user }) {
         console.log("FORM DATA", formData)
 
         try {
-            const res = await axios.post("http://127.0.0.1:8000/author/" + user.user.user_id + "/editprofile", formData, config);
+            const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/editprofile", formData, config);
             console.log(res.data);
             window.location.reload(false)
           } catch (error) {
