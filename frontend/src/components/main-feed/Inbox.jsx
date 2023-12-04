@@ -195,7 +195,7 @@ export default function Inbox({ user }) {
 
             } else if (res.data.id.includes("web-weavers")) {
               image = "https://picsum.photos/200/300";
-            } else if (boxUrl.includes("node-net")) {
+            } else if (res.data.id.includes("node-net")) {
               image = "https://picsum.photos/200/300";
             }
 
