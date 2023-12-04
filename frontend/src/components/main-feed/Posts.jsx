@@ -73,7 +73,7 @@ export default function Post({
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "http://127.0.0.1:8000/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
           {
             post_object_id: id,
             author: user,
@@ -87,7 +87,7 @@ export default function Post({
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete(
-          "http://127.0.0.1:8000/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
           {
             data: {
               post_object_id: id,
@@ -116,7 +116,7 @@ export default function Post({
     const checkLikeStatus = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
           config
         );
         const likedByCurrentUser = response.data["Post Likes"].some(
@@ -142,7 +142,7 @@ export default function Post({
     // this will be those you can directly dm to their inbox
     // ** double check though **
     let url =
-      "http://127.0.0.1:8000/author/" + user.user.user_id + "/authorfollowers";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/authorfollowers";
 
     try {
       const response = await axios.get(url, config);
@@ -159,7 +159,7 @@ export default function Post({
 
   async function handleShareToClick(author) {
     console.log("SHARED TO FOLLOWER", author);
-    let url = "http://127.0.0.1:8000/author/" + author.friend + "/inbox/local";
+    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author.friend + "/inbox/local";
     let API = window.location.origin + `/posts/${id}`;
 
     let shareData = {
@@ -215,9 +215,9 @@ export default function Post({
 
     console.log("USER!!!", user);
 
-    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments";
+    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments";
     let authorUrl =
-      "http://127.0.0.1:8000/author/" + user.user.user_id + "/simpleauthor";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/simpleauthor";
 
     const authorRes = await axios
       .get(authorUrl, config)
@@ -229,7 +229,7 @@ export default function Post({
               text: commentText,
               author: user.user.user_id,
               author_picture:
-                "http://127.0.0.1:8000" + authorRes.data.Author.profile_picture,
+                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
               author_username: authorRes.data.Author.username,
             },
             config,
@@ -248,7 +248,7 @@ export default function Post({
   };
 
   const getPostLikes = async () => {
-    let likesUrl = "http://127.0.0.1:8000/author/" + id + "/postlikes";
+    let likesUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes";
 
     const likesRes = await axios.get(likesUrl, config).then((likesRes) => {
       console.log("LIKE RES DATA", likesRes.data);
@@ -273,7 +273,7 @@ export default function Post({
   };
 
   const getComments = async () => {
-    let commentsUrl = "http://127.0.0.1:8000/author/" + id + "/postcomments";
+    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments";
 
     const commentsRes = await axios
       .get(commentsUrl, config)
