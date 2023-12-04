@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ReactMarkdown from 'react-markdown';
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -418,7 +419,11 @@ export default function RemotePost({
           </div> */}
 
           <div className="description-section flex justify-center items-center">
-            <p>{description}</p>
+          {contentType === "text/markdown" ?
+              <p><ReactMarkdown>{description}</ReactMarkdown></p>
+              :
+              <p>{description}</p>
+            }
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
             <img src={img} alt="" className="w-full h-full object-cover" />
