@@ -229,15 +229,20 @@ class EditProfile(APIView):
 
         picture = request.data['profile_picture']
 
-        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
-        
-        request.data['profile_picture'] = image
+        new_request_data = request.data.copy()
 
-        request.data['username'] = author.username 
+        if picture != '':
+            image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        else:
+            image = author.profile_picture
 
-        request.data['password'] = author.password # Change this when we want to change passwords
+        new_request_data['profile_picture'] = image
 
-        serializer = AuthorSerializer(author, data = request.data)
+        new_request_data['username'] = author.username 
+
+        new_request_data['password'] = author.password # Change this when we want to change passwords
+
+        serializer = AuthorSerializer(author, data = new_request_data)
         
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
