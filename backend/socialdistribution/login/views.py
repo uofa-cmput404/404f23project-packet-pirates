@@ -41,7 +41,8 @@ from drf_yasg import openapi
 
 class AuthorRegistration(APIView):
     permission_classes = (permissions.AllowAny,)
-    
+    authentication_classes = ()
+
     @swagger_auto_schema(operation_description="Registers an author", 
                          operation_summary="Register", 
                          responses={201: AuthorSerializer()}, 
@@ -49,7 +50,7 @@ class AuthorRegistration(APIView):
     
     def post(self, request):
         picture = request.data['profile_picture']
-
+        print("PICTURE", picture)
         image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
         request.data['profile_picture'] = image
         request.data['user_id'] = uuid.uuid4()
@@ -211,6 +212,38 @@ class getNodes(APIView):
         serializer = NodeSerializer(nodes, many = True)
 
         return Response (serializer.data, status=status.HTTP_200_OK)
+
+class EditProfile(APIView):
+    '''
+    Edit a profile
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def post(self, request, pk):
+        print(request.data)
+
+        pk = uuid.UUID(pk)
+
+        author = AppAuthor.objects.get(user_id = pk)
+
+        picture = request.data['profile_picture']
+
+        image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
+        
+        request.data['profile_picture'] = image
+
+        request.data['username'] = author.username 
+
+        request.data['password'] = author.password # Change this when we want to change passwords
+
+        serializer = AuthorSerializer(author, data = request.data)
+        
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response ({"Message":"Profile Successfully Editted"}, status = status.HTTP_200_OK)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
 
 # REMOTE VIEWS
 class getAllAuthorsRemote(APIView):
