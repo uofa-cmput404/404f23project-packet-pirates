@@ -176,6 +176,7 @@ export default function RemotePost({
         auth = SC_auth;
       } else if (boxUrl.includes("web-weavers")) {
         auth = WW_auth;
+        boxUrl = boxUrl + "/"
       } else if (boxUrl.includes("node-net")) {
         auth = NN_auth;
       }
@@ -194,6 +195,16 @@ export default function RemotePost({
             object: post_id,
           };
 
+          if (boxUrl.includes("web-weavers")) {
+            likeData = {
+              context : "",
+              type: "Like",
+              author: authorResponse.data.id,
+              summary : user.user.username + ' likes your post',
+              object: post_id,
+            }
+          }
+  
           await axios.post(boxUrl, likeData, auth)
           .then(() => {
             console.log('Like sent to inbox')
