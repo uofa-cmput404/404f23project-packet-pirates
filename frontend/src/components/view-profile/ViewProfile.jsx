@@ -72,6 +72,13 @@ export default function ViewProfile({ user }) {
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+  
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
 
@@ -122,6 +129,8 @@ export default function ViewProfile({ user }) {
         } else if (url.includes("web-weavers")) {
           auth = WW_auth;
           url = url + "/";
+        } else if (url.includes("node-net")) {
+          auth = NN_auth;
         }
 
         return axios
@@ -207,6 +216,8 @@ export default function ViewProfile({ user }) {
       } else if (host.includes("web-weavers")) {
         auth = WW_auth;
         postsUrl = postsUrl + "/";
+      } else if (host.includes("node-net")) {
+        auth = NN_auth;
       }
 
       const postsRes = await axios
@@ -271,6 +282,8 @@ export default function ViewProfile({ user }) {
                       image = responses[index]["data"]["image"];
                     } else if (host.includes("web-weavers")) {
                       image = "https://picsum.photos/200/300";
+                    } else if (host.includes("node-net")) {
+                      image = "https://picsum.photos/200/300";
                     } else {
                       image = responses[index]["data"];
                     }
@@ -321,6 +334,8 @@ export default function ViewProfile({ user }) {
     } else if (host.includes("web-weavers")) {
       auth = WW_auth;
       authUrl = authUrl + "/";
+    } else if (host.includes("node-net")) {
+      auth = NN_auth;
     }
 
     const authRes = await axios
@@ -465,6 +480,8 @@ export default function ViewProfile({ user }) {
     } else if (host.includes("web-weavers")) {
       auth = WW_auth;
       url = url + '/';
+    } else if (host.includes("node-net")) {
+      auth = NN_auth;
     }
     
     console.log("RESPONSE DATA", responseData);

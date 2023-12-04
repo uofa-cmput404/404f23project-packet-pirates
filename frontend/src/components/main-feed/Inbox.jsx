@@ -34,6 +34,13 @@ export default function Inbox({ user }) {
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+
   const token = {
     headers: {
       "Content-Type": "application/json",
@@ -139,6 +146,8 @@ export default function Inbox({ user }) {
       } else if (url.includes("web-weavers")) {
         auth = WW_auth;
         url = url + "/";
+      } else if (url.includes("node-net")) {
+        auth = NN_auth;
       }
 
       postUrls.push([url, auth])
@@ -174,6 +183,8 @@ export default function Inbox({ user }) {
         } else if (url.includes("web-weavers")) {
           auth = WW_auth;
           url = url + "/";
+        } else if (url.includes("node-net")) {
+          auth = NN_auth;
         }
 
         imageUrls.push([url, auth])
@@ -204,6 +215,8 @@ export default function Inbox({ user }) {
               image = images[index]['data']['image']
 
             } else if (res.data.id.includes("web-weavers")) {
+              image = "https://picsum.photos/200/300";
+            } else if (res.data.id.includes("node-net")) {
               image = "https://picsum.photos/200/300";
             }
 

@@ -43,6 +43,13 @@ export default function MainPage({ user }) {
     },
   };
 
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+
   const getPosts = async () => {
     let postsUrl =
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/feedposts";
@@ -126,6 +133,8 @@ export default function MainPage({ user }) {
           } else if (url.includes("web-weavers")) {
             auth = WW_auth;
             url = url + "/";
+          } else if (url.includes("node-net")) {
+            auth = NN_auth;
           }
 
           return axios

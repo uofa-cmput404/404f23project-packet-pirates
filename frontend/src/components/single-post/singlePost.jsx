@@ -37,6 +37,13 @@ export default function SinglePost({ user }) {
       password: "12345",
     },
   };
+
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
   
   useEffect(() => {
 
@@ -80,6 +87,8 @@ export default function SinglePost({ user }) {
         } else if (url.includes("web-weavers")) {
           auth = WW_auth;
           url = url + "/";
+        } else if (url.includes("node-net")) {
+          auth = NN_auth;
         }
 
         return axios

@@ -43,7 +43,11 @@ class FollowerRemoteSerializer(serializers.Serializer):
                 basic = HTTPBasicAuth(c.WW_USER, c.WW_PASS)
                 req = requests.get(author_origin, auth=basic)
                 return req.json()
-    
+            elif ("node-net" in author_origin):
+                basic = HTTPBasicAuth(c.SCRIPTED_USER, c.SCRIPTED_PASS)
+                req = requests.get(author_origin, auth=basic)
+                return req.json()
+            
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         return rep

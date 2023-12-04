@@ -11,3 +11,7 @@ PP_PASS = "cmput404"
 WW_ENDPOINT = 'https://web-weavers-backend-fb4af7963149.herokuapp.com/'
 WW_USER = 'packet-pirates'
 WW_PASS = '12345'
+
+SCRIPTED_ENDPOINT = "https://node-net-46d70235bc29.herokuapp.com/"
+SCRIPTED_USER = "Pirate"
+SCRIPTED_PASS = "Pirate"
