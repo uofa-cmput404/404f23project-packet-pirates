@@ -9,7 +9,7 @@ export default function Register() {
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
 
-    const [profPic, setProfPic] = useState('');
+    const [profPic, setProfPic] = useState([]);
     const [dispPic, setDispPic] = useState('');
 
     const [dispName, setdispName] = useState('');
@@ -40,35 +40,9 @@ export default function Register() {
         console.log('user value is:', event.target.value);
     };
 
-    const info = {
-        'username' : user,
-        'password' : pass,
-        'github' : git,
-        'profile_picture' : profPic,
-        'display_name' : dispName,
-        'Authorization': 'Token ' + localStorage.getItem('access_token')
-        
-    }
-
-    const loginTest = {
-        'username' : user,
-        'password' : pass,
-        'Authorization': 'Token' + localStorage.getItem('access_token')
-    }
-
-    const SignUp = async (event) => {
-        event.preventDefault()
-        console.log(info)
-
-        const res = await axios.post("http://127.0.0.1:8000/register", info)
-        console.log(res.data)
-    
-        const res2 = await axios.post("http://127.0.0.1:8000/login", loginTest)
-        console.log(res2.data)
-      };
-
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const formData = new FormData();
         formData.append('username', user);
         formData.append('password', pass);
@@ -84,7 +58,6 @@ export default function Register() {
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    'Authorization': 'Token ' + localStorage.getItem('access_token')
                 },
             })
         .then((response) => {

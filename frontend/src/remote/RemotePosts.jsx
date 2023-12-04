@@ -232,7 +232,6 @@ export default function RemotePost({
       unlisted: unlisted,
     };
 
-    cookies.set('postData', JSON.stringify(postData))
     var post_link = "http://127.0.0.1:3000/post/" + id;
     console.log(post_link);
 
