@@ -475,7 +475,7 @@ class GetLikesOnPostRemote(APIView):
         
         post_id = uuid.UUID(post)
 
-        likes = PostLike.objects.filter(author = auth_id).filter(post_object = post_id)
+        likes = PostLike.objects.filter(post_object = post_id)
 
         serializer = LikeSerializerRemote(likes, many = True)
 
