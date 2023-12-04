@@ -9,7 +9,7 @@ export default function Register() {
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
 
-    const [profPic, setProfPic] = useState('');
+    const [profPic, setProfPic] = useState([]);
     const [dispPic, setDispPic] = useState('');
 
     const [dispName, setdispName] = useState('');
@@ -69,6 +69,7 @@ export default function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const formData = new FormData();
         formData.append('username', user);
         formData.append('password', pass);
@@ -84,7 +85,6 @@ export default function Register() {
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    'Authorization': 'Token ' + localStorage.getItem('access_token')
                 },
             })
         .then((response) => {
