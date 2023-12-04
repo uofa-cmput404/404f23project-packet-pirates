@@ -1,18 +1,14 @@
 import CreatePost from "../main-feed/CreatePost";
+import GitHubTracking from "../main-feed/GitHubTracking";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
-import Site from "./Site";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from 'universal-cookie'
-
-import { Navigate, useNavigate } from "react-router-dom";
 import SearchBar from "../main-feed/Search";
 
 export default function MainPage({ user }) {
-  const navigate = useNavigate();
-
   const [posts, setPosts] = useState(null)
   const cookies = new Cookies();
   const [friends, setFriends] = useState()
@@ -57,22 +53,19 @@ export default function MainPage({ user }) {
     const postsRes = await axios
       .get(postsUrl, config)
       .then((postsRes) => {
-        //Result of post query
-        console.log("POSTSRES_fomr", postsRes.data.Posts[0]);
-
+        console.log("POSTS RES DATA POST", postsRes.data.Posts);
         setPosts(
           postsRes.data.Posts.filter((post) => !post.is_private).map((post, index) => {
               const image_conditions = post.image_url === '' && post.image_file != ''
-              // console.log("TESTING", image_conditions)
               const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
-              // console.log("IMAGE", image)
-              // console.log("Private", post.is_private)
+
               return (
                 <Post
                   key={index}
                   user={user}
                   post_author={post.author}
                   title={post.title}
+                  content_type={post.content_type}
                   description={post.content}
                   img={image}
                   img_url={post.image_url}
@@ -84,7 +77,6 @@ export default function MainPage({ user }) {
               );
             })
           );
-        
 
       })
       .then(() => {})
@@ -92,7 +84,7 @@ export default function MainPage({ user }) {
         console.error("Error getting posts:", error);
       });
   };
-  console.log("user", user);
+
   const getConnections = async () => {
     // let connectionsUrl =
     //   "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
@@ -235,11 +227,11 @@ export default function MainPage({ user }) {
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
-          <div
-            className="profile h-fit mx-auto"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            {friends}
+          <div className="left-feed-container w-[250px] block top-[20px] h-min sticky">
+            <div className="profile h-fit mx-auto sticky top-[20px]">
+              {friends}
+            </div>
+            <GitHubTracking user={user} />
           </div>
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="">
