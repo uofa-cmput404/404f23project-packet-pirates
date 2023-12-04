@@ -580,8 +580,9 @@ export default function RemotePost({
               <p>{description}</p>
             }
           </div>
+
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
-            <img src={img} alt="" className="w-full h-full object-cover" />
+            {img !== '' && <img src={img} alt="" className="w-full h-full object-cover" />}
           </div>
 
           <div className="likes">
