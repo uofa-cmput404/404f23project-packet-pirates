@@ -69,10 +69,16 @@ export default function CreatePost({ user }) {
 
     if (value["value"] === "Private") {
       setIsPrivate(true);
+      setIsFriends(false);
+      setIsUnlisted(false);
     } else if (value["value"] === "Unlisted") {
       setIsUnlisted(true);
+      setIsPrivate(false);
+      setIsFriends(false);
     } else if (value["value"] === "Friends") {
       setIsFriends(true);
+      setIsPrivate(false);
+      setIsUnlisted(false);
     }
 
     console.log("Sent visibility is:", value);
