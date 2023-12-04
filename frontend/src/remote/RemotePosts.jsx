@@ -355,23 +355,6 @@ export default function RemotePost({
     // the id of the post, used as the last part of url
     console.log(id);
 
-    let postData = {
-      type: "post",
-      title: title,
-      id: post_id,
-      source: source,
-      origin: origin,
-      description: description,
-      contentType: contentType,
-      content: content,
-      author: post_author,
-      categories: categories,
-      comments: "",
-      published: published,
-      visibility: visibility,
-      unlisted: unlisted,
-    };
-
     var post_link = "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
     console.log(post_link);
 
