@@ -204,7 +204,6 @@ export default function Inbox({ user }) {
         .catch (error => console.error('Error', error))
       );
 
-      console.log("AUTH", auth)
       const likRequests = likeUrls.map(([url, auth]) => 
         axios.get(url, auth)
         .then(response => response)

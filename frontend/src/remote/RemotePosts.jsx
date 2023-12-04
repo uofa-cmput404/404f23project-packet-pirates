@@ -194,7 +194,6 @@ export default function RemotePost({
             object: post_id,
           };
 
-          console.log("AUTH2222222222", auth)
           await axios.post(boxUrl, likeData, auth)
           .then(() => {
             console.log('Like sent to inbox')
