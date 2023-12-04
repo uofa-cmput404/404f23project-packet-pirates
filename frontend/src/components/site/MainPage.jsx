@@ -3,6 +3,7 @@ import GitHubTracking from "../main-feed/GitHubTracking";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -14,6 +15,7 @@ export default function MainPage({ user }) {
   const cookies = new Cookies();
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
+  const navigate = useNavigate();
 
   const navigate = useNavigate()
   
@@ -255,37 +257,40 @@ export default function MainPage({ user }) {
           </div>
 
           <div className="flex-col justify-center mx-4">
-            <div className="search-bar">
+            <div className="search-bar sticky top-[20px] z-10">
               <SearchBar />
+            </div>
+            <div className="flex sticky top-[83px] mb-5">
+              <button
+                onClick={() => navigate("/inbox")}
+                className="block rounded-lg text-black bg-white w-1/2 mr-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+              >
+                <span>Inbox</span>
+                <img
+                  src="/inbox-button.png"
+                  alt="Inbox"
+                  className="inbox-button-img ml-3 h-7.5 w-10"
+                />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+              >
+                <span>Logout</span>
+                <img
+                  src="/logout-button.png"
+                  alt="Logout"
+                  className="Logout-button-img ml-3 h-7.5 w-10"
+                />
+              </button>
             </div>
             <div
               className="notifications h-fit mx-auto"
-              style={{ position: "sticky", top: "20px" }}
+              style={{ position: "sticky", top: "155px" }}
             >
               {notifications}
             </div>
-            <button
-              className="sticky top-[265px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
-              onClick={() => navigate("/inbox")}
-            >
-              <span>Inbox</span>
-              <img
-                src="/inbox-button.png"
-                alt="Inbox"
-                className="inbox-button-img ml-3 h-7.5 w-10"
-              />
-            </button>
-            <button
-              onClick={handleLogout}
-              className="sticky top-[320px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
-            >
-              <span>Logout</span>
-              <img
-                src="/logout-button.png"
-                alt="Logout"
-                className="Logout-button-img ml-3 h-7.5 w-10"
-              />
-            </button>
           </div>
         </div>
       </div>
