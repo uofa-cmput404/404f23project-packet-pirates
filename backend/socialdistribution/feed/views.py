@@ -82,7 +82,7 @@ class GetUsers(APIView):
         # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
         external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
         external_data2 = requests.get(c.WW_ENDPOINT+"authors/", auth=basic2).json()
-        external_data3 = requests.get(c.SCRIPTED_ENDPOINT+"authors/", auth=basic2).json()
+        external_data3 = requests.get(c.SCRIPTED_ENDPOINT+"authors/", auth=basic3).json()
 
         filtered_external_data = [
             {
