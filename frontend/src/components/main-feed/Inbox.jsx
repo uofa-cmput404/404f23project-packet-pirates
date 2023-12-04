@@ -179,7 +179,7 @@ export default function Inbox({ user }) {
         let likUrl = responses[res]['data']['id'] + '/likes'
 
         //Corresponding authorization
-        let auth = ''
+        var auth = ''
         if (imUrl.includes('packet-pirates')) {
           auth = PP_auth
         } else if (imUrl.includes("super-coding")) {
@@ -204,6 +204,7 @@ export default function Inbox({ user }) {
         .catch (error => console.error('Error', error))
       );
 
+      console.log("AUTH", auth)
       const likRequests = likeUrls.map(([url, auth]) => 
         axios.get(url, auth)
         .then(response => response)

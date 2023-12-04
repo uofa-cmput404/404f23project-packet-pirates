@@ -169,7 +169,7 @@ export default function RemotePost({
         user.user.user_id;
 
       //Corresponding authorization
-      let auth = "";
+      var auth = "";
       if (boxUrl.includes("packet-pirates")) {
         auth = PP_auth;
       } else if (boxUrl.includes("super-coding")) {
@@ -194,6 +194,7 @@ export default function RemotePost({
             object: post_id,
           };
 
+          console.log("AUTH2222222222", auth)
           await axios.post(boxUrl, likeData, auth)
           .then(() => {
             console.log('Like sent to inbox')
