@@ -244,7 +244,11 @@ export default function ViewProfile({ user }) {
 
           for (let i = 0; i < postData.length; i++) {
             console.log(postData[i]["id"] + "/image");
-            urls.push(postData[i]["id"] + "/image");
+            if (postData[i]["id"].includes("web-weavers")){
+                urls.push(postData[i]["id"] + "/image/");
+            } else {
+                urls.push(postData[i]["id"] + "/image");
+            }
           }
 
           console.log("URLS", urls);
@@ -287,12 +291,27 @@ export default function ViewProfile({ user }) {
                   .map((post, index) => {
                     var image = "";
                     if (host.includes("super-coding")) {
+
                       image = responses[index]["data"]["image"];
+
                     } else if (host.includes("web-weavers")) {
-                      image = "https://picsum.photos/200/300";
+                      if (responses[index]) {
+                        image = "data:" + postData[index].contentType + "," + postData[index].content
+                      } else {
+                        image = ""
+                      }
+
+                      // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
+                      // console.log("IMAGE TESTING", responses[index], postData[index])
+                      // console.log("IMAGE TESTING", "data:" + postData[index].contentType + "," + postData[index].content, postData[index])
+                      // image = "https://picsum.photos/200/300";
+
                     } else if (host.includes("node-net")) {
+
                       image = "https://picsum.photos/200/300";
+
                     } else {
+
                       image = responses[index]["data"];
                     }
                     return (
@@ -336,6 +355,49 @@ export default function ViewProfile({ user }) {
       
       // We can check if packet pirates is a friend of Sasuke
       var followingUrl = location.state['api'] + "/followers/" + user.user.user_id 
+      
+      const urls = []
+
+    //   urls.push(followersUrl)
+    //   urls.push(followReqUrl)
+    //   urls.push(followingUrl)
+
+    //   var auth = ''
+    //   const requests = urls.map((url) => {
+        
+    //     if (url.includes("packet-pirates")) {
+    //       console.log("PIRATE!");
+    //       auth = PP_auth;
+    //     } else if (url.includes("super-coding")) {
+    //       auth = SC_auth;
+    //     } else if (url.includes("web-weavers")) {
+    //       auth = WW_auth;
+    //       url = url + "/";
+    //     } else if (url.includes("node-net")) {
+    //       auth = NN_auth;
+    //     }
+
+    //     return axios
+    //       .get(url, auth)
+    //       .then((response) => response)
+    //       .catch((error) => console.error("Error", error))
+    //   }
+    // );
+
+    // Promise.all(requests).then((responses) => {
+    //   console.log("RESPONSESS", responses)
+    //   setAreFriends(responses[0]);
+    //   set_is_pending(responses[1])
+      
+    //   if (urls[2].includes("packet-pirates")) {
+    //     setIsFollowing(responses[2])
+    //     // console.log("DATA RESPONSE", isFollowing)
+    //   } else {
+    //     setIsFollowing(responses[2]['is_follower'])
+    //     // console.log("DATA RESPONSE", isFollowing)
+    //   }
+    //   console.log("PROMISE RESPONSES", is_pending, areFriends, isFollowing)
+    // })
 
       try {
         const response = await axios.get(followersUrl).then(async (data) => {
