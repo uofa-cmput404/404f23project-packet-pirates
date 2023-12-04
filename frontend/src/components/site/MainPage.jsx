@@ -5,6 +5,7 @@ import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie'
 import SearchBar from "../main-feed/Search";
 
@@ -14,6 +15,8 @@ export default function MainPage({ user }) {
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
 
+  const navigate = useNavigate()
+  
   const config = {
     headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
   };
