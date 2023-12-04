@@ -87,6 +87,8 @@ class PostSerializerRemote(serializers.ModelSerializer):
     
     def get_visibility(self, instance):
         if (instance.is_private == True):
+            return "PRIVATE"
+        elif (instance.is_friends == True):
             return "FRIENDS"
         elif (instance.is_private == False):
             return "PUBLIC"
