@@ -3,6 +3,7 @@ import GitHubTracking from "../main-feed/GitHubTracking";
 import Post from "../main-feed/Posts";
 import Profile from "../main-feed/Profile";
 import Notifications from "../main-feed/Notifications";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from 'universal-cookie'
@@ -13,6 +14,7 @@ export default function MainPage({ user }) {
   const cookies = new Cookies();
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
+  const navigate = useNavigate();
 
   const config = {
     headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
@@ -234,7 +236,7 @@ export default function MainPage({ user }) {
           </div>
 
           <div className="flex-col justify-center mx-4">
-            <div className="search-bar sticky top-[20px]">
+            <div className="search-bar sticky top-[20px] z-10">
               <SearchBar />
             </div>
             <div className="flex sticky top-[83px] mb-5">
