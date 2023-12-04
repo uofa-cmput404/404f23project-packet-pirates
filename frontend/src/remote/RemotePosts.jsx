@@ -233,7 +233,7 @@ export default function RemotePost({
     };
 
     cookies.set('postData', JSON.stringify(postData))
-    var post_link = "http://127.0.0.1:3000/post/" + id;
+    var post_link = "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
     console.log(post_link);
 
     navigator.clipboard

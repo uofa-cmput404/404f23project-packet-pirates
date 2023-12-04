@@ -340,7 +340,7 @@ export default function Post({
 
   const getPostAuthor = async () => {
     let authorUrl =
-      "http://127.0.0.1:8000/author/" + post_author + "/simpleauthor";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_author + "/simpleauthor";
 
     const authorRes = await axios
       .get(authorUrl, config)
