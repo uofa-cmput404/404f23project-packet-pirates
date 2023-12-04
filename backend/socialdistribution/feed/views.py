@@ -836,7 +836,7 @@ class GetAuthorsFollowersRemote(APIView):
         if (authors):
             return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
-        return Response({"message": "Author's Followers do not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_200_OK)
 
 
 
