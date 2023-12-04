@@ -823,7 +823,7 @@ class GetAuthorsFollowersRemote(APIView):
         if (authors):
             return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
-        return Response(status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
