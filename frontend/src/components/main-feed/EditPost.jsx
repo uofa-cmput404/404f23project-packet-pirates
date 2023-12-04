@@ -46,7 +46,7 @@ export default function EditPost({ user,
     console.log("Sent text is:", event.target.value);
   };
 
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState(img || img_url || "");
   const handleImageUrlTextChange = (event) => {
     setImageUrl(event.target.value);
     console.log("Sent Image URL is:", event.target.value);

@@ -271,6 +271,10 @@ export default function Inbox({ user }) {
       });
   };
 
+  const handleClear = (event) => {
+    console.log("Cleared");
+  };
+
   // const testApi = () => {
   //   console.log("test");
   //   console.log(user);
@@ -298,7 +302,16 @@ export default function Inbox({ user }) {
       <div className="container flex flex-col">
         <div className="inbox">Inbox page</div>
         <div className="sections flex flex-row justify-between">
-          <div className="posts">{showPost}</div>
+          <div className="posts">
+            <div className="fixed-button">
+              <button
+                className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+                onClick={handleClear}>
+                Clear Inbox
+              </button>
+            </div>
+            {showPost}
+            </div>
           <div className="other-info">
             <div className="">{inboxComments}</div>
             

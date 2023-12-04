@@ -66,6 +66,7 @@ function App() {
         console.log("Response from /author:", response);
         setIsLoggedIn(true);
         setAuthorInfo(response.data);
+        localStorage.setItem('author', JSON.stringify(response.data))
         if (response.data.session_id) {
           // User is logged in
           setIsLoggedIn(true);

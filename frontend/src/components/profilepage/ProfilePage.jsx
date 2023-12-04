@@ -6,9 +6,21 @@ export default function ProfilePage({ user }) {
     const navigate = useNavigate();
     const [pass, setPass] = useState('');
     const [git, setGit] = useState('');
+
+    const [dispPic, setDispPic] = useState('');
     const [profPic, setProfPic] = useState('');
+
     const [dispName, setdispName] = useState('');
     
+    var user = JSON.parse(localStorage.getItem('author'))
+
+    const config = {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      };
+
     const handlePassChange = event => {
         setPass(event.target.value);
         console.log('user value is:', event.target.value);
@@ -22,7 +34,8 @@ export default function ProfilePage({ user }) {
     const handleProfPicChange = event => {
         const file = event.target.files[0];
         if (file) {
-            setProfPic(URL.createObjectURL(file));
+            setProfPic(file);
+            setDispPic(URL.createObjectURL(event.target.files[0]))
         }
         console.log('user value is:', event.target.files);
     };
@@ -31,22 +44,31 @@ export default function ProfilePage({ user }) {
         setdispName(event.target.value);
         console.log('user value is:', event.target.value);
     };
-
+    
     const info = {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
         'display_name' : dispName,
-        'Authorization': 'Token ' + localStorage.getItem('access_token')
     }
+
 
     const SaveProfile = async (event) => {
         event.preventDefault()
-        console.log(info)
+
+        const formData = new FormData();
+        formData.append('password', info['password'])
+        formData.append('github', info['github'])
+        console.log(info['profile_picture'])
+        formData.append('profile_picture', info['profile_picture'])
+        formData.append('display_name', info['display_name'])
+
+        console.log("FORM DATA", formData)
 
         try {
-            const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/something", info);
+            const res = await axios.post("http://127.0.0.1:8000/author/" + user.user.user_id + "/editprofile", formData, config);
             console.log(res.data);
+            window.location.reload(false)
           } catch (error) {
             console.error("Error saving profile:", error);
           }
@@ -64,7 +86,7 @@ export default function ProfilePage({ user }) {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <div className="image-container w-24 h-24 my-6 ml-12 mr-8 rounded-full overflow-hidden bg-black">
                                     <img
-                                        src={profPic || "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
+                                        src={dispPic || "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />
