@@ -35,7 +35,7 @@ export default function Profile({ friends, user }) {
             Edit Profile
           </button>
           <div className="flex flex-col items-center">
-            <span>5</span>
+            <span>{friends.length}</span>
             <span>Connections</span>
           </div>
         </div>
