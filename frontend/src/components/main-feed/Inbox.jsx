@@ -144,29 +144,35 @@ export default function Inbox({ user }) {
     Promise.all(requests)
     .then(responses => {
       console.log(responses)
-      //Get profile images
+      //Get profile images and likes
       const imageUrls = []
+      const likeUrls = []
 
       //Create array of url-auth pairs again :(
       for (let res in responses) {
 
         //Post url
-        let url = responses[res]['data']['id'] + '/image'
+        let imUrl = responses[res]['data']['id'] + '/image'
+
+        //Likes url
+        let likUrl = responses[res]['data']['id'] + '/likes'
 
         //Corresponding authorization
         let auth = ''
-        if (url.includes('packet-pirates')) {
+        if (imUrl.includes('packet-pirates')) {
           auth = PP_auth
-        } else if (url.includes("super-coding")) {
+        } else if (imUrl.includes("super-coding")) {
           auth = SC_auth
-        } else if (url.includes("web-weavers")) {
+        } else if (imUrl.includes("web-weavers")) {
           auth = WW_auth;
-          url = url + "/";
-        } else if (url.includes("node-net")) {
+          imUrl = imUrl + "/";
+          likUrl = likUrl + "/";
+        } else if (imUrl.includes("node-net")) {
           auth = NN_auth;
         }
 
-        imageUrls.push([url, auth])
+        imageUrls.push([imUrl, auth])
+        likeUrls.push([likUrl, auth])
 
       }
 
@@ -177,55 +183,74 @@ export default function Inbox({ user }) {
         .catch (error => console.error('Error', error))
       );
 
+      const likRequests = likeUrls.map(([url, auth]) => 
+        axios.get(url, auth)
+        .then(response => response)
+        .catch (error => console.error('Error', error))
+      );
+
       Promise.all(imgRequests)
       .then(images => {
+
+        Promise.all(likRequests)
+        .then(likes => {
         
-        setShowPost(() => [
-          responses.map((res, index) => {
+          setShowPost(() => [
+            responses.map((res, index) => {
 
-            let image = ''
+              let image = ''
+              let num_likes = 0
 
-            if (res.data.id.includes("packet-pirates")){
+              if (res.data.id.includes("packet-pirates")){
 
-              image = images[index]['data']
+                image = images[index]['data']
+                num_likes = likes[index]['data']['length']
 
-            } else if (res.data.id.includes("super-coding")){
+              } else if (res.data.id.includes("super-coding")){
 
-              image = images[index]['data']['image']
+                image = images[index]['data']['image']
+                num_likes = likes[index]['data']['length']
 
-            } else if (res.data.id.includes("web-weavers")) {
-              image = "https://picsum.photos/200/300";
-            } else if (res.data.id.includes("node-net")) {
-              image = "https://picsum.photos/200/300";
-            }
+              } else if (res.data.id.includes("web-weavers")) {
 
-            return (
-              <RemotePost
-                key={index}
-                user={user}
-                post_author={res.data.author}
-                title={res.data.title}
-                description={res.data.description}
-                content={res.data.content}
-                img={image}
-                likes={res.data.likes_count}  
-                post_id = {res.data.id}
-                categories = {res.data.categories}
-                contentType = {res.data.contentType}
-                count = {res.data.count}
-                origin = {res.data.origin}
-                published = {res.data.published}
-                source = {res.data.source}
-                unlisted = {res.data.unlisted}
-                visibility = {res.data.visibility}
-              />
-            );
-          }),
-        ]);
+                image = "https://picsum.photos/200/300";
+                num_likes = likes[index]['data']['items']['length']
 
+              } else if (res.data.id.includes("node-net")) {
+
+                image = "https://picsum.photos/200/300";
+                num_likes = likes[index]['data']['length']
+
+              }
+
+              return (
+                <RemotePost
+                  key={index}
+                  user={user}
+                  post_author={res.data.author}
+                  title={res.data.title}
+                  description={res.data.description}
+                  content={res.data.content}
+                  img={image}
+                  likes={num_likes}  
+                  post_id = {res.data.id}
+                  categories = {res.data.categories}
+                  contentType = {res.data.contentType}
+                  count = {res.data.count}
+                  origin = {res.data.origin}
+                  published = {res.data.published}
+                  source = {res.data.source}
+                  unlisted = {res.data.unlisted}
+                  visibility = {res.data.visibility}
+                />
+              );
+            }),
+          ]);
+        })
       })
-
     })
+
+
 
   };
 

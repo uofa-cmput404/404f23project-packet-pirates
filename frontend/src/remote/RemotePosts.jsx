@@ -110,8 +110,8 @@ export default function RemotePost({
         await axios.post(
           "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
           {
-            post_object_id: post_id,
-            author: user.user.user_id,
+            post_object_id: post_uuid,
+            author: user,
             like_count: newLikeCount,
           },
           config,
@@ -125,8 +125,8 @@ export default function RemotePost({
           "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
           {
             data: {
-              post_object_id: post_id,
-              author: user.user.user_id,
+              post_object_id: post_uuid,
+              author: user,
               like_count: newLikeCount,
             },
             headers: {
@@ -486,6 +486,54 @@ export default function RemotePost({
     window.location.reload(false);
   };
 
+  async function checkLikeStatus () {
+    
+    //Likes url
+    let likUrl = post_id + '/likes'
+
+    //Corresponding authorization
+    let auth = ''
+    if (post_id.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (post_id.includes("super-coding")) {
+      auth = SC_auth
+    } else if (post_id.includes("web-weavers")) {
+      auth = WW_auth;
+      likUrl = likUrl + "/";
+    } else if (post_id.includes("node-net")) {
+      auth = NN_auth;
+    }
+
+    await axios.get(likUrl, auth)
+    .then((likeResponse) => {
+
+      let likesList = []
+
+      if (post_id.includes("web-weavers")) {
+
+        likesList = likeResponse['data']['items']
+
+      } else {
+
+        likesList = likeResponse['data']
+
+      }
+
+      for (let like in likesList){
+        console.log(':(', likesList[like])
+
+        if (likesList[like]['author']['id'].split('/')[4] === user.user.user_id){
+
+          setHasLiked(true);
+
+        }
+
+      }
+
+    })
+
+  };
+
   useEffect(() => {
     console.log("user", user);
     console.log("title", title);
@@ -495,6 +543,8 @@ export default function RemotePost({
     console.log("likes", likes);
     console.log("author", post_author);
     fetchCommentData();
+    checkLikeStatus();
+
   }, []);
 
   return (
