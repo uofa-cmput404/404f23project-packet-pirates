@@ -16,8 +16,6 @@ export default function MainPage({ user }) {
   const [friends, setFriends] = useState()
   const [notifications, setNotifications] = useState()
   const navigate = useNavigate();
-
-  const navigate = useNavigate()
   
   const config = {
     headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
