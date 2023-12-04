@@ -237,31 +237,34 @@ export default function MainPage({ user }) {
             <div className="search-bar sticky top-[20px]">
               <SearchBar />
             </div>
-            <button
-              className="sticky top-[83px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
-              onClick={() => navigate("/inbox")}
-            >
-              <span>Inbox</span>
-              <img
-                src="/inbox-button.png"
-                alt="Inbox"
-                className="inbox-button-img ml-3 h-7.5 w-10"
-              />
-            </button>
-            <button
-              onClick={handleLogout}
-              className="sticky top-[145px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
-            >
-              <span>Logout</span>
-              <img
-                src="/logout-button.png"
-                alt="Logout"
-                className="Logout-button-img ml-3 h-7.5 w-10"
-              />
-            </button>
+            <div className="flex sticky top-[83px] mb-5">
+              <button
+                onClick={() => navigate("/inbox")}
+                className="block rounded-lg text-black bg-white w-1/2 mr-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+              >
+                <span>Inbox</span>
+                <img
+                  src="/inbox-button.png"
+                  alt="Inbox"
+                  className="inbox-button-img ml-3 h-7.5 w-10"
+                />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+              >
+                <span>Logout</span>
+                <img
+                  src="/logout-button.png"
+                  alt="Logout"
+                  className="Logout-button-img ml-3 h-7.5 w-10"
+                />
+              </button>
+            </div>
             <div
               className="notifications h-fit mx-auto"
-              style={{ position: "sticky", top: "208px" }}
+              style={{ position: "sticky", top: "155px" }}
             >
               {notifications}
             </div>
