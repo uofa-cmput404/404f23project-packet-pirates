@@ -1,13 +1,26 @@
 import axios from "axios";
 
 export default function Notifications({ notifications , user}) {
+
+  const clearNotifications = async () => {
+    console.log("Clear non follow notifs");
+  };
+
   return (
     <button
-      className="notifications-container flex flex-col justify-start items-start w-fit h-full bg-white border border-gray-300 p-4 rounded-lg divide-y"
+      className="notifications-container flex flex-col w-full h-full bg-white border border-gray-300 p-4 rounded-lg"
       style={{ boxShadow: "8px 8px 0px 0px rgba(0, 0, 0, 0.2)" }}
     >
-      <div className="header flex flex-col justify-center items-center">
-        <h2 className="text-xl font-semibold">Notifications</h2>
+      <div className="header-clear-container flex justify-between items-center mb-4">
+        <div className="header">
+          <h2 className="text-xl font-semibold">Notifications</h2>
+        </div>
+        <button
+          className="border border-gray-700 rounded-full p-1 text-white bg-gray-700 ml-12"
+          onClick={clearNotifications}
+        >
+          Clear
+        </button>
       </div>
       <div className="notifications">
         <ul>

@@ -192,3 +192,10 @@ h1 {
 .share-option-button:hover {
   background-color: #5C7F88;
 }
+
+.fixed-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+}

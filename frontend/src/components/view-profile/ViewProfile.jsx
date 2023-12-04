@@ -530,9 +530,14 @@ export default function ViewProfile({ user }) {
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="sticky top-[320px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
+                  className="sticky top-[320px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
                 >
-                  Logout
+                  <span>Logout</span>
+                  <img
+                    src="/logout-button.png"
+                    alt="Logout"
+                    className="Logout-button-img ml-3 h-7.5 w-10"
+                  />
                 </button>
               </div>
             </div>
