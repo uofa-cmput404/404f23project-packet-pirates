@@ -51,7 +51,7 @@ class AppAuthor(AbstractBaseUser, PermissionsMixin):
 
     url = models.CharField(max_length=200, blank=True) # url
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     is_staff = True
 
