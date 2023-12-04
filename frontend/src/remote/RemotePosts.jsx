@@ -83,7 +83,7 @@ export default function RemotePost({
   } else if (post_id.includes("web-weavers")) {
     auth = WW_auth;
     // post_id = post_id + "/";
-  } else if (boxUrl.includes("node-net")) {
+  } else if (post_id.includes("node-net")) {
     auth = NN_auth;
   }
 

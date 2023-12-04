@@ -125,7 +125,7 @@ export default function Inbox({ user }) {
       } else if (url.includes("web-weavers")) {
         auth = WW_auth;
         url = url + "/";
-      } else if (boxUrl.includes("node-net")) {
+      } else if (url.includes("node-net")) {
         auth = NN_auth;
       }
 
@@ -162,7 +162,7 @@ export default function Inbox({ user }) {
         } else if (url.includes("web-weavers")) {
           auth = WW_auth;
           url = url + "/";
-        } else if (boxUrl.includes("node-net")) {
+        } else if (url.includes("node-net")) {
           auth = NN_auth;
         }
 
