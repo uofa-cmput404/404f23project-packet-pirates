@@ -372,7 +372,6 @@ export default function RemotePost({
       unlisted: unlisted,
     };
 
-    cookies.set('postData', JSON.stringify(postData))
     var post_link = "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
     console.log(post_link);
 
