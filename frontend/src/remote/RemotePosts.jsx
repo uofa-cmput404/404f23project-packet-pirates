@@ -263,9 +263,9 @@ export default function RemotePost({
             postComments = response.data;
           } else if (url.includes("super-coding")) {
             postComments = response.data.comments;
+          } else if (url.includes("web-weavers")) {
+            postComments = response.data.items;
           }
-          // } else if (url.includes("web-weavers")) {
-
           // } else if (url.includes("node-net")) {
 
           // }
