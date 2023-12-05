@@ -224,7 +224,7 @@ export default function Post({
 
           console.log("TEsting sending post", postData);
 
-          await axios.post(boxUrl, postData, PP_auth).then(() => {
+          await axios.post(boxUrl, postData, auth).then(() => {
 
             setSharingModalOpen(false);
             console.log("Successfully sent post to inbox");
