@@ -413,6 +413,24 @@ class NotificationViews(APIView):
     
     def delete(self, request, pk):
         print("Notify DATA", request.data)
+
+        notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
+
+        if (notification_object):
+            notification_object.delete()
+            return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
+
+        return Response({"Message": "Error has occured when trying to delete notification"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteAllNotifications(APIView):
+    @swagger_auto_schema(operation_description="Delete all notification objects",
+        operation_summary="Delete all notification objects",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+    
+    def delete(self, request, pk):
+        print("Notify DATA", request.data)
         pk = uuid.UUID(pk)
         notification_objects = Notifications.objects.filter(author = pk).filter(is_follow_notification = False)
         # notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
@@ -424,7 +442,6 @@ class NotificationViews(APIView):
             return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_200_OK)
-
 
 class InboxViewPosts(APIView):
     '''
