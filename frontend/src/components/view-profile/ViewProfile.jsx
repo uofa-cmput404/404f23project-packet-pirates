@@ -27,6 +27,7 @@ export default function ViewProfile({ user }) {
   const [is_pending, set_is_pending] = useState(null);
   const [areFriends, setAreFriends] = useState(null);
   const [isFollowing, setIsFollowing] = useState(null);
+  const [showFollowPopup, setShowFollowPopup] = useState(false);
 
   const [followButtons, setFollowButtons] = useState(null);
   const navigate = useNavigate();
@@ -667,7 +668,7 @@ export default function ViewProfile({ user }) {
     getAuthorInfo();
     checkFriendship();
     console.log("posts", posts);
-  }, [author, is_pending, areFriends, isFollowing]);
+  }, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
 
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
@@ -720,6 +721,12 @@ export default function ViewProfile({ user }) {
                     </button>
                   )}
 
+                  {showFollowPopup && (
+                    <div className="follow-popup">
+                      Follow request sent!
+                    </div>
+                  )}
+
                   {isFollowing && (
                     <button
                       className="bg-gray-500 text-white px-2 py-2 rounded-md cursor-not-allowed w-24"
@@ -762,6 +769,7 @@ export default function ViewProfile({ user }) {
   };
 
   const handleFollow = async (event) => {
+    // console.log("handleFollow function called");
     // console.log("FOLLOWING");
     // console.log(author);
     // console.log("this is the user" + user.user);
@@ -822,7 +830,14 @@ export default function ViewProfile({ user }) {
       };
     }
 
-   
+    // Show follow request popup
+    setShowFollowPopup(true);
+    console.log("After setShowFollowPopup", showFollowPopup);
+
+    // Set a timer to hide the popup after 3 seconds
+    const timer = setTimeout(() => {
+      setShowFollowPopup(false);
+    }, 3000);
 
     var url = location.state["api"] + "/inbox"
     if (host.includes("packet-pirates")) {
