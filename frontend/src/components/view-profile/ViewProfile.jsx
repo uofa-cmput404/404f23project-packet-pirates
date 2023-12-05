@@ -278,6 +278,7 @@ export default function ViewProfile({ user }) {
                       title={post.title}
                       description={post.description}
                       content={post.content}
+                      contentType = {post.contentType}
                       img={image}
                       likes={post.likes_count}
                       post_id={post.id}
@@ -323,6 +324,7 @@ export default function ViewProfile({ user }) {
                         title={post.title}
                         description={post.description}
                         content={post.content}
+                        contentType = {post.contentType}
                         img={image}
                         likes={post.likes_count}
                         post_id={post.id}

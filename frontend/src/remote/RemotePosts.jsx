@@ -563,12 +563,12 @@ export default function RemotePost({
     console.log("img", img);
     console.log("likes", likes);
     console.log("author", post_author);
+    console.log("contentType", contentType);
     fetchCommentData();
     checkLikeStatus();
     handleEditAccess();
 
   }, []);
-
   return (
     <>
       <li className="list-none mb-5">
