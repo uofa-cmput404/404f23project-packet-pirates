@@ -212,8 +212,19 @@ export default function Inbox({ user }) {
                 num_likes = likes[index]['data']['length']
 
               } else if (res.data.id.includes("web-weavers")) {
+                
+                // Change this to the post data here
+                if (responses[index]) {
+                  image = "data:" + responses[index]['data'].contentType + "," + responses[index]['data'].content
+                } else {
+                  image = ""
+                }
 
-                image = "https://picsum.photos/200/300";
+                // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
+                // console.log("IMAGE TESTING", responses[index], postData[index])
+                // console.log("IMAGE TESTING", "data:" + responses[index]['data'].contentType + "," + responses[index]['data'].content, responses[index])
+                // image = "https://picsum.photos/200/300";
+
                 num_likes = likes[index]['data']['items']['length']
 
               } else if (res.data.id.includes("node-net")) {

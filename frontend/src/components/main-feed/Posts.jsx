@@ -47,6 +47,34 @@ export default function Post({
     headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
 
+  const SC_auth = {
+    auth: {
+      username: "packet_pirates",
+      password: "pass123$",
+    },
+  };
+
+  const PP_auth = {
+    auth: {
+      username: "packetpirates",
+      password: "cmput404",
+    },
+  };
+
+  const WW_auth = {
+    auth: {
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
+
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
+    },
+  };
+
   const handleEdit = () => {
     // Handle edit functionality
   };
@@ -143,12 +171,15 @@ export default function Post({
     // do request to retrieve all your followers
     // this will be those you can directly dm to their inbox
     // ** double check though **
-    let url =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/authorfollowers";
+    let followersUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      user.user.user_id +
+      "/followers";
 
     try {
-      const response = await axios.get(url, config);
-      setShareableAuthors(response.data["Friends"]);
+      const response = await axios.get(followersUrl, PP_auth);
+      console.log(response);
+      setShareableAuthors(response.data["items"]);
     } catch (err) {
       // Handle err
       console.log("Oh no, an error", err);
@@ -160,34 +191,75 @@ export default function Post({
   };
 
   async function handleShareToClick(author) {
-    console.log("SHARED TO FOLLOWER", author);
-    let url = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author.friend + "/inbox/local";
-    let API = window.location.origin + `/posts/${id}`;
+    //Inbox url
+    let boxUrl = author.id + "/inbox";
+    console.log("BOX URL", boxUrl);
+    //Author url (Sending post)
+    let authUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      user.user.user_id;
 
-    let shareData = {
-      author: author,
-      posts: {
-        [id]: {
-          origin: "local",
-          API: API,
-          "post author": post_author,
-        },
-      },
-      post_comments: commentsData,
-      post_likes: postLikes,
-      follow_requests: null,
-    };
+    let postUrl = 
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + 
+      post_author + '/posts/' + id
 
-    console.log("SHARED DATA WITH CLICKED AUTHOR", shareData);
-
-    try {
-      const response = await axios.post(url, shareData, config);
-      console.log("RESPONSE", response);
-      console.log("DATA", response.data);
-    } catch (err) {
-      console.log("Error when sharing to followers inbox");
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    } else if (boxUrl.includes("web-weavers")) {
+      auth = WW_auth;
+      boxUrl = boxUrl + "/";
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
     }
-    setSharingModalOpen(false);
+    
+    try {
+
+      await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
+
+        await axios.get(postUrl, PP_auth).then(async (postResponse) => {
+
+          console.log(postResponse)
+          console.log(authorResponse)
+        
+          //NOT SURE YET
+          let postData = {
+            type: "post",
+            title: postResponse.data.title,
+            id: postResponse.data.id,
+            source: postResponse.data.source,
+            origin: postResponse.data.origin,
+            description: postResponse.data.description,
+            contentType: postResponse.data.contentType,
+            content: postResponse.data.content,
+            author: postResponse.data.author,
+            categories: postResponse.data.categories,
+            comments: "",
+            published: postResponse.data.published,
+            visibility: postResponse.data.visibility,
+            unlisted: postResponse.data.unlisted,
+            sent_by: authorResponse.data,
+          };
+
+          console.log("TEsting sending post", postData);
+
+          await axios.post(boxUrl, postData, auth).then(() => {
+
+            setSharingModalOpen(false);
+            console.log("Successfully sent post to inbox");
+
+          });
+
+        })
+
+      });
+    } catch (error) {
+
+      console.log(error);
+
+    }
   }
 
   const handleCopyLink = () => {
@@ -388,44 +460,6 @@ export default function Post({
                 <span className="text-center">
                   <h1>{title}</h1>
                 </span>
-
-                {/* Post Edit Button */}
-                {isEditable && (
-                  <Popup
-                    trigger={
-                      <button
-                        onClick={handleEdit}
-                        className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full"
-                      >
-                        Edit
-                      </button>
-                    }
-                    modal={true}
-                    closeOnDocumentClick={false}
-                  >
-                    {(close) => (
-                      <>
-                        <EditPost
-                          user={user}
-                          titl={title}
-                          description={description}
-                          img={img}
-                          img_url={img_url}
-                          id={id}
-                          is_private={is_private}
-                          unlisted={unlisted}
-                        />
-
-                        <button
-                          className="close absolute top-[.5rem] right-[.95rem]"
-                          onClick={close}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
-                  </Popup>
-                )}
               </div>
             </div>
           </div>
@@ -578,14 +612,14 @@ export default function Post({
               <li key={index}>
                 <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                   <img
-                    src={author.friend_pfp}
+                    src={author.profileImage}
                     alt="profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="username ml-5">
                   <span className="border border-[#A5C9CA] bg-[#A5C9CA] w-fit pl-3 pr-3 text-black rounded-full">
-                    {author.friend_username}
+                    {author.displayName}
                   </span>
                 </div>
                 <button
