@@ -377,7 +377,11 @@ export default function ViewProfile({ user }) {
           const likeUrls = []
 
           let allPosts = []
-          if (url.includes("web-weavers")) { allPosts = posts['data']['items'] } else { allPosts = posts['data'] }
+          if (url.includes("web-weavers")) { 
+            allPosts = posts['data']['items'] 
+          } else { 
+            allPosts = posts['data'] 
+          }
     
           //Create array of url-auth pairs again :(
           for (let res in allPosts) {
@@ -488,7 +492,7 @@ export default function ViewProfile({ user }) {
               } else {
 
                 setPosts(() => [
-                  posts['data']
+                  allPosts
                   .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
                   .map((res, index) => {
       
