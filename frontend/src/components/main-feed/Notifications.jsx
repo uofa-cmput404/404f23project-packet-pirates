@@ -8,7 +8,7 @@ export default function Notifications({ notifications , user}) {
       'Authorization': 'Token ' + localStorage.getItem('access_token')
     }
   };
-  
+
   var deleteUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/deletenotifs";
   const clearNotifications = async () => {
     console.log("Clear non follow notifs");
@@ -51,6 +51,13 @@ export default function Notifications({ notifications , user}) {
 
 export function Notification({ user, index, notification }) {
   const isFollowRequest = notification.is_follow_notification;
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
+    }
+  };
 
   const requestDeclined = async (event) => {
 
