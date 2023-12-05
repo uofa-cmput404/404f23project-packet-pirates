@@ -87,7 +87,7 @@ export default function ViewProfile({ user }) {
 
 
   useEffect(() => {
-    const getUrl = "http://127.0.0.1:8000";
+    const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
     console.log("author", author);
     console.log("user", user);
@@ -191,7 +191,7 @@ export default function ViewProfile({ user }) {
 
     const getNotifications = async () => {
       let notificationsUrl =
-        "http://127.0.0.1:8000/author/" +
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
         user.user.user_id +
         "/authornotifications";
 
