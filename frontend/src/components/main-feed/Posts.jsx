@@ -182,6 +182,17 @@ export default function Post({
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + 
       post_author + '/posts/' + id
 
+    let auth = ''
+    if (boxUrl.includes('packet-pirates')) {
+      auth = PP_auth
+    } else if (boxUrl.includes("super-coding")) {
+      auth = SC_auth
+    } else if (boxUrl.includes("web-weavers")) {
+      auth = WW_auth;
+      boxUrl = boxUrl + "/";
+    } else if (boxUrl.includes("node-net")) {
+      auth = NN_auth;
+    }
     
     try {
 
