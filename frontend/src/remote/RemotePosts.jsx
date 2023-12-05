@@ -327,6 +327,7 @@ export default function RemotePost({
     } else if (boxUrl.includes("super-coding")) {
       auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
+      boxUrl = boxUrl + "/"
       auth = WW_auth;
     } else if (boxUrl.includes("node-net")) {
       auth = NN_auth;
