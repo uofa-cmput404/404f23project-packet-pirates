@@ -82,6 +82,7 @@ export default function ViewProfile({ user }) {
   
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
+  var ownProfile = user.user.user_id === location.state['api'].split('/')[4];
 
 
   useEffect(() => {
@@ -487,32 +488,39 @@ export default function ViewProfile({ user }) {
               {author + "'s profile"}
             </h2>
 
-            {areFriends && !is_pending && (
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-md"
-                onClick={handleUnfollow}
-              >
-                Unfollow
-              </button>
-            )}
+            <div className="flex space-x-4">
+              {!ownProfile && isFollowing !== null && (
+                <>
+                  {!isFollowing && (
+                    <button
+                      className="bg-blue-500 text-white px-2 py-2 rounded-md w-24"
+                      onClick={handleFollow}
+                    >
+                      Follow
+                    </button>
+                  )}
 
-            {!areFriends && !is_pending && (
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                onClick={handleFollow}
-              >
-                Follow
-              </button>
-            )}
+                  {isFollowing && (
+                    <button
+                      className="bg-gray-500 text-white px-2 py-2 rounded-md cursor-not-allowed w-24"
+                      onClick={handleFollow}
+                      disabled
+                    >
+                      Following
+                    </button>
+                  )}
 
-            {is_pending && !areFriends && (
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-md"
-                disabled
-              >
-                Pending
-              </button>
-            )}
+                  {isFollowing && areFriends && (
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
+                      onClick={handleRemove}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         );
       })
@@ -613,13 +621,28 @@ export default function ViewProfile({ user }) {
     axios.post(url, responseData, auth);
   };
 
-  const handleUnfollow = async (event) => {
+  // const handleUnfollow = async (event) => {
+  //   event.preventDefault();
+  
+  //   let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
+
+  //   try {
+  //     const res = await axios.delete(unfollowUrl).then((res) => {
+  //       console.log(res.data);
+  //       setAreFriends(false);
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const handleRemove = async (event) => {
     event.preventDefault();
   
-    let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
+    let removeUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
 
     try {
-      const res = await axios.delete(unfollowUrl).then((res) => {
+      const res = await axios.delete(removeUrl).then((res) => {
         console.log(res.data);
         setAreFriends(false);
       });
@@ -627,6 +650,7 @@ export default function ViewProfile({ user }) {
       console.log(err);
     }
   };
+
 
   return (
     <>
