@@ -219,6 +219,7 @@ export default function MainPage({ user }) {
     getConnections();
     getNotifications();
   }, []);
+// }, [notifications]);
 
   const handleLogout = async (event) => {
     event.preventDefault();

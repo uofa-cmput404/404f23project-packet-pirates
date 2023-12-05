@@ -437,8 +437,8 @@ class DeleteAllNotifications(APIView):
 
         if (notification_objects):
             for notification in notification_objects:
-                print(notification)
-                # notification.delete()
+                # print(notification)
+                notification.delete()
             return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_200_OK)

@@ -1,9 +1,20 @@
 import axios from "axios";
 
 export default function Notifications({ notifications , user}) {
-
+  
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': 'Token ' + localStorage.getItem('access_token')
+    }
+  };
+  
+  var deleteUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/deletenotifs";
   const clearNotifications = async () => {
     console.log("Clear non follow notifs");
+    const deleteNotifs = await axios.delete(deleteUrl, config).then(() => {
+      console.log("Success")
+    })
   };
 
   return (
@@ -37,13 +48,6 @@ export default function Notifications({ notifications , user}) {
     </button>
   );
 }
-
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-    'Authorization': 'Token ' + localStorage.getItem('access_token')
-  }
-};
 
 export function Notification({ user, index, notification }) {
   const isFollowRequest = notification.is_follow_notification;
