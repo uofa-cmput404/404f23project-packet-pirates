@@ -47,10 +47,31 @@ export default function Post({
     headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
 
+  const SC_auth = {
+    auth: {
+      username: "packet_pirates",
+      password: "pass123$",
+    },
+  };
+
   const PP_auth = {
     auth: {
       username: "packetpirates",
       password: "cmput404",
+    },
+  };
+
+  const WW_auth = {
+    auth: {
+      username: "packet-pirates",
+      password: "12345",
+    },
+  };
+
+  const NN_auth = {
+    auth: {
+      username: "Pirate",
+      password: "Pirate",
     },
   };
 
