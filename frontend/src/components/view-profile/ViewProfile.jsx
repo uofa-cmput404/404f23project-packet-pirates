@@ -210,141 +210,359 @@ export default function ViewProfile({ user }) {
         });
     };
 
-    let auth = "";
-    const fetchPosts = async () => {
-      let postsUrl =
-        // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
-        location.state["api"] + "/posts";
-      let host = new URL(location.state["api"]).hostname;
+    // const fetchPosts = async () => {
+    //   let postsUrl =
+    //     // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
+    //     location.state["api"] + "/posts";
+    //   let host = new URL(location.state["api"]).hostname;
 
-      if (host.includes("packet-pirates")) {
-        console.log("PIRATE!");
-        auth = PP_auth;
-      } else if (host.includes("super-coding")) {
-        auth = SC_auth;
-      } else if (host.includes("web-weavers")) {
+    //   if (host.includes("packet-pirates")) {
+    //     console.log("PIRATE!");
+    //     auth = PP_auth;
+    //   } else if (host.includes("super-coding")) {
+    //     auth = SC_auth;
+    //   } else if (host.includes("web-weavers")) {
+    //     auth = WW_auth;
+    //     postsUrl = postsUrl + "/";
+    //   } else if (host.includes("node-net")) {
+    //     auth = NN_auth;
+    //   }
+
+    //   const postsRes = await axios
+    //     .get(postsUrl, auth)
+    //     .then((postsRes) => {
+    //       console.log("POSTSRES", postsRes.status);
+    //       console.log("posts", postsRes.data);
+    //       const urls = [];
+    //       const likeUrls = [];
+
+    //       var postData = "";
+    //       if (postsRes.data.items) {
+    //         postData = postsRes.data.items;
+    //       } else {
+    //         postData = postsRes.data;
+    //       }
+
+    //       for (let i = 0; i < postData.length; i++) {
+    //         console.log(postData[i]["id"] + "/image");
+    //         if (postData[i]["id"].includes("web-weavers")){
+    //             urls.push(postData[i]["id"] + "/image/");
+    //         } else {
+    //             urls.push(postData[i]["id"] + "/image");
+    //         }
+    //       }
+
+    //       console.log("URLS", urls);
+
+    //       const requests = urls.map((url) =>
+    //         axios
+    //           .get(url, auth)
+    //           .then((response) => response)
+    //           .catch((error) => console.error("Error", error))
+    //       );
+
+    //       Promise.all(requests).then((responses) => {
+    //         // console.log("RESPONSES", responses);
+    //         // console.log("RESPONSE", responses[0]['data']['image'])
+
+    //         if (author === user.user.username) {
+    //           setPosts(
+    //             postData.map((post, index) => {
+    //               // As the user, want to be able to see your all your posts.
+    //               const image = responses[index]["data"];
+    //               return (
+    //                 <RemotePost
+    //                   key={index}
+    //                   user={user}
+    //                   post_author={post.author}
+    //                   title={post.title}
+    //                   description={post.description}
+    //                   content={post.content}
+    //                   contentType = {post.contentType}
+    //                   img={image}
+    //                   likes={post.likes_count}
+    //                   post_id={post.id}
+    //                 />
+    //               );
+    //             })
+    //           );
+    //         } else {
+    //           setPosts(
+    //             postData
+    //               .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
+    //               .map((post, index) => {
+    //                 var image = "";
+    //                 if (host.includes("super-coding")) {
+
+    //                   image = responses[index]["data"]["image"];
+
+    //                 } else if (host.includes("web-weavers")) {
+    //                   if (responses[index]) {
+    //                     image = "data:" + postData[index].contentType + "," + postData[index].content
+    //                   } else {
+    //                     image = ""
+    //                   }
+
+    //                   // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
+    //                   // console.log("IMAGE TESTING", responses[index], postData[index])
+    //                   // console.log("IMAGE TESTING", "data:" + postData[index].contentType + "," + postData[index].content, postData[index])
+    //                   // image = "https://picsum.photos/200/300";
+
+    //                 } else if (host.includes("node-net")) {
+
+    //                   image = "https://picsum.photos/200/300";
+
+    //                 } else {
+
+    //                   image = responses[index]["data"];
+    //                 }
+    //                 return (
+    //                   <RemotePost
+    //                     key={index}
+    //                     user={user}
+    //                     post_author={post.author}
+    //                     title={post.title}
+    //                     description={post.description}
+    //                     content={post.content}
+    //                     contentType = {post.contentType}
+    //                     img={image}
+    //                     likes={post.likes_count}
+    //                     post_id={post.id}
+    //                   />
+    //                 ); // end return
+    //               }) // end map
+    //           ); // end setPosts
+    //         } // end else
+    //       });
+    //     })
+
+    //     .catch((error) => {
+    //       console.error("Error getting posts:", error);
+    //       setPosts(
+    //         <div className="flex justify-center items-center">
+    //           This user does not exists, did you enter the correct username?
+    //         </div>
+    //       ); // end catch error
+    //     }); //
+    // }; // end fetchPosts
+
+    const fetchPostData = async () => {
+
+      let url = location.state["api"] + "/posts";
+      let host = new URL(location.state["api"]).hostname;
+  
+      const postUrls = []
+  
+      //Corresponding authorization
+      let auth = ''
+      if (url.includes('packet-pirates')) {
+        auth = PP_auth
+      } else if (url.includes("super-coding")) {
+        auth = SC_auth
+      } else if (url.includes("web-weavers")) {
         auth = WW_auth;
-        postsUrl = postsUrl + "/";
-      } else if (host.includes("node-net")) {
+        url = url + "/";
+      } else if (url.includes("node-net")) {
         auth = NN_auth;
       }
 
-      const postsRes = await axios
-        .get(postsUrl, auth)
-        .then((postsRes) => {
-          console.log("POSTSRES", postsRes.status);
-          console.log("posts", postsRes.data);
-          const urls = [];
+      try {
 
-          var postData = "";
-          if (postsRes.data.items) {
-            postData = postsRes.data.items;
-          } else {
-            postData = postsRes.data;
-          }
+        await axios.get(url, auth)
+        .then(posts => {
+          console.log("Murph", posts['data'])
+          //Get profile images and likes
+          const imageUrls = []
+          const likeUrls = []
 
-          for (let i = 0; i < postData.length; i++) {
-            console.log(postData[i]["id"] + "/image");
-            if (postData[i]["id"].includes("web-weavers")){
-                urls.push(postData[i]["id"] + "/image/");
-            } else {
-                urls.push(postData[i]["id"] + "/image");
+          let allPosts = []
+          if (url.includes("web-weavers")) { allPosts = posts['data']['items'] } else { allPosts = posts['data'] }
+    
+          //Create array of url-auth pairs again :(
+          for (let res in allPosts) {
+
+            //Post url
+            let imUrl = allPosts[res]['id'] + '/image'
+    
+            //Likes url
+            let likUrl = allPosts[res]['id'] + '/likes'
+    
+            //Corresponding authorization
+            let auth = ''
+            if (imUrl.includes('packet-pirates')) {
+              auth = PP_auth
+            } else if (imUrl.includes("super-coding")) {
+              auth = SC_auth
+            } else if (imUrl.includes("web-weavers")) {
+              auth = WW_auth;
+              imUrl = imUrl + "/";
+              likUrl = likUrl + "/";
+            } else if (imUrl.includes("node-net")) {
+              auth = NN_auth;
             }
+    
+            imageUrls.push([imUrl, auth])
+            likeUrls.push([likUrl, auth])
+    
           }
-
-          console.log("URLS", urls);
-
-          const requests = urls.map((url) =>
-            axios
-              .get(url, auth)
-              .then((response) => response)
-              .catch((error) => console.error("Error", error))
+    
+          //Send request for each url-auth
+          const imgRequests = imageUrls.map(([url, auth]) =>
+            axios.get(url, auth)
+            .then(response => response)
+            .catch (error => console.error('Error', error))
           );
+    
+          const likRequests = likeUrls.map(([url, auth]) => 
+            axios.get(url, auth)
+            .then(response => response)
+            .catch (error => console.error('Error', error))
+          );
+    
+          Promise.all(imgRequests)
+          .then(images => {
+    
+            Promise.all(likRequests)
+            .then(likes => {
+            
+              if (author === user.user.username) {
 
-          Promise.all(requests).then((responses) => {
-            // console.log("RESPONSES", responses);
-            // console.log("RESPONSE", responses[0]['data']['image'])
-
-            if (author === user.user.username) {
-              setPosts(
-                postData.map((post, index) => {
-                  // As the user, want to be able to see your all your posts.
-                  const image = responses[index]["data"];
-                  return (
-                    <RemotePost
-                      key={index}
-                      user={user}
-                      post_author={post.author}
-                      title={post.title}
-                      description={post.description}
-                      content={post.content}
-                      contentType = {post.contentType}
-                      img={image}
-                      likes={post.likes_count}
-                      post_id={post.id}
-                    />
-                  );
-                })
-              );
-            } else {
-              setPosts(
-                postData
-                  .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
-                  .map((post, index) => {
-                    var image = "";
-                    if (host.includes("super-coding")) {
-
-                      image = responses[index]["data"]["image"];
-
-                    } else if (host.includes("web-weavers")) {
+                setPosts(() => [
+                  allPosts.map((res, index) => {
+      
+                    let image = ''
+                    let num_likes = 0
+      
+                    if (res.id.includes("packet-pirates")){
+      
+                      image = images[index]['data']
+                      num_likes = likes[index]['data']['length']
+      
+                    } else if (res.id.includes("super-coding")){
+      
+                      image = images[index]['data']['image']
+                      num_likes = likes[index]['data']['length']
+      
+                    } else if (res.id.includes("web-weavers")) {
+                      
+                      // Change this to the post data here
                       if (responses[index]) {
-                        image = "data:" + postData[index].contentType + "," + postData[index].content
+                        image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
                       } else {
                         image = ""
                       }
-
-                      // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
-                      // console.log("IMAGE TESTING", responses[index], postData[index])
-                      // console.log("IMAGE TESTING", "data:" + postData[index].contentType + "," + postData[index].content, postData[index])
-                      // image = "https://picsum.photos/200/300";
-
-                    } else if (host.includes("node-net")) {
-
+      
+                      num_likes = likes[index]['data']['items']['length']
+      
+                    } else if (res.data.id.includes("node-net")) {
+      
                       image = "https://picsum.photos/200/300";
-
-                    } else {
-
-                      image = responses[index]["data"];
+                      num_likes = likes[index]['data']['length']
+      
                     }
+
                     return (
                       <RemotePost
                         key={index}
                         user={user}
-                        post_author={post.author}
-                        title={post.title}
-                        description={post.description}
-                        content={post.content}
-                        contentType = {post.contentType}
+                        post_author={res.author}
+                        title={res.title}
+                        description={res.description}
+                        content={res.content}
                         img={image}
-                        likes={post.likes_count}
-                        post_id={post.id}
+                        likes={num_likes}  
+                        post_id = {res.id}
+                        categories = {res.categories}
+                        contentType = {res.contentType}
+                        count = {res.count}
+                        origin = {res.origin}
+                        published = {res.published}
+                        source = {res.source}
+                        unlisted = {res.unlisted}
+                        visibility = {res.visibility}
                       />
-                    ); // end return
-                  }) // end map
-              ); // end setPosts
-            } // end else
-          });
+                    );
+                  }),
+                ]);
+              } else {
+
+                setPosts(() => [
+                  posts['data']
+                  .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
+                  .map((res, index) => {
+      
+                    let image = ''
+                    let num_likes = 0
+      
+                    if (res.id.includes("packet-pirates")){
+      
+                      image = images[index]['data']
+                      num_likes = likes[index]['data']['length']
+      
+                    } else if (res.id.includes("super-coding")){
+      
+                      image = images[index]['data']['image']
+                      num_likes = likes[index]['data']['length']
+      
+                    } else if (res.id.includes("web-weavers")) {
+                      
+                      // Change this to the post data here
+                      if (responses[index]) {
+                        image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
+                      } else {
+                        image = ""
+                      }
+      
+                      num_likes = likes[index]['data']['items']['length']
+      
+                    } else if (res.data.id.includes("node-net")) {
+      
+                      image = "https://picsum.photos/200/300";
+                      num_likes = likes[index]['data']['length']
+      
+                    }
+
+                    return (
+                      <RemotePost
+                        key={index}
+                        user={user}
+                        post_author={res.author}
+                        title={res.title}
+                        description={res.description}
+                        content={res.content}
+                        img={image}
+                        likes={num_likes}  
+                        post_id = {res.id}
+                        categories = {res.categories}
+                        contentType = {res.contentType}
+                        count = {res.count}
+                        origin = {res.origin}
+                        published = {res.published}
+                        source = {res.source}
+                        unlisted = {res.unlisted}
+                        visibility = {res.visibility}
+                      />
+                    );
+                  }),
+                ]);
+
+              }
+            })
+          })
         })
 
-        .catch((error) => {
-          console.error("Error getting posts:", error);
+      } catch (error) {
+
+        console.error("Error getting posts:", error);
           setPosts(
             <div className="flex justify-center items-center">
               This user does not exists, did you enter the correct username?
             </div>
           ); // end catch error
-        }); //
-    }; // end fetchPosts
+
+      }
+  
+    };
 
 
     const checkFriendship = async () => {
@@ -443,7 +661,7 @@ export default function ViewProfile({ user }) {
       }
      }  
 
-    fetchPosts(); // Call the fetchPosts function
+    fetchPostData(); // Call the fetchPosts function
     getConnections();
     getNotifications();
     getAuthorInfo();
