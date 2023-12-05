@@ -380,6 +380,7 @@ export default function ViewProfile({ user }) {
       try {
         await axios.get(url, auth).then((posts) => {
           console.log("Murph", posts["data"]);
+          console.log("MurphITEMS", posts["data"].items);
           if (posts["data"].items) {
             console.log("Murph111111", posts["data"].items);
             posts["data"] = posts["data"].items;
