@@ -380,6 +380,10 @@ export default function ViewProfile({ user }) {
       try {
         await axios.get(url, auth).then((posts) => {
           console.log("Murph", posts["data"]);
+          if (posts["data"].items) {
+            console.log("Murph111111", posts["data"].items);
+            posts["data"] = posts["data"].items;
+          }
           //Get profile images and likes
           const imageUrls = [];
           const likeUrls = [];
@@ -447,8 +451,8 @@ export default function ViewProfile({ user }) {
                       image = images[index]["data"]["image"];
                       num_likes = likes[index]["data"]["length"];
                     } else if (res.id.includes("web-weavers")) {
-                      res = res.items.items;
-                      console.log("RES for web weavers?", res);
+                      // res = res.items.items;
+                      // console.log("RES for web weavers?", res);
 
                       // Change this to the post data here
                       if (responses[index]) {
