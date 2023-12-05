@@ -847,7 +847,7 @@ class FollowersRemote(APIView):
     '''
 
     permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (BasicAuthentication, )
+    authentication_classes = (BasicAuthentication, TokenAuthentication, )
 
     @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
         operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
