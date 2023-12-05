@@ -199,3 +199,14 @@ h1 {
   right: 20px;
   z-index: 1;
 }
+
+.follow-popup {
+  position: fixed;
+  top: 13%;
+  left: 35.75%;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it's above other elements */
+}
