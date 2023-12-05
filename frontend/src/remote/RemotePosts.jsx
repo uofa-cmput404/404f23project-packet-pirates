@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
+import EditPost from "../components/main-feed/EditPost"
+import Popup from "reactjs-popup";
 import {
   Avatar,
   Button,
@@ -41,6 +43,7 @@ export default function RemotePost({
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [sharingModalOpen, setSharingModalOpen] = useState(false);
   const [shareableAuthors, setShareableAuthors] = useState([]);
+  const [isEditable, setIsEditable] = useState(false);
   const navigate = useNavigate();
 
   const config = {
@@ -528,6 +531,30 @@ export default function RemotePost({
 
   };
 
+
+  const handleEditAccess = () => {
+    
+    console.log(window.location.href)
+
+    //Check if user is viewing own profile
+
+    let profPath = 'user/' + user.user.username
+
+    try {
+
+      if (!window.location.href.includes(profPath)) { return }
+
+      if (!(user.user.user_id == post_author['id'].split('/')[4])) { return }
+
+      setIsEditable(true);
+
+    } catch {
+
+      console.log(":^]");
+
+    }
+  };
+
   useEffect(() => {
     console.log("user", user);
     console.log("title", title);
@@ -538,6 +565,7 @@ export default function RemotePost({
     console.log("author", post_author);
     fetchCommentData();
     checkLikeStatus();
+    handleEditAccess();
 
   }, []);
 
@@ -566,12 +594,42 @@ export default function RemotePost({
                   <h1>{title}</h1>
                 </span>
 
-                <button
-                  onClick={handleEdit}
-                  className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full"
-                >
-                  Edit
-                </button>
+                {isEditable && (
+                  <Popup
+                    trigger={
+                      <button
+                        onClick={handleEdit}
+                        className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full"
+                      >
+                        Edit
+                      </button>
+                    }
+                    modal={true}
+                    closeOnDocumentClick={false}
+                  >
+                    {(close) => (
+                      <>
+                        <EditPost
+                          user={user}
+                          titl={title}
+                          description={description}
+                          img={img}
+                          img_url = ''
+                          id={post_id.split('/')[6]}
+                          visibility={visibility}
+                          unlisted={unlisted}
+                        />
+
+                        <button
+                          className="close absolute top-[.5rem] right-[.95rem]"
+                          onClick={close}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </Popup>
+                )}
               </div>
             </div>
           </div>

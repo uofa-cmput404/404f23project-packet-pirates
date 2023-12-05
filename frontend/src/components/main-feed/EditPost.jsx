@@ -9,7 +9,7 @@ export default function EditPost({ user,
     img,
     img_url,
     id,
-    is_private,
+    visibility,
     unlisted, }) {
 
   const [text, setText] = useState(description);
@@ -22,13 +22,15 @@ export default function EditPost({ user,
 
   const visibilityOptions = [
     { value: "Public", label: "Public" },
+    { value: "Friends", label: "Friends"},
     { value: "Private", label: "Private" },
     { value: "Unlisted", label: "Unlisted" },
   ];
-  const [visibility, setVisibility] = useState(visibilityOptions[0].value);
+  const [postVisibility, setPostVisibility] = useState(visibilityOptions[0].value);
 
-  const [isUnlisted, setIsUnlisted] = useState(unlisted);
-  const [isPrivate, setIsPrivate] = useState(is_private);
+  const [isUnlisted, setIsUnlisted] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [isFriends, setIsFriends] = useState(false);
 
   const contentOptions = [
     { value: "text/plain", label: "Plaintext" },
@@ -68,12 +70,24 @@ export default function EditPost({ user,
   };
 
   const handleVisibilityChange = (value) => {
-    setVisibility(value);
+    setPostVisibility(value);
 
     if (value["value"] === "Private") {
       setIsPrivate(true);
+      setIsFriends(false);
+      setIsUnlisted(false);
     } else if (value["value"] === "Unlisted") {
       setIsUnlisted(true);
+      setIsPrivate(false);
+      setIsFriends(false);
+    } else if (value["value"] === "Friends") {
+      setIsFriends(true);
+      setIsPrivate(false);
+      setIsUnlisted(false);
+    } else if (value['value'] === "Public") {
+      setIsFriends(false);
+      setIsPrivate(false);
+      setIsUnlisted(false);
     }
 
     console.log("Sent visibility is:", value);
@@ -90,7 +104,7 @@ export default function EditPost({ user,
     event.preventDefault();
 
     axios
-      .delete("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + id + "/postViews", config)
+      .delete( "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + id + "/postViews", config)
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
@@ -114,9 +128,9 @@ export default function EditPost({ user,
     formData.append('is_private', isPrivate)
     formData.append('image_file', imageFile)
     formData.append('image_url', imageUrl)
-    formData.append('visibility', visibility)
 
     console.log("Data", formData);
+    console.log(isUnlisted)
 
     axios
       .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/editpost", formData, 
@@ -210,7 +224,7 @@ export default function EditPost({ user,
               <div className="chooseVisibility">
                 <Dropdown
                   options={visibilityOptions}
-                  value={visibility}
+                  value={postVisibility}
                   onChange={handleVisibilityChange}
                 />
               </div>
