@@ -622,17 +622,6 @@ export default function ViewProfile({ user }) {
     // })
 
       try {
-        const response = await axios.get(followersUrl).then(async (data) => {
-          setAreFriends(data['data']);
-          console.log("FFF", data['data'])
-          console.log("FRIENDS?", areFriends)
-          // console.log(response.data)
-        });
-        
-        const followReqResponse = await axios.get(followReqUrl).then(async (data) => {
-          set_is_pending(data['data'])
-          console.log("PENDING?", is_pending)
-        });
 
         if (host.includes("packet-pirates")) {
           console.log("PIRATE!");
@@ -645,6 +634,19 @@ export default function ViewProfile({ user }) {
         } else if (host.includes("node-net")) {
           auth = NN_auth;
         }
+
+        const response = await axios.get(followersUrl, auth).then(async (data) => {
+          setAreFriends(data['data']);
+          console.log("FFF", data['data'])
+          console.log("FRIENDS?", areFriends)
+          // console.log(response.data)
+        });
+        
+        const followReqResponse = await axios.get(followReqUrl, auth).then(async (data) => {
+          set_is_pending(data['data'])
+          console.log("PENDING?", is_pending)
+        });
+
 
         const followingResponse = await axios.get(followingUrl, auth).then (async (data) => {
           if (host.includes("packet-pirates")) {
