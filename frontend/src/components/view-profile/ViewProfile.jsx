@@ -447,7 +447,8 @@ export default function ViewProfile({ user }) {
                       image = images[index]["data"]["image"];
                       num_likes = likes[index]["data"]["length"];
                     } else if (res.id.includes("web-weavers")) {
-                      res = res.items;
+                      res = res.items.items;
+                      console.log("RES for web weavers?", res);
 
                       // Change this to the post data here
                       if (responses[index]) {
