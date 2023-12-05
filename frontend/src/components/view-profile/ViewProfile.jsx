@@ -371,7 +371,6 @@ export default function ViewProfile({ user }) {
 
         await axios.get(url, auth)
         .then(posts => {
-          console.log("Murph", posts['data'])
           //Get profile images and likes
           const imageUrls = []
           const likeUrls = []
@@ -380,8 +379,10 @@ export default function ViewProfile({ user }) {
           if (url.includes("web-weavers")) { 
             allPosts = posts['data']['items'] 
           } else { 
-            allPosts = posts['data'] }
-    
+            allPosts = posts['data'] 
+          }
+          
+          console.log("TESTING ALL POSTS", allPosts)
           //Create array of url-auth pairs again :(
           for (let res in allPosts) {
 
@@ -491,7 +492,7 @@ export default function ViewProfile({ user }) {
               } else {
 
                 setPosts(() => [
-                  posts['data']
+                  allPosts
                   .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
                   .map((res, index) => {
       
