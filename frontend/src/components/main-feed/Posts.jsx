@@ -428,44 +428,6 @@ export default function Post({
                 <span className="text-center">
                   <h1>{title}</h1>
                 </span>
-
-                {/* Post Edit Button */}
-                {isEditable && (
-                  <Popup
-                    trigger={
-                      <button
-                        onClick={handleEdit}
-                        className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-white rounded-full"
-                      >
-                        Edit
-                      </button>
-                    }
-                    modal={true}
-                    closeOnDocumentClick={false}
-                  >
-                    {(close) => (
-                      <>
-                        <EditPost
-                          user={user}
-                          titl={title}
-                          description={description}
-                          img={img}
-                          img_url={img_url}
-                          id={id}
-                          is_private={is_private}
-                          unlisted={unlisted}
-                        />
-
-                        <button
-                          className="close absolute top-[.5rem] right-[.95rem]"
-                          onClick={close}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
-                  </Popup>
-                )}
               </div>
             </div>
           </div>
