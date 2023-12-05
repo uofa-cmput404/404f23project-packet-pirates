@@ -337,7 +337,7 @@ export default function RemotePost({
     try {
       await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
-        let commentData = {
+        var commentData = {
           type: "comment",
           author: authorResponse.data,
           comment: commentText,
@@ -345,11 +345,37 @@ export default function RemotePost({
           published: ":)",
           id: post_id,
         };
+        
+        if (boxUrl.includes("web-weavers")) { // They need to handle comments differently
+            commentData = {
+              type: "comment",
+              author: authorResponse.data.id,
+              comment: commentText,
+              contentType: "text/plain",
+              id: post_id,
+            };
+            var commentUrl = post_id + "/comments/"
 
-        await axios.post(boxUrl, commentData, auth).then(() => {
-          fetchCommentData();
-          console.log("Successfully sent comment to inbox");
-        });
+            await axios.post(commentUrl, commentData, auth).then((response) => {
+              console.log("RESPONSE", response.data.id)
+
+              var commentData2 = {
+                id: response.data.id,
+                type: "comment"
+              }
+
+              axios.post(boxUrl, commentData2, auth).then(() => {
+                fetchCommentData();
+                console.log("Successfully sent comment to inbox");
+              });
+            })
+
+        } else {
+          await axios.post(boxUrl, commentData, auth).then(() => {
+            fetchCommentData();
+            console.log("Successfully sent comment to inbox");
+          });
+        }
       });
     } catch (error) {
       console.log(error);
