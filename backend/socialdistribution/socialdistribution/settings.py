@@ -34,13 +34,13 @@ CORS_ALLOWED_ORIGINS = [
 'https://packet-pirates-frontend-46271456b73c.herokuapp.com', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com',
 'https://packet-pirates-frontend-46271456b73c.herokuapp.com', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com',
 'https://super-coding-team-89a5aa34a95f.herokuapp.com', 'https://node-net-46d70235bc29.herokuapp.com',
-'https://web-weavers-backend-fb4af7963149.herokuapp.com', 'https://web-weavers-734f03.netlify.app']
+'https://web-weavers-backend-fb4af7963149.herokuapp.com', 'https://web-weavers-2df78f.netlify.app']
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000', 'http://localhost:3000', 
                         'https://packet-pirates-frontend-46271456b73c.herokuapp.com/', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/',
                         'https://packet-pirates-frontend-46271456b73c.herokuapp.com', 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com',
                         'https://super-coding-team-89a5aa34a95f.herokuapp.com/', 'https://node-net-46d70235bc29.herokuapp.com/',
-                        'https://web-weavers-backend-fb4af7963149.herokuapp.com/', 'https://web-weavers-734f03.netlify.app/']
+                        'https://web-weavers-backend-fb4af7963149.herokuapp.com/', 'https://web-weavers-2df78f.netlify.app/']
 
 CORS_ALLOW_CREDENTIALS = True
 
