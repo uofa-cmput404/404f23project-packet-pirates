@@ -718,7 +718,7 @@ export default function ViewProfile({ user }) {
               >
                 {friends}
               </div>
-              <div className="feed flex flex-col ml-5 w-full mx-auto">
+              <div className="feed flex flex-col ml-5 w-full mx-auto min-w-[620px]">
                 <div className="feed_content mt-[-20px]">
                   {profileHeader}
                   {/* this is where the follow shit is */}
