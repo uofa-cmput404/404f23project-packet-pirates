@@ -890,9 +890,9 @@ class GetAuthorsFollowersRemote(APIView):
         print("Serializer Data", serializer.data)
         print("External data", external_data)
         # data = [item['author'] for item in serializer.data]
-        print()
+        print("AUTHORS", authors)
+        print("APPEND BOTH DATAS", serializer.data + external_data)
         if (authors):
-            print("APPEND BOTH DATAS", serializer.data + external_data)
             return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
         return Response({"items":serializer.data}, status=status.HTTP_200_OK)
