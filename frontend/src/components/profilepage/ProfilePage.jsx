@@ -49,7 +49,7 @@ export default function ProfilePage({ user }) {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
-        'display_name' : dispName,
+        'username' : dispName,
     }
 
 
@@ -61,7 +61,7 @@ export default function ProfilePage({ user }) {
         formData.append('github', info['github'])
         console.log(info['profile_picture'])
         formData.append('profile_picture', info['profile_picture'])
-        formData.append('display_name', info['display_name'])
+        formData.append('username', info['username'])
 
         console.log("FORM DATA", formData)
 
