@@ -339,13 +339,27 @@ export default function Inbox({ user }) {
         <div className="inbox">Inbox page</div>
         <div className="sections flex flex-row justify-between">
           <div className="posts">
-            <div className="fixed-button">
-              <button
-                className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
-                onClick={handleClear}>
-                Clear Inbox
-              </button>
-            </div>
+          <div className="fixed-button">
+            <button
+              style={{ display: 'block' }}
+              className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+              onClick={handleClear}
+            >
+              Clear Inbox
+            </button>
+            <button
+              style={{ display: 'flex', alignItems: 'center' }}
+              className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+              onClick={() => {navigate("/")}}
+            >
+              <span>Home</span>
+              <img
+                src="/home-button.png"
+                alt="Home"
+                className="Home-button-img ml-3 h-6 w-7"
+              />
+            </button>
+          </div>
             {showPost}
             </div>
           <div className="other-info">
