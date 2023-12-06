@@ -861,7 +861,7 @@ class GetAuthorsFollowersRemote(APIView):
 
         friend_list = []
         friend_origin_list = []
-        print("FRIEND FILTER", friends)
+
         for friend in friends:
 
             friend_list.append(uuid.UUID(friend.friend))
@@ -870,10 +870,8 @@ class GetAuthorsFollowersRemote(APIView):
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
         external_data = []
-        print("FRIEND:", friend_list, "ORIGIN:", friend_origin_list)
         for origin in friend_origin_list:
             if ("super-coding" in origin):
-                print("YEPPERS?")
                 basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
                 req = requests.get(origin, auth=basic)
                 external_data.append(req.json())
@@ -886,16 +884,8 @@ class GetAuthorsFollowersRemote(APIView):
 
         serializer = AuthorSerializerRemote(authors, many = True)
 
-        # serializer = FriendsSerializer(friends, many=True)
-        print("Serializer Data", serializer.data)
-        print("External data", external_data)
-        # data = [item['author'] for item in serializer.data]
-        print("AUTHORS", authors)
-        print("APPEND BOTH DATAS", serializer.data + external_data)
-        if (authors or external_data):
-            return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
+        return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
-        return Response({"items":serializer.data}, status=status.HTTP_200_OK)
 
 
 
