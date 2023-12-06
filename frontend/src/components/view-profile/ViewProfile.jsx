@@ -100,14 +100,14 @@ export default function ViewProfile({ user }) {
   useEffect(() => {
 
     getNotifications();
-
+    getAuthorInfo();
+    getConnections();
+    checkFriendship();
   }, [notifications])
  
-  useEffect(() => {
-    getAuthorInfo();
-    checkFriendship();
-    getConnections();
-  }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
+  // useEffect(() => {
+
+  // }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
 
 
   async function getNotifications() {
