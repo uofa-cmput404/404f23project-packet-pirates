@@ -671,8 +671,8 @@ export default function ViewProfile({ user }) {
     getAuthorInfo();
     checkFriendship();
     console.log("posts", posts);
-  }, [notifications]);
-// }, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
+  // }, [notifications]);
+}, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
 
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
