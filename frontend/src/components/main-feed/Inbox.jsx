@@ -12,6 +12,8 @@ export default function Inbox({ user }) {
   const [postsFetched, setPostsFetched] = useState(false);
   const [inboxComments, setInboxComments] = useState([])
   const navigate = useNavigate();
+  
+  var inbox = ''
 
   const SC_auth = {
     auth: {
@@ -245,7 +247,7 @@ export default function Inbox({ user }) {
 
   useEffect(() => {
     getInbox();
-  }, []);
+  }, [inbox]);
 
   const getInbox = async () => {
 
@@ -257,7 +259,7 @@ export default function Inbox({ user }) {
 
         fetchPostData(inboxRes.data)
         // fetchCommentData(inboxRes.data)
-
+        inbox = inboxRes.data
       })
       .catch((err) => {
         console.log("error getting inbox", err);
