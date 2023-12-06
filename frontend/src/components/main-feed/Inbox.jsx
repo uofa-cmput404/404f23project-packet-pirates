@@ -298,14 +298,14 @@ export default function Inbox({ user }) {
           <div className="posts">
           <div className="fixed-button">
             <button
-              style={{ display: 'block' }}
-              className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
+              style={{ display: 'block', height: '2.5rem'  }}
+              className="border-gray-700 border rounded-full p-2 text-white bg-gray-700 mb-1"
               onClick={handleClear}
             >
               Clear Inbox
             </button>
             <button
-              style={{ display: 'flex', alignItems: 'center' }}
+              style={{ display: 'flex', alignItems: 'center', height: '2.5rem'  }}
               className="border-gray-700 border rounded-full p-2 text-white bg-gray-700"
               onClick={() => {navigate("/")}}
             >
@@ -313,7 +313,7 @@ export default function Inbox({ user }) {
               <img
                 src="/home-button.png"
                 alt="Home"
-                className="Home-button-img ml-3 h-6 w-7"
+                className="Home-button-img ml-3 h-7 w-7"
               />
             </button>
           </div>
