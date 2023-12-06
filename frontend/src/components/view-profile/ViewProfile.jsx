@@ -102,7 +102,7 @@ export default function ViewProfile({ user }) {
     getNotifications();
     getConnections();
 
-  }, [notifications])
+  }, [])
  
   useEffect(() => {
     getAuthorInfo();
@@ -428,7 +428,7 @@ export default function ViewProfile({ user }) {
       console.error("Error getting posts:", error);
         setPosts(
           <div className="flex justify-center items-center">
-            This user does not exists, did you enter the correct username?
+            This user has no posts
           </div>
         ); // end catch error
 
