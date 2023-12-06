@@ -384,6 +384,22 @@ class NotificationViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    @swagger_auto_schema(operation_description= "Get an authors notifications",
+        operation_summary="Get an authors notifications",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+
+    def get(self, request, pk):
+        pk = uuid.UUID(pk)
+        notifications = Notifications.objects.filter(author = pk)
+
+        serializer = NotificationsSerializer(notifications, many = True)
+        
+        if (notifications):
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        
+        return Response (serializer.data, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(operation_description="Creates a notification object",
         operation_summary="Creates a notification object",
         responses={200: NotificationsSerializer()},
