@@ -93,7 +93,7 @@ export function Notification({ user, index, notification }) {
     // const requestRes = await axios.delete(notificationUrl, {data: notifData}, {config})
 
     .then((notifRes) => {
-      window.location.reload(false);
+      // window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error deleting notification:", err);
