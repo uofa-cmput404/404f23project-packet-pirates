@@ -238,7 +238,7 @@ class EditProfile(APIView):
 
         new_request_data['profile_picture'] = image
 
-        new_request_data['username'] = request.data['username']
+        new_request_data['username'] = author.username 
 
         new_request_data['password'] = author.password # Change this when we want to change passwords
 
