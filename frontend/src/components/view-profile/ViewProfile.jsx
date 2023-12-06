@@ -107,10 +107,8 @@ export default function ViewProfile({ user }) {
   }, [notifications])
 
   useEffect(() => {
-    
     checkFriendship();
-
-  }, [is_pending, areFriends, isFollowing])
+  }, [author, is_pending, areFriends, isFollowing])
 
   async function getNotifications() {
     let notificationsUrl =
