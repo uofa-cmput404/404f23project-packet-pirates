@@ -187,7 +187,7 @@ export function Notification({ user, index, notification }) {
 
     const friendRes = await axios.post(friendUrl, friendData, config)
     .then((friendRes) => {
-      window.location.reload(false);
+      // window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error creating friend:", err);
