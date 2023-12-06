@@ -11,7 +11,7 @@ export default function CreatePost({ user }) {
   const [title, setTitle] = useState("");
 
   // Image variables
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
   const [imageUID, setImageUID] = useState(null);
 

@@ -16,7 +16,7 @@ export default function EditPost({ user,
   const [title, setTitle] = useState(titl);
 
   // Image variables
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
   const [imageUID, setImageUID] = useState(null);
 
