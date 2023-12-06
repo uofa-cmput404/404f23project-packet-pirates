@@ -366,6 +366,7 @@ export default function ViewProfile({ user }) {
     
                   let image = ''
                   let num_likes = 0
+                  index = allPosts.indexOf(res)
     
                   if (res.id.includes("packet-pirates")){
     
@@ -373,8 +374,6 @@ export default function ViewProfile({ user }) {
                     num_likes = likes[index]['data']['length']
     
                   } else if (res.id.includes("super-coding")){
-                    console.log("ALL SUPER CODING POST", allPosts)
-                    console.log("ALL IMAGES", images)
                     image = images[index]['data']['image']
                     num_likes = likes[index]['data']['length']
     
