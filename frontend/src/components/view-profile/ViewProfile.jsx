@@ -102,8 +102,8 @@ export default function ViewProfile({ user }) {
     getNotifications();
     getConnections();
 
-  // }, [notifications])
-  }, [])
+  }, [notifications])
+  // }, [])
  
   useEffect(() => {
     getAuthorInfo();
