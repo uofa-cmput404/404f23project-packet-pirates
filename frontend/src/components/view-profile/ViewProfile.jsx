@@ -381,8 +381,7 @@ export default function ViewProfile({ user }) {
           } else { 
             allPosts = posts['data'] 
           }
-          
-          console.log("TESTING ALL POSTS", allPosts)
+    
           //Create array of url-auth pairs again :(
           for (let res in allPosts) {
 
@@ -451,7 +450,6 @@ export default function ViewProfile({ user }) {
                     } else if (res.id.includes("web-weavers")) {
                       
                       // Change this to the post data here
-
                       if (allPosts[index]) {
                         image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
                       } else {

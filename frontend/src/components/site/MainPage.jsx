@@ -90,20 +90,6 @@ export default function MainPage({ user }) {
   };
 
   const getConnections = async () => {
-    // let connectionsUrl =
-    //   "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/truefriends";
-
-    // const connectionsRes = await axios
-    //   .get(connectionsUrl, config)
-    //   .then((connectionsRes) => {
-    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
-    //     setFriends(
-    //       <Profile friends={connectionsRes.data.Friends} user={user} />
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
 
       var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
       const connectionTest = await axios
@@ -220,7 +206,9 @@ export default function MainPage({ user }) {
     getPosts();
     getConnections();
     getNotifications();
-  }, []);
+  // }, [notifications, friends]);
+}, [posts]);
+  // }, []);
 
   const handleLogout = async (event) => {
     event.preventDefault();
