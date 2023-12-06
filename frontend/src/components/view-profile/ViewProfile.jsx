@@ -579,8 +579,8 @@ export default function ViewProfile({ user }) {
       event.preventDefault();
 
       try {
-        await axios.get("http://127.0.0.1:8000/logout", config);
-        window.location.reload(false);
+        await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+        window.location.href = "/";
         console.log("logged out");
       } catch (err) {
         console.log(err);
