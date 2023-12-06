@@ -93,6 +93,9 @@ export default function ViewProfile({ user }) {
     console.log("user", user);
 
     fetchPostData(); // Call the fetchPosts function
+    getConnections();
+    getAuthorInfo();
+    checkFriendship();
     console.log("posts", posts);
   // }, []);
 }, [posts]);
@@ -102,13 +105,10 @@ export default function ViewProfile({ user }) {
     getNotifications();
 
   }, [notifications])
+ 
+  // useEffect(() => {
 
-  useEffect(() => {
-    getConnections();
-    getAuthorInfo();
-    checkFriendship();
-
-  }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
+  // }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
 
 
   async function getNotifications() {
