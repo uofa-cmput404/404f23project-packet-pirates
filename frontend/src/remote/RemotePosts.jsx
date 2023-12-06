@@ -661,13 +661,12 @@ export default function RemotePost({
             </div>
           </div>
 
-          {/* <div className="privacy-status">
-            {is_private && <span className="privacy-private">Private</span>}
+          <div className="privacy-status">
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {!is_private && !unlisted && (
-              <span className="privacy-public">Public</span>
-            )}
-          </div> */}
+            {visibility==="PUBLIC" && !unlisted && <span className="privacy-private">Public</span>}
+            {visibility==="FRIENDS" && !unlisted && <span className="privacy-private">Friend</span>}
+            {visibility==="PRIVATE" && !unlisted && <span className="privacy-private">Private</span>}
+          </div>
 
           <div className="description-section flex justify-center items-center">
           {contentType === "text/markdown" ?

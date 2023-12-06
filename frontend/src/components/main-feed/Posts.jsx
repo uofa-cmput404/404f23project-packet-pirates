@@ -26,6 +26,7 @@ export default function Post({
   likes,
   id,
   is_private,
+  is_friends,
   unlisted,
 }) {
   const [comments, setComments] = useState(null);
@@ -465,9 +466,10 @@ export default function Post({
           </div>
 
           <div className="privacy-status">
-            {is_private && <span className="privacy-private">Private</span>}
+            {is_private && !is_friends && <span className="privacy-private">Private</span>}
+            {!is_private && is_friends && <span classname="pribacy-friends">Friend</span>}
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {!is_private && !unlisted && (
+            {!is_private && !unlisted && !is_friends && (
               <span className="privacy-public">Public</span>
             )}
           </div>

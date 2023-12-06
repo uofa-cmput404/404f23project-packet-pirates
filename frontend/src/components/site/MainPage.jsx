@@ -63,6 +63,7 @@ export default function MainPage({ user }) {
               const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
               // console.log("IMAGE", image)
               // console.log("Private", post.is_private)
+              console.log("VISIBILITYYY", post)
               return (
                 <Post
                   key={index}
@@ -76,6 +77,7 @@ export default function MainPage({ user }) {
                   likes={post.likes_count}
                   id={post.post_id}
                   is_private={post.is_private}
+                  is_friends = {post.is_friends}
                   unlisted={post.unlisted}
                 />
               );
