@@ -108,54 +108,19 @@ export default function Inbox({ user }) {
 
     let posts = inbox.posts
 
-    const postUrls = []
+    console.log(posts)
 
-    //Create array of url-auth pairs
-    for (let post in posts) {
-
-      //Post url
-      let url = posts[post]['API']
-
-      //Corresponding authorization
-      let auth = ''
-      if (url.includes('packet-pirates')) {
-        auth = PP_auth
-      } else if (url.includes("super-coding")) {
-        auth = SC_auth
-      } else if (url.includes("web-weavers")) {
-        auth = WW_auth;
-        url = url + "/";
-      } else if (url.includes("node-net")) {
-        auth = NN_auth;
-      }
-
-      postUrls.push([url, auth])
-
-    }
-
-
-    //Send request for each url-auth
-    const requests = postUrls.map(([url, auth]) =>
-      axios.get(url, auth)
-      .then(response => response)
-      .catch (error => console.error('Error', error))
-    );
-
-    Promise.all(requests)
-    .then(responses => {
-      console.log(responses)
-      //Get profile images and likes
       const imageUrls = []
       const likeUrls = []
 
       //Create array of url-auth pairs again :(
-      for (let res in responses) {
+      for (let id in posts) {
 
         //Post url
-        let imUrl = responses[res]['data']['id'] + '/image'
+        let imUrl = posts[id]['data']['id'] + '/image'
 
         //Likes url
-        let likUrl = responses[res]['data']['id'] + '/likes'
+        let likUrl = posts[id]['data']['id'] + '/likes'
 
         //Corresponding authorization
         let auth = ''
@@ -196,38 +161,33 @@ export default function Inbox({ user }) {
         .then(likes => {
         
           setShowPost(() => [
-            responses.map((res, index) => {
+            posts.map((res, index) => {
 
               let image = ''
               let num_likes = 0
 
-              if (res.data.id.includes("packet-pirates")){
+              if (res.id.includes("packet-pirates")){
 
                 image = images[index]['data']
                 num_likes = likes[index]['data']['length']
 
-              } else if (res.data.id.includes("super-coding")){
+              } else if (res.id.includes("super-coding")){
 
                 image = images[index]['data']['image']
                 num_likes = likes[index]['data']['length']
 
-              } else if (res.data.id.includes("web-weavers")) {
+              } else if (res.id.includes("web-weavers")) {
                 
                 // Change this to the post data here
-                if (responses[index]) {
-                  image = "data:" + responses[index]['data'].contentType + "," + responses[index]['data'].content
+                if (res.contentType.includes("im")) {
+                  image = "data:" + res.contentType + "," + res.content
                 } else {
                   image = ""
                 }
 
-                // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
-                // console.log("IMAGE TESTING", responses[index], postData[index])
-                // console.log("IMAGE TESTING", "data:" + responses[index]['data'].contentType + "," + responses[index]['data'].content, responses[index])
-                // image = "https://picsum.photos/200/300";
-
                 num_likes = likes[index]['data']['items']['length']
 
-              } else if (res.data.id.includes("node-net")) {
+              } else if (res.id.includes("node-net")) {
 
                 image = "https://picsum.photos/200/300";
                 num_likes = likes[index]['data']['length']
@@ -238,28 +198,27 @@ export default function Inbox({ user }) {
                 <RemotePost
                   key={index}
                   user={user}
-                  post_author={res.data.author}
-                  title={res.data.title}
-                  description={res.data.description}
-                  content={res.data.content}
+                  post_author={res.author}
+                  title={res.title}
+                  description={res.description}
+                  content={res.content}
                   img={image}
                   likes={num_likes}  
-                  post_id = {res.data.id}
-                  categories = {res.data.categories}
-                  contentType = {res.data.contentType}
-                  count = {res.data.count}
-                  origin = {res.data.origin}
-                  published = {res.data.published}
-                  source = {res.data.source}
-                  unlisted = {res.data.unlisted}
-                  visibility = {res.data.visibility}
+                  post_id = {res.id}
+                  categories = {res.categories}
+                  contentType = {res.contentType}
+                  count = {res.count}
+                  origin = {res.origin}
+                  published = {res.published}
+                  source = {res.source}
+                  unlisted = {res.unlisted}
+                  visibility = {res.visibility}
                 />
               );
             }),
           ]);
         })
       })
-    })
 
 
 
@@ -273,7 +232,7 @@ export default function Inbox({ user }) {
 
     await axios
       .get(
-        config.API_ENDPOINT + "author/" + user.user.user_id + "/inbox/local", token
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local", token
       )
       .then((inboxRes) => {
 
