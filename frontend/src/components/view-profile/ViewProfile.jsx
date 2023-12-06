@@ -575,17 +575,17 @@ export default function ViewProfile({ user }) {
         });
     };
 
-    const handleLogout = async (event) => {
-      event.preventDefault();
+  //   const handleLogout = async (event) => {
+  //     event.preventDefault();
 
-      try {
-        await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
-        window.location.href = "/";
-        console.log("logged out");
-      } catch (err) {
-        console.log(err);
-      }
-  };
+  //     try {
+  //       await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+  //       window.location.href = "/";
+  //       console.log("logged out");
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  // };
 
   const handleFollow = async (event) => {
     // console.log("handleFollow function called");
@@ -718,7 +718,7 @@ export default function ViewProfile({ user }) {
               >
                 {friends}
               </div>
-              <div className="feed flex flex-col ml-5 w-full mx-auto">
+              <div className="feed flex flex-col ml-5 w-full mx-auto min-w-[620px]">
                 <div className="feed_content mt-[-20px]">
                   {profileHeader}
                   {/* this is where the follow shit is */}
@@ -743,14 +743,14 @@ export default function ViewProfile({ user }) {
                   </button>
 
                   <button
-                    onClick={handleLogout}
+                    onClick={() => {navigate("/")}}
                     className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
                   >
-                    <span>Logout</span>
+                    <span>Home</span>
                     <img
-                      src="/logout-button.png"
-                      alt="Logout"
-                      className="Logout-button-img ml-3 h-7.5 w-10"
+                      src="/home-button.png"
+                      alt="Home"
+                      className="Home-button-img ml-3 h-7.5 w-10"
                     />
                   </button>
                 </div>
