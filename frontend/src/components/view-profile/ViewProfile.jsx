@@ -98,7 +98,7 @@ export default function ViewProfile({ user }) {
     checkFriendship();
     console.log("posts", posts);
   // }, []);
-}, [posts]);
+}, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
 
   useEffect(() => {
 
