@@ -513,7 +513,7 @@ export default function ViewProfile({ user }) {
                       
                       // Change this to the post data here
                       if (allPosts[index]) {
-                        image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
+                        image = "data:" + posts['data']['items'][index].contentType + "," + posts['data']['items'][index].content
                       } else {
                         image = ""
                       }
