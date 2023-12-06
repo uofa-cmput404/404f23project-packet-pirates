@@ -451,7 +451,7 @@ export default function ViewProfile({ user }) {
                     } else if (res.id.includes("web-weavers")) {
                       
                       // Change this to the post data here
-                      if (responses[index]) {
+                      if (allPosts[index]) {
                         image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
                       } else {
                         image = ""
