@@ -215,7 +215,7 @@ export default function MainPage({ user }) {
 
     try {
       await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
-      window.location.reload(false);
+      window.location.href = "/";
       console.log("logged out");
     } catch (err) {
       console.log(err);
