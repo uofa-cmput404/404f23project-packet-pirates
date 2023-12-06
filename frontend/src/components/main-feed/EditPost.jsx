@@ -141,7 +141,7 @@ export default function EditPost({ user,
         }
       })
       .then((response) => {
-        window.location.reload(false)
+        // window.location.reload(false)
         console.log(response.data);
       })
       .catch((error) => {
