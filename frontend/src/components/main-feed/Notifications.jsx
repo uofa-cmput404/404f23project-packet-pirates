@@ -9,7 +9,7 @@ export default function Notifications({ notifications , user}) {
     }
   };
 
-  var deleteUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/deletenotifs";
+  var deleteUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/deletenotifs";
   const clearNotifications = async () => {
     console.log("Clear non follow notifs");
     const deleteNotifs = await axios.delete(deleteUrl, config).then(() => {
