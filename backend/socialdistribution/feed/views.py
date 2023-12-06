@@ -406,8 +406,8 @@ class NotificationViews(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-    @swagger_auto_schema(operation_description="Delete a notification object",
-        operation_summary="Delete a notification object",
+    @swagger_auto_schema(operation_description="Delete a notification objects",
+        operation_summary="Delete a notification objects",
         responses={200: NotificationsSerializer()},
         tags=['Notifications'],)
     
@@ -422,6 +422,26 @@ class NotificationViews(APIView):
 
         return Response({"Message": "Error has occured when trying to delete notification"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class DeleteAllNotifications(APIView):
+    @swagger_auto_schema(operation_description="Delete all notification objects",
+        operation_summary="Delete all notification objects",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+    
+    def delete(self, request, pk):
+        print("Notify DATA", request.data)
+        pk = uuid.UUID(pk)
+        notification_objects = Notifications.objects.filter(author = pk).filter(is_follow_notification = False)
+        # notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
+
+        if (notification_objects):
+            for notification in notification_objects:
+                # print(notification)
+                notification.delete()
+            return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_200_OK)
 
 class InboxViewPosts(APIView):
     '''
@@ -505,7 +525,6 @@ class InboxViewPosts(APIView):
     
         return Response(posts, status=status.HTTP_200_OK)
         # return Response(api_fields, status=status.HTTP_200_OK)
-
             
 class InboxViewComments(APIView):
     '''
@@ -738,6 +757,27 @@ class InboxViews(APIView):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+    @swagger_auto_schema(operation_description="Empties an authors inbox",
+        operation_summary="Empties an authors inbox",
+        responses={200: InboxSerializer()},
+        tags=['Feed'],)
+
+    def delete(self, request, pk):
+        pk = uuid.UUID(pk)
+        inbox = Inbox.objects.get(author = pk)
+
+        new_inbox = {"author": inbox.author.user_id, "posts": None, "post_comments": None, "post_likes":None, "follow_requests":None, "notifications":[]}
+
+        serializer = InboxSerializer(inbox, data = new_inbox)
+
+        if (serializer.is_valid(raise_exception = True)):
+            # print("valid")
+            serializer.save()
+            return Response ({"Message":"Inbox successfully deleted"}, status = status.HTTP_200_OK)
+        
+        return Response (status=status.HTTP_200_OK)
+
 class FollowersLocal(APIView):
     '''
     URL: ://service/authors/{AUTHOR_ID}/followers/{FOREIGN_AUTHOR_ID}
@@ -834,7 +874,7 @@ class FollowersRemote(APIView):
     '''
 
     permission_classes = (permissions.IsAuthenticated, )
-    authentication_classes = (BasicAuthentication, )
+    authentication_classes = (BasicAuthentication, TokenAuthentication, )
 
     @swagger_auto_schema(operation_description="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
         operation_summary="Check if FOREIGN_AUTHOR_ID is a follower of AUTHOR_ID",
@@ -928,15 +968,16 @@ class InboxViewsRemote(APIView):
                 comment_serializer.save()
                 print("Comment Valid")
 
-            notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
-                            'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
-                            'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
-            
-            notification_serializer = NotificationsSerializer(data = notification)
+            if (str(uuid.UUID(author_id)) != author): # To prevent self notifications
+                notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
+                                'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
+                                'message':'Commented on your post', 'is_follow_notification': False} # Swap to heroku link later for pfp
+                
+                notification_serializer = NotificationsSerializer(data = notification)
 
-            if (notification_serializer.is_valid(raise_exception=True)):
-                notification_serializer.save()
-                print("Notif Valid")
+                if (notification_serializer.is_valid(raise_exception=True)):
+                    notification_serializer.save()
+                    print("Notif Valid")
 
         
         if (request.data['type'].lower() == 'like'):
@@ -979,7 +1020,7 @@ class InboxViewsRemote(APIView):
             if (follow_serializer.is_valid(raise_exception=True)):
                 follow_serializer.save()
                 print("Follow Valid")
-            
+
             notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
                 'message':'Requested to follow you', 'is_follow_notification': True} # Swap to heroku link later for pfp

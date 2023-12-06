@@ -377,7 +377,11 @@ export default function ViewProfile({ user }) {
           const likeUrls = []
 
           let allPosts = []
-          if (url.includes("web-weavers")) { allPosts = posts['data']['items'] } else { allPosts = posts['data'] }
+          if (url.includes("web-weavers")) { 
+            allPosts = posts['data']['items'] 
+          } else { 
+            allPosts = posts['data'] 
+          }
     
           //Create array of url-auth pairs again :(
           for (let res in allPosts) {
@@ -447,7 +451,7 @@ export default function ViewProfile({ user }) {
                     } else if (res.id.includes("web-weavers")) {
                       
                       // Change this to the post data here
-                      if (responses[index]) {
+                      if (allPosts[index]) {
                         image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
                       } else {
                         image = ""
@@ -488,7 +492,7 @@ export default function ViewProfile({ user }) {
               } else {
 
                 setPosts(() => [
-                  posts['data']
+                  allPosts
                   .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
                   .map((res, index) => {
       
@@ -508,8 +512,8 @@ export default function ViewProfile({ user }) {
                     } else if (res.id.includes("web-weavers")) {
                       
                       // Change this to the post data here
-                      if (responses[index]) {
-                        image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
+                      if (allPosts[index]) {
+                        image = "data:" + posts['data']['items'][index].contentType + "," + posts['data']['items'][index].content
                       } else {
                         image = ""
                       }
@@ -622,14 +626,14 @@ export default function ViewProfile({ user }) {
     // })
 
       try {
-        const response = await axios.get(followersUrl).then(async (data) => {
+        const response = await axios.get(followersUrl, PP_auth).then(async (data) => {
           setAreFriends(data['data']);
           console.log("FFF", data['data'])
           console.log("FRIENDS?", areFriends)
           // console.log(response.data)
         });
         
-        const followReqResponse = await axios.get(followReqUrl).then(async (data) => {
+        const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
           set_is_pending(data['data'])
           console.log("PENDING?", is_pending)
         });
