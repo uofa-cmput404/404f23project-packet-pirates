@@ -92,22 +92,39 @@ export default function ViewProfile({ user }) {
     console.log("author", author);
     console.log("user", user);
 
-    const getConnections = async () => {
-    // let connectionsUrl =
-    //   "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
 
-    // const connectionsRes = await axios
-    //   .get(connectionsUrl, config)
-    //   .then((connectionsRes) => {
-    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
-    //     setFriends(
-    //       <Profile friends={connectionsRes.data.Friends} user={user} />
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
+    fetchPostData(); // Call the fetchPosts function
+    getConnections();
+    getNotifications();
+    getAuthorInfo();
+    checkFriendship();
+    console.log("posts", posts);
+  // }, [notifications]);
+}, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
 
+async function getNotifications() {
+  let notificationsUrl =
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+    user.user.user_id +
+    "/authornotifications";
+
+  const notifsRes = await axios
+    .get(notificationsUrl, config)
+    .then((notifsRes) => {
+      console.log("NOTIFSRES", notifsRes.data.Notifications);
+      setNotifications(
+        <Notifications
+          notifications={notifsRes.data.Notifications}
+          user={user}
+        />
+      );
+    })
+    .catch((error) => {
+      console.error("Error getting notifications:", error);
+    });
+};
+
+async function getConnections() {
     var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
     const connectionTest = await axios
     .get(url, PP_auth)
@@ -143,32 +160,21 @@ export default function ViewProfile({ user }) {
       }
     );
 
-      Promise.all(requests).then((responses) => {
-        console.log("RESPONSES", responses)
-        console.log(responses.length)
-        const Friends = []
-        
-        if (responses.length == 0) {
-          setFriends(
-            <Profile friends={Friends} user={user} />
-          );
-        } else {
-        
-          for (let i = 0; i < responses.length; i++) {
+    Promise.all(requests).then((responses) => {
+      console.log("RESPONSES", responses)
+      console.log(responses.length)
+      const Friends = []
+      
+      if (responses.length == 0) {
+        setFriends(
+          <Profile friends={Friends} user={user} />
+        );
+      } else {
+      
+        for (let i = 0; i < responses.length; i++) {
 
-            if (responses[i].data['is_follower']) { // For Web Weavers
-              if (responses[i].data['is_follower'] == true) {
-                let userProfile = {
-                  friend_username: connectionRes.data.items[i].displayName,
-                  friend_pfp: connectionRes.data.items[i].profileImage
-                }
-                  console.log("friend_username", connectionRes.data.items[i].displayName)
-                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-                Friends.push(userProfile)
-              }
-            }
-
-            if (responses[i].data == true) {
+          if (responses[i].data['is_follower']) { // For Web Weavers
+            if (responses[i].data['is_follower'] == true) {
               let userProfile = {
                 friend_username: connectionRes.data.items[i].displayName,
                 friend_pfp: connectionRes.data.items[i].profileImage
@@ -176,504 +182,305 @@ export default function ViewProfile({ user }) {
                 console.log("friend_username", connectionRes.data.items[i].displayName)
                 console.log("friend_pfp", connectionRes.data.items[i].profileImage)
               Friends.push(userProfile)
-            }  
-
-            console.log("FRIENDS", Friends)
-            setFriends(
-              <Profile friends={Friends} user={user} />
-            );
+            }
           }
-        } // end for
-      }); // end Promise
 
-    }); // end Then
+          if (responses[i].data == true) {
+            let userProfile = {
+              friend_username: connectionRes.data.items[i].displayName,
+              friend_pfp: connectionRes.data.items[i].profileImage
+            }
+              console.log("friend_username", connectionRes.data.items[i].displayName)
+              console.log("friend_pfp", connectionRes.data.items[i].profileImage)
+            Friends.push(userProfile)
+          }  
+
+          console.log("FRIENDS", Friends)
+          setFriends(
+            <Profile friends={Friends} user={user} />
+          );
+        }
+      } // end for
+    }); // end Promise
+
+  }); // end Then
 }; // end async
 
-    const getNotifications = async () => {
-      let notificationsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
-        user.user.user_id +
-        "/authornotifications";
 
-      const notifsRes = await axios
-        .get(notificationsUrl, config)
-        .then((notifsRes) => {
-          console.log("NOTIFSRES", notifsRes.data.Notifications);
-          setNotifications(
-            <Notifications
-              notifications={notifsRes.data.Notifications}
-              user={user}
-            />
-          );
-        })
-        .catch((error) => {
-          console.error("Error getting notifications:", error);
-        });
-    };
+async function fetchPostData() {
 
-    // const fetchPosts = async () => {
-    //   let postsUrl =
-    //     // "http://127.0.0.1:8000/author/" + author + "/feedposts_byusername";
-    //     location.state["api"] + "/posts";
-    //   let host = new URL(location.state["api"]).hostname;
+  let url = location.state["api"] + "/posts";
+  let host = new URL(location.state["api"]).hostname;
 
-    //   if (host.includes("packet-pirates")) {
-    //     console.log("PIRATE!");
-    //     auth = PP_auth;
-    //   } else if (host.includes("super-coding")) {
-    //     auth = SC_auth;
-    //   } else if (host.includes("web-weavers")) {
-    //     auth = WW_auth;
-    //     postsUrl = postsUrl + "/";
-    //   } else if (host.includes("node-net")) {
-    //     auth = NN_auth;
-    //   }
+  const postUrls = []
 
-    //   const postsRes = await axios
-    //     .get(postsUrl, auth)
-    //     .then((postsRes) => {
-    //       console.log("POSTSRES", postsRes.status);
-    //       console.log("posts", postsRes.data);
-    //       const urls = [];
-    //       const likeUrls = [];
+  //Corresponding authorization
+  let auth = ''
+  if (url.includes('packet-pirates')) {
+    auth = PP_auth
+  } else if (url.includes("super-coding")) {
+    auth = SC_auth
+  } else if (url.includes("web-weavers")) {
+    auth = WW_auth;
+    url = url + "/";
+  } else if (url.includes("node-net")) {
+    auth = NN_auth;
+  }
 
-    //       var postData = "";
-    //       if (postsRes.data.items) {
-    //         postData = postsRes.data.items;
-    //       } else {
-    //         postData = postsRes.data;
-    //       }
+  try {
 
-    //       for (let i = 0; i < postData.length; i++) {
-    //         console.log(postData[i]["id"] + "/image");
-    //         if (postData[i]["id"].includes("web-weavers")){
-    //             urls.push(postData[i]["id"] + "/image/");
-    //         } else {
-    //             urls.push(postData[i]["id"] + "/image");
-    //         }
-    //       }
+    await axios.get(url, auth)
+    .then(posts => {
+      //Get profile images and likes
+      const imageUrls = []
+      const likeUrls = []
 
-    //       console.log("URLS", urls);
-
-    //       const requests = urls.map((url) =>
-    //         axios
-    //           .get(url, auth)
-    //           .then((response) => response)
-    //           .catch((error) => console.error("Error", error))
-    //       );
-
-    //       Promise.all(requests).then((responses) => {
-    //         // console.log("RESPONSES", responses);
-    //         // console.log("RESPONSE", responses[0]['data']['image'])
-
-    //         if (author === user.user.username) {
-    //           setPosts(
-    //             postData.map((post, index) => {
-    //               // As the user, want to be able to see your all your posts.
-    //               const image = responses[index]["data"];
-    //               return (
-    //                 <RemotePost
-    //                   key={index}
-    //                   user={user}
-    //                   post_author={post.author}
-    //                   title={post.title}
-    //                   description={post.description}
-    //                   content={post.content}
-    //                   contentType = {post.contentType}
-    //                   img={image}
-    //                   likes={post.likes_count}
-    //                   post_id={post.id}
-    //                 />
-    //               );
-    //             })
-    //           );
-    //         } else {
-    //           setPosts(
-    //             postData
-    //               .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
-    //               .map((post, index) => {
-    //                 var image = "";
-    //                 if (host.includes("super-coding")) {
-
-    //                   image = responses[index]["data"]["image"];
-
-    //                 } else if (host.includes("web-weavers")) {
-    //                   if (responses[index]) {
-    //                     image = "data:" + postData[index].contentType + "," + postData[index].content
-    //                   } else {
-    //                     image = ""
-    //                   }
-
-    //                   // THEIR IMAGE ENDPOINT IS NOT RETURNING A DECODED IMAGE URL...
-    //                   // console.log("IMAGE TESTING", responses[index], postData[index])
-    //                   // console.log("IMAGE TESTING", "data:" + postData[index].contentType + "," + postData[index].content, postData[index])
-    //                   // image = "https://picsum.photos/200/300";
-
-    //                 } else if (host.includes("node-net")) {
-
-    //                   image = "https://picsum.photos/200/300";
-
-    //                 } else {
-
-    //                   image = responses[index]["data"];
-    //                 }
-    //                 return (
-    //                   <RemotePost
-    //                     key={index}
-    //                     user={user}
-    //                     post_author={post.author}
-    //                     title={post.title}
-    //                     description={post.description}
-    //                     content={post.content}
-    //                     contentType = {post.contentType}
-    //                     img={image}
-    //                     likes={post.likes_count}
-    //                     post_id={post.id}
-    //                   />
-    //                 ); // end return
-    //               }) // end map
-    //           ); // end setPosts
-    //         } // end else
-    //       });
-    //     })
-
-    //     .catch((error) => {
-    //       console.error("Error getting posts:", error);
-    //       setPosts(
-    //         <div className="flex justify-center items-center">
-    //           This user does not exists, did you enter the correct username?
-    //         </div>
-    //       ); // end catch error
-    //     }); //
-    // }; // end fetchPosts
-
-    const fetchPostData = async () => {
-
-      let url = location.state["api"] + "/posts";
-      let host = new URL(location.state["api"]).hostname;
-  
-      const postUrls = []
-  
-      //Corresponding authorization
-      let auth = ''
-      if (url.includes('packet-pirates')) {
-        auth = PP_auth
-      } else if (url.includes("super-coding")) {
-        auth = SC_auth
-      } else if (url.includes("web-weavers")) {
-        auth = WW_auth;
-        url = url + "/";
-      } else if (url.includes("node-net")) {
-        auth = NN_auth;
+      let allPosts = []
+      if (url.includes("web-weavers")) { 
+        allPosts = posts['data']['items'] 
+      } else { 
+        allPosts = posts['data'] 
       }
 
-      try {
+      //Create array of url-auth pairs again :(
+      for (let res in allPosts) {
 
-        await axios.get(url, auth)
-        .then(posts => {
-          //Get profile images and likes
-          const imageUrls = []
-          const likeUrls = []
+        //Post url
+        let imUrl = allPosts[res]['id'] + '/image'
 
-          let allPosts = []
-          if (url.includes("web-weavers")) { 
-            allPosts = posts['data']['items'] 
-          } else { 
-            allPosts = posts['data'] 
-          }
-    
-          //Create array of url-auth pairs again :(
-          for (let res in allPosts) {
+        //Likes url
+        let likUrl = allPosts[res]['id'] + '/likes'
 
-            //Post url
-            let imUrl = allPosts[res]['id'] + '/image'
-    
-            //Likes url
-            let likUrl = allPosts[res]['id'] + '/likes'
-    
-            //Corresponding authorization
-            let auth = ''
-            if (imUrl.includes('packet-pirates')) {
-              auth = PP_auth
-            } else if (imUrl.includes("super-coding")) {
-              auth = SC_auth
-            } else if (imUrl.includes("web-weavers")) {
-              auth = WW_auth;
-              imUrl = imUrl + "/";
-              likUrl = likUrl + "/";
-            } else if (imUrl.includes("node-net")) {
-              auth = NN_auth;
-            }
-    
-            imageUrls.push([imUrl, auth])
-            likeUrls.push([likUrl, auth])
-    
-          }
-    
-          //Send request for each url-auth
-          const imgRequests = imageUrls.map(([url, auth]) =>
-            axios.get(url, auth)
-            .then(response => response)
-            .catch (error => console.error('Error', error))
-          );
-    
-          const likRequests = likeUrls.map(([url, auth]) => 
-            axios.get(url, auth)
-            .then(response => response)
-            .catch (error => console.error('Error', error))
-          );
-    
-          Promise.all(imgRequests)
-          .then(images => {
-    
-            Promise.all(likRequests)
-            .then(likes => {
-            
-              if (author === user.user.username) {
-
-                setPosts(() => [
-                  allPosts.map((res, index) => {
-      
-                    let image = ''
-                    let num_likes = 0
-      
-                    if (res.id.includes("packet-pirates")){
-      
-                      image = images[index]['data']
-                      num_likes = likes[index]['data']['length']
-      
-                    } else if (res.id.includes("super-coding")){
-      
-                      image = images[index]['data']['image']
-                      num_likes = likes[index]['data']['length']
-      
-                    } else if (res.id.includes("web-weavers")) {
-                      
-                      // Change this to the post data here
-                      if (allPosts[index]) {
-                        image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
-                      } else {
-                        image = ""
-                      }
-      
-                      num_likes = likes[index]['data']['items']['length']
-      
-                    } else if (res.data.id.includes("node-net")) {
-      
-                      image = "https://picsum.photos/200/300";
-                      num_likes = likes[index]['data']['length']
-      
-                    }
-
-                    return (
-                      <RemotePost
-                        key={index}
-                        user={user}
-                        post_author={res.author}
-                        title={res.title}
-                        description={res.description}
-                        content={res.content}
-                        img={image}
-                        likes={num_likes}  
-                        post_id = {res.id}
-                        categories = {res.categories}
-                        contentType = {res.contentType}
-                        count = {res.count}
-                        origin = {res.origin}
-                        published = {res.published}
-                        source = {res.source}
-                        unlisted = {res.unlisted}
-                        visibility = {res.visibility}
-                      />
-                    );
-                  }),
-                ]);
-              } else {
-
-                setPosts(() => [
-                  allPosts
-                  .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
-                  .map((res, index) => {
-      
-                    let image = ''
-                    let num_likes = 0
-      
-                    if (res.id.includes("packet-pirates")){
-      
-                      image = images[index]['data']
-                      num_likes = likes[index]['data']['length']
-      
-                    } else if (res.id.includes("super-coding")){
-      
-                      image = images[index]['data']['image']
-                      num_likes = likes[index]['data']['length']
-      
-                    } else if (res.id.includes("web-weavers")) {
-                      
-                      // Change this to the post data here
-                      if (allPosts[index]) {
-                        image = "data:" + posts['data']['items'][index].contentType + "," + posts['data']['items'][index].content
-                      } else {
-                        image = ""
-                      }
-      
-                      num_likes = likes[index]['data']['items']['length']
-      
-                    } else if (res.data.id.includes("node-net")) {
-      
-                      image = "https://picsum.photos/200/300";
-                      num_likes = likes[index]['data']['length']
-      
-                    }
-
-                    return (
-                      <RemotePost
-                        key={index}
-                        user={user}
-                        post_author={res.author}
-                        title={res.title}
-                        description={res.description}
-                        content={res.content}
-                        img={image}
-                        likes={num_likes}  
-                        post_id = {res.id}
-                        categories = {res.categories}
-                        contentType = {res.contentType}
-                        count = {res.count}
-                        origin = {res.origin}
-                        published = {res.published}
-                        source = {res.source}
-                        unlisted = {res.unlisted}
-                        visibility = {res.visibility}
-                      />
-                    );
-                  }),
-                ]);
-
-              }
-            })
-          })
-        })
-
-      } catch (error) {
-
-        console.error("Error getting posts:", error);
-          setPosts(
-            <div className="flex justify-center items-center">
-              This user does not exists, did you enter the correct username?
-            </div>
-          ); // end catch error
-
-      }
-  
-    };
-
-
-    const checkFriendship = async () => {
-      // Check if Sasuke is a friend of Packet, if so, we want to let packet be able to remove them as a follower
-      const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" 
-                              + user.user.user_id  + "/followers/" + location.state['api'].split('/')[4];
-      
-      // Check if Sasuke follow request to Packet still exists, if it does, disable the remove follower button.
-      const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" 
-                              + user.user.user_id + "/followrequest/" + location.state['api'].split('/')[4] + "/ispending"
-      
-      // We can check if packet pirates is a friend of Sasuke
-      var followingUrl = location.state['api'] + "/followers/" + user.user.user_id 
-      
-      const urls = []
-
-    //   urls.push(followersUrl)
-    //   urls.push(followReqUrl)
-    //   urls.push(followingUrl)
-
-    //   var auth = ''
-    //   const requests = urls.map((url) => {
-        
-    //     if (url.includes("packet-pirates")) {
-    //       console.log("PIRATE!");
-    //       auth = PP_auth;
-    //     } else if (url.includes("super-coding")) {
-    //       auth = SC_auth;
-    //     } else if (url.includes("web-weavers")) {
-    //       auth = WW_auth;
-    //       url = url + "/";
-    //     } else if (url.includes("node-net")) {
-    //       auth = NN_auth;
-    //     }
-
-    //     return axios
-    //       .get(url, auth)
-    //       .then((response) => response)
-    //       .catch((error) => console.error("Error", error))
-    //   }
-    // );
-
-    // Promise.all(requests).then((responses) => {
-    //   console.log("RESPONSESS", responses)
-    //   setAreFriends(responses[0]);
-    //   set_is_pending(responses[1])
-      
-    //   if (urls[2].includes("packet-pirates")) {
-    //     setIsFollowing(responses[2])
-    //     // console.log("DATA RESPONSE", isFollowing)
-    //   } else {
-    //     setIsFollowing(responses[2]['is_follower'])
-    //     // console.log("DATA RESPONSE", isFollowing)
-    //   }
-    //   console.log("PROMISE RESPONSES", is_pending, areFriends, isFollowing)
-    // })
-
-      try {
-        const response = await axios.get(followersUrl, PP_auth).then(async (data) => {
-          setAreFriends(data['data']);
-          console.log("FFF", data['data'])
-          console.log("FRIENDS?", areFriends)
-          // console.log(response.data)
-        });
-        
-        const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
-          set_is_pending(data['data'])
-          console.log("PENDING?", is_pending)
-        });
-
-        if (host.includes("packet-pirates")) {
-          console.log("PIRATE!");
-          auth = PP_auth;
-        } else if (host.includes("super-coding")) {
-          auth = SC_auth;
-        } else if (host.includes("web-weavers")) {
+        //Corresponding authorization
+        let auth = ''
+        if (imUrl.includes('packet-pirates')) {
+          auth = PP_auth
+        } else if (imUrl.includes("super-coding")) {
+          auth = SC_auth
+        } else if (imUrl.includes("web-weavers")) {
           auth = WW_auth;
-          followingUrl = followingUrl + "/";
-        } else if (host.includes("node-net")) {
+          imUrl = imUrl + "/";
+          likUrl = likUrl + "/";
+        } else if (imUrl.includes("node-net")) {
           auth = NN_auth;
         }
 
-        const followingResponse = await axios.get(followingUrl, auth).then (async (data) => {
-          if (host.includes("packet-pirates")) {
-            setIsFollowing(data['data'])
-            console.log("DATA RESPONSE", isFollowing)
+        imageUrls.push([imUrl, auth])
+        likeUrls.push([likUrl, auth])
+
+      }
+
+      //Send request for each url-auth
+      const imgRequests = imageUrls.map(([url, auth]) =>
+        axios.get(url, auth)
+        .then(response => response)
+        .catch (error => console.error('Error', error))
+      );
+
+      const likRequests = likeUrls.map(([url, auth]) => 
+        axios.get(url, auth)
+        .then(response => response)
+        .catch (error => console.error('Error', error))
+      );
+
+      Promise.all(imgRequests)
+      .then(images => {
+
+        Promise.all(likRequests)
+        .then(likes => {
+        
+          if (author === user.user.username) {
+
+            setPosts(() => [
+              allPosts.map((res, index) => {
+  
+                let image = ''
+                let num_likes = 0
+  
+                if (res.id.includes("packet-pirates")){
+  
+                  image = images[index]['data']
+                  num_likes = likes[index]['data']['length']
+  
+                } else if (res.id.includes("super-coding")){
+  
+                  image = images[index]['data']['image']
+                  num_likes = likes[index]['data']['length']
+  
+                } else if (res.id.includes("web-weavers")) {
+                  
+                  // Change this to the post data here
+                  if (allPosts[index]) {
+                    image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
+                  } else {
+                    image = ""
+                  }
+  
+                  num_likes = likes[index]['data']['items']['length']
+  
+                } else if (res.data.id.includes("node-net")) {
+  
+                  image = "https://picsum.photos/200/300";
+                  num_likes = likes[index]['data']['length']
+  
+                }
+
+                return (
+                  <RemotePost
+                    key={index}
+                    user={user}
+                    post_author={res.author}
+                    title={res.title}
+                    description={res.description}
+                    content={res.content}
+                    img={image}
+                    likes={num_likes}  
+                    post_id = {res.id}
+                    categories = {res.categories}
+                    contentType = {res.contentType}
+                    count = {res.count}
+                    origin = {res.origin}
+                    published = {res.published}
+                    source = {res.source}
+                    unlisted = {res.unlisted}
+                    visibility = {res.visibility}
+                  />
+                );
+              }),
+            ]);
           } else {
-            setIsFollowing(data['data']['is_follower'])
-            console.log("DATA RESPONSE", isFollowing)
+
+            setPosts(() => [
+              allPosts
+              .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
+              .map((res, index) => {
+  
+                let image = ''
+                let num_likes = 0
+  
+                if (res.id.includes("packet-pirates")){
+  
+                  image = images[index]['data']
+                  num_likes = likes[index]['data']['length']
+  
+                } else if (res.id.includes("super-coding")){
+  
+                  image = images[index]['data']['image']
+                  num_likes = likes[index]['data']['length']
+  
+                } else if (res.id.includes("web-weavers")) {
+                  
+                  // Change this to the post data here
+                  if (allPosts[index]) {
+                    image = "data:" + posts['data']['items'][index].contentType + "," + posts['data']['items'][index].content
+                  } else {
+                    image = ""
+                  }
+  
+                  num_likes = likes[index]['data']['items']['length']
+  
+                } else if (res.data.id.includes("node-net")) {
+  
+                  image = "https://picsum.photos/200/300";
+                  num_likes = likes[index]['data']['length']
+  
+                }
+
+                return (
+                  <RemotePost
+                    key={index}
+                    user={user}
+                    post_author={res.author}
+                    title={res.title}
+                    description={res.description}
+                    content={res.content}
+                    img={image}
+                    likes={num_likes}  
+                    post_id = {res.id}
+                    categories = {res.categories}
+                    contentType = {res.contentType}
+                    count = {res.count}
+                    origin = {res.origin}
+                    published = {res.published}
+                    source = {res.source}
+                    unlisted = {res.unlisted}
+                    visibility = {res.visibility}
+                  />
+                );
+              }),
+            ]);
+
           }
         })
+      })
+    })
 
-        console.log("RESPONSES", is_pending, areFriends, isFollowing)
-      } catch (error) {
-        console.error("Error checking friendship:", error);
+  } catch (error) {
+
+    console.error("Error getting posts:", error);
+      setPosts(
+        <div className="flex justify-center items-center">
+          This user does not exists, did you enter the correct username?
+        </div>
+      ); // end catch error
+
+  }
+};
+
+async function checkFriendship() {
+  // Check if Sasuke is a friend of Packet, if so, we want to let packet be able to remove them as a follower
+  const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" 
+                          + user.user.user_id  + "/followers/" + location.state['api'].split('/')[4];
+  
+  // Check if Sasuke follow request to Packet still exists, if it does, disable the remove follower button.
+  const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" 
+                          + user.user.user_id + "/followrequest/" + location.state['api'].split('/')[4] + "/ispending"
+  
+  // We can check if packet pirates is a friend of Sasuke
+  var followingUrl = location.state['api'] + "/followers/" + user.user.user_id 
+  
+  const urls = []
+
+  try {
+    const response = await axios.get(followersUrl, PP_auth).then(async (data) => {
+      setAreFriends(data['data']);
+      console.log("FFF", data['data'])
+      console.log("FRIENDS?", areFriends)
+      // console.log(response.data)
+    });
+    
+    const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
+      set_is_pending(data['data'])
+      console.log("PENDING?", is_pending)
+    });
+
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      followingUrl = followingUrl + "/";
+    } else if (host.includes("node-net")) {
+      auth = NN_auth;
+    }
+
+    const followingResponse = await axios.get(followingUrl, auth).then (async (data) => {
+      if (host.includes("packet-pirates")) {
+        setIsFollowing(data['data'])
+        console.log("DATA RESPONSE", isFollowing)
+      } else {
+        setIsFollowing(data['data']['is_follower'])
+        console.log("DATA RESPONSE", isFollowing)
       }
-     }  
+    })
 
-    fetchPostData(); // Call the fetchPosts function
-    getConnections();
-    getNotifications();
-    getAuthorInfo();
-    checkFriendship();
-    console.log("posts", posts);
-  // }, [notifications]);
-}, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
-
+    console.log("RESPONSES", is_pending, areFriends, isFollowing)
+  } catch (error) {
+    console.error("Error checking friendship:", error);
+  }
+} 
   const getAuthorInfo = async () => {
     let authUrl = location.state["api"];
 
