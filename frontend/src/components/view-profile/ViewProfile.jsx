@@ -557,7 +557,7 @@ export default function ViewProfile({ user }) {
                       </button>
                     )}
 
-                    {isFollowing && areFriends && (
+                    {areFriends && (
                       <button
                         className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
                         onClick={handleRemove}
