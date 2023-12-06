@@ -95,7 +95,7 @@ export default function ViewProfile({ user }) {
     fetchPostData(); // Call the fetchPosts function
     console.log("posts", posts);
   // }, []);
-}, [posts]);
+}, []);
 
   useEffect(() => {
 

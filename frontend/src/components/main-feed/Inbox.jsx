@@ -247,7 +247,7 @@ export default function Inbox({ user }) {
 
   useEffect(() => {
     getInbox();
-  }, [inbox]);
+  }, []);
 
   const getInbox = async () => {
 
