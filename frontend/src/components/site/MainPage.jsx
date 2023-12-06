@@ -207,7 +207,7 @@ export default function MainPage({ user }) {
     getConnections();
     getNotifications();
   // }, [notifications, friends]);
-}, []);
+}, [posts]);
   // }, []);
 
   const handleLogout = async (event) => {
