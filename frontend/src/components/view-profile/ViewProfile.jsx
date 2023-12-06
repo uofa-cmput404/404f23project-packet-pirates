@@ -458,10 +458,10 @@ export default function ViewProfile({ user }) {
         // console.log(response.data)
       });
       
-      const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
-        set_is_pending(data['data'])
-        console.log("PENDING?", is_pending)
-      });
+      // const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
+      //   set_is_pending(data['data'])
+      //   console.log("PENDING?", is_pending)
+      // });
 
       if (host.includes("packet-pirates")) {
         console.log("PIRATE!");
@@ -557,7 +557,7 @@ export default function ViewProfile({ user }) {
                       </button>
                     )}
 
-                    {isFollowing && areFriends && (
+                    {areFriends && (
                       <button
                         className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
                         onClick={handleRemove}
