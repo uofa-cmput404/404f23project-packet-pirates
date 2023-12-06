@@ -98,7 +98,7 @@ export default function ViewProfile({ user }) {
     checkFriendship();
     console.log("posts", posts);
   // }, []);
-}, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
+}, [posts]);
 
   useEffect(() => {
 
@@ -106,9 +106,9 @@ export default function ViewProfile({ user }) {
 
   }, [notifications])
  
-  // useEffect(() => {
+  useEffect(() => {
 
-  // }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
+  }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
 
 
   async function getNotifications() {
@@ -557,7 +557,7 @@ export default function ViewProfile({ user }) {
                       </button>
                     )}
 
-                    {areFriends && (
+                    {isFollowing && areFriends && (
                       <button
                         className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
                         onClick={handleRemove}
