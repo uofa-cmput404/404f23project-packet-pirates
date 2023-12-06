@@ -106,9 +106,7 @@ export default function Inbox({ user }) {
 
   const fetchPostData = async (inbox) => {
 
-    let posts = inbox.posts
-
-    console.log(posts)
+    let posts = Object.values(inbox.posts)
 
       const imageUrls = []
       const likeUrls = []
@@ -117,10 +115,10 @@ export default function Inbox({ user }) {
       for (let id in posts) {
 
         //Post url
-        let imUrl = posts[id]['data']['id'] + '/image'
+        let imUrl = posts[id]['id'] + '/image'
 
         //Likes url
-        let likUrl = posts[id]['data']['id'] + '/likes'
+        let likUrl = posts[id]['id'] + '/likes'
 
         //Corresponding authorization
         let auth = ''
