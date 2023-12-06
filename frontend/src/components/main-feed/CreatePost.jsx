@@ -113,7 +113,7 @@ export default function CreatePost({ user }) {
       })
       .then((response) => {
         console.log(response.data);
-        // window.location.reload(false);
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("Error Response: ", error.response);
