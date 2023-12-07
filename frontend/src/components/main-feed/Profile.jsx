@@ -47,7 +47,7 @@ export default function Profile({ friends, user }) {
                 {/* idk? what should this behavior be? change this later on i guess */}
                 <button
                   className="flex flex-row list-image-none justify-center items-center mt-3"
-                  onClick={() => handleFriendClick(friend)}
+                  // onClick={() => handleFriendClick(friend)}
                   // onClick={() => navigate("/user/" + friend.friend_username)}
                 >
                   <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
