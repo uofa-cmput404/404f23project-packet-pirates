@@ -60,13 +60,13 @@ export default function Login() {
                 Sign in to your account
               </h1>
 
-              <a
+              {/* <a
                 href="#"
                 className="flex items-center justify-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-400"
               >
                 <FontAwesomeIcon icon={faGithub} />
                 <span>Sign in with Github</span>
-              </a>
+              </a> */}
 
               <form className="space-y-4 md:space-y-6" action="#">
                 <div>
