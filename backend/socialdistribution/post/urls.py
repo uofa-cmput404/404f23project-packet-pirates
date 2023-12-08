@@ -10,6 +10,7 @@ urlpatterns = [
     
     path("author/<str:pk>/postcomments", views.PostComments.as_view(), name = "get_comments_post"),
     path("author/<str:pk>/postlikes", views.PostLikeViews.as_view(), name = "get_likes_post"),
+    path("author/<str:pk>/testlikes", views.PostCreateTestLike.as_view(), name = "get_likes_post"),
     path('author/<str:pk>/editpost', views.EditPost.as_view(), name="editpost"),
     # path("author/<str:pk>/postlikes", views.getPostLike.as_view(), name = "get_likes_post"),
     path('postViews', views.PostViews.as_view(), name="createpost"),

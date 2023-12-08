@@ -57,7 +57,6 @@ class GetAllNotifications(APIView):
     def get(self, request, pk):
         pk = uuid.UUID(pk)
         notifications = Notifications.objects.filter(author = pk)
-        print(notifications)
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
 
@@ -119,7 +118,7 @@ class GetUsers(APIView):
         Users = {
             "Users": serializer.data + filtered_external_data + filtered_external_data2
         }
-        print(Users)
+
 
         return Response(Users, status=status.HTTP_200_OK)
     
@@ -174,10 +173,13 @@ class GetAuthorFollowing(APIView):
                     tags=['Feed'],)
     
     def get(self, request, pk):
-          
-        friends = Friends.objects.filter(friend_id = pk)
-        serializer = FriendsSerializer(friends, many=True)
 
+        pk = str(uuid.UUID(pk))
+
+        friends = Friends.objects.filter(friend = pk)
+
+        serializer = FriendsSerializer(friends, many=True)
+        
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         
         # friends = Friends.author.objects.get(author_id = request.user.user_id)
@@ -275,7 +277,7 @@ class FollowRequestViews(APIView):
         tags=['Feed'],)
     
     def get (self, request, pk):
-        print("Request", request.data)
+
         follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['data']['sender'])).filter(recipient = uuid.UUID(request.data['data']['recipient']))
         
         if (follow_req_obj):
@@ -294,9 +296,6 @@ class FollowRequestViews(APIView):
                                   # Or request can have both.
 
         serializer = FollowerRequestSerializer(data = request.data)
-        
-        print(serializer.is_valid())
-        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -310,8 +309,6 @@ class FollowRequestViews(APIView):
             tags=['Feed'],)
         
     def delete(self, request, pk):
-        print("FR DATA", request.data)
-        print("Sender", request.data['data']['sender'], "Recipicient", request.data['data']['recipient'])
         follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
 
         if (follow_request_obj):
@@ -412,9 +409,7 @@ class NotificationViews(APIView):
 
         author = AppAuthor.objects.get(username = request.data['author'])
         request.data['author'] = str(author.user_id)
-
-        serializer.is_valid()
-        print(serializer.errors)
+        
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
             return Response({'message': 'Notification Object Successfully Created'}, status=status.HTTP_201_CREATED)
@@ -428,7 +423,6 @@ class NotificationViews(APIView):
         tags=['Notifications'],)
     
     def delete(self, request, pk):
-        print("Notify DATA", request.data)
 
         notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
@@ -446,14 +440,14 @@ class DeleteAllNotifications(APIView):
         tags=['Notifications'],)
     
     def delete(self, request, pk):
-        print("Notify DATA", request.data)
+
         pk = uuid.UUID(pk)
         notification_objects = Notifications.objects.filter(author = pk).filter(is_follow_notification = False)
         # notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
         if (notification_objects):
             for notification in notification_objects:
-                # print(notification)
+
                 notification.delete()
             return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
 
@@ -483,8 +477,6 @@ class InboxViewPosts(APIView):
 
         serializer = InboxPostsSerializer(inbox)
         
-        # print(serializer.data)
-        
         # extract only the 'API' field from each post
         api_fields = []
         
@@ -492,13 +484,11 @@ class InboxViewPosts(APIView):
             api_fields.append(post_data.get('API', ''))
             
         posts = []
-        print("GOT HERE 1")
         for x in api_fields:
             if c.SUPER_ENDPOINT in x:
                 try:
                     basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
                     r = requests.get(x, auth=basic)
-                    print("GOT HERE 2")
             
                     t = r.json().copy()
 
@@ -518,7 +508,7 @@ class InboxViewPosts(APIView):
                     basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
                     r = requests.get(x, auth=basic)
                     t = r.json().copy()
-                    print("GOT HERE 3")
+
                     t['image_url'] = x + "/image"
 
                     image_req = requests.get(t['image_url'], auth=basic)
@@ -572,15 +562,12 @@ class InboxViewComments(APIView):
 
         serializer = InboxCommentsSerializer(inbox)
         
-        # print(serializer.data)
-        
         # extract only the 'API' field from each post
         api_fields = []
-        print(serializer.data.items())
+
         for comment_id, comment_data in serializer.data.items():
             api_fields.append(comment_data.get('API', ''))
         
-        print(api_fields)
         comments = []
         
         for x in api_fields:
@@ -602,8 +589,6 @@ class InboxViewComments(APIView):
                 try:
                     basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
                     r = requests.get(x, auth=basic)
-                    
-                    print(r)
 
                     comments.append(r.json())
                 except Exception as e:
@@ -670,8 +655,6 @@ class InboxViews(APIView):
         inbox = Inbox.objects.get(author = pk)
 
         # inbox = Inbox.objects.get(author = request.data['author'])
-        print("Inbox", inbox.author.user_id)
-        print("REQUEST\n", request.data)
 
         # author = request.data['author']
 
@@ -682,26 +665,20 @@ class InboxViews(APIView):
         # follow_requests = request.data.get('follow_requests')
 
         if (request.data['type'].lower() == 'post'):
-            print("YES")
         
             key = str(uuid.uuid4())
             request.data['API'] = request.data['id']
-            print(key)
             if(inbox.posts == None):
                 inbox.posts = {key: request.data}
-                print("New object", inbox.posts)
             else:
                 inbox.posts[key] = request.data
-                print("APPENDED", inbox.posts)
 
         if (request.data['type'].lower() == 'comment'):
             # Need to create comment object and notification
             post_id = request.data['id'].split('/')[6]
             comment_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
-            print(request.data['author']['displayName'])
-            print(request.data['author']['profileImage'])
-            print(request.data['comment'])
+
             comment_id = uuid.uuid4()
 
             new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
@@ -711,7 +688,7 @@ class InboxViews(APIView):
 
             if (comment_serializer.is_valid(raise_exception=True)):
                 comment_serializer.save()
-                print("Comment Valid")
+
 
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                             'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -721,7 +698,7 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
+
 
         
         if (request.data['type'].lower() == 'like'):
@@ -739,7 +716,7 @@ class InboxViews(APIView):
                 like_serializer.save()
                 new_like_count = like_post.likes_count + 1
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
-                print("Like Valid")
+
 
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -749,7 +726,7 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
+
 
 
         if (request.data['type'].lower() == 'follow'):
@@ -763,7 +740,7 @@ class InboxViews(APIView):
 
             if (follow_serializer.is_valid(raise_exception=True)):
                 follow_serializer.save()
-                print("Follow Valid")
+
             
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
@@ -773,7 +750,7 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
+
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                         'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
@@ -801,7 +778,7 @@ class InboxViews(APIView):
         serializer = InboxSerializer(inbox, data = new_inbox)
 
         if (serializer.is_valid(raise_exception = True)):
-            # print("valid")
+
             serializer.save()
             return Response ({"Message":"Inbox successfully deleted"}, status = status.HTTP_200_OK)
         
@@ -942,43 +919,22 @@ class InboxViewsRemote(APIView):
         Update the inbox of an author
         '''
 
-        # author_id = uuid.UUID(author_id)
-
         inbox = Inbox.objects.get(author = author_id)
 
-        # inbox = Inbox.objects.get(author = request.data['author'])
-        print("Inbox", inbox.author.user_id)
-        print("REQUEST\n", request.data)
-
-        # author = request.data['author']
-
-        # post_comments = request.data.get('post_comments')
-
-        # post_likes = request.data.get('post_likes')
-
-        # follow_requests = request.data.get('follow_requests')
-
         if (request.data['type'].lower() == 'post'):
-            print("YES")
         
             key = str(uuid.uuid4())
             request.data['API'] = request.data['id']
-            print(key)
             if(inbox.posts == None):
                 inbox.posts = {key: request.data}
-                print("New object", inbox.posts)
             else:
                 inbox.posts[key] = request.data
-                print("APPENDED", inbox.posts)
 
         if (request.data['type'].lower() == 'comment'):
             # Need to create comment object and notification
             post_id = request.data['id'].split('/')[6]
             comment_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
-            print(request.data['author']['displayName'])
-            print(request.data['author']['profileImage'])
-            print(request.data['comment'])
             comment_id = uuid.uuid4()
 
             new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
@@ -988,7 +944,6 @@ class InboxViewsRemote(APIView):
 
             if (comment_serializer.is_valid(raise_exception=True)):
                 comment_serializer.save()
-                print("Comment Valid")
 
             if (str(uuid.UUID(author_id)) != author): # To prevent self notifications
                 notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
@@ -999,7 +954,6 @@ class InboxViewsRemote(APIView):
 
                 if (notification_serializer.is_valid(raise_exception=True)):
                     notification_serializer.save()
-                    print("Notif Valid")
 
         
         if (request.data['type'].lower() == 'like'):
@@ -1017,7 +971,6 @@ class InboxViewsRemote(APIView):
                 like_serializer.save()
                 new_like_count = like_post.likes_count + 1
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
-                print("Like Valid")
 
             notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -1027,7 +980,6 @@ class InboxViewsRemote(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
 
 
         if (request.data['type'].lower() == 'follow'):
@@ -1041,7 +993,6 @@ class InboxViewsRemote(APIView):
 
             if (follow_serializer.is_valid(raise_exception=True)):
                 follow_serializer.save()
-                print("Follow Valid")
 
             notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
@@ -1051,7 +1002,6 @@ class InboxViewsRemote(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                         'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}

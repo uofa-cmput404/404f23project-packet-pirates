@@ -1,7 +1,8 @@
 from django.test import TestCase
 from login.models import AppAuthor
 from django.contrib import auth
-
+from django.contrib.auth.models import User, Permission
+from rest_framework.authtoken.models import Token
 
 class AuthorTestCase(TestCase):
     def setUp(self):
@@ -33,18 +34,24 @@ class AuthenticateTestCase(TestCase):
         tempAuthor.is_superuser = False
         tempAuthor.is_active = True
         tempAuthor.save()
+        self.token, created1 = Token.objects.get_or_create(user=tempAuthor)
 
     def testLogin(self):
         self.client.login(username='CMPUT404', password='cmput404')
-        response = self.client.get('http://127.0.0.1:8000/api/author')
+        headers = {'HTTP_AUTHORIZATION': f'Token {self.token.key}'}
+        response = self.client.get('https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author',
+                                   **headers)
+                                   
         self.assertEqual(response.status_code, 200)
 
     def testNotLoggedIn(self):
-        response = self.client.get('http://127.0.0.1:8000/api/author')
-        self.assertEqual(response.status_code, 403)
+        response = self.client.get('https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author',)
+        self.assertEqual(response.status_code, 401)
 
     def testLogout(self):
-        response = self.client.get('http://127.0.0.1:8000/api/logout')
+        headers = {'HTTP_AUTHORIZATION': f'Token {self.token.key}'}
+        response = self.client.get('hhttps://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout',
+                                   **headers)
         self.assertEqual(response.status_code, 200)
 
 

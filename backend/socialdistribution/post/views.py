@@ -56,7 +56,8 @@ class GetAuthorsPosts(APIView):
                     tags=['Post'],)
 
     def get(self, request, pk):
-        posts = Post.objects.filter(author_id = request.user.user_id) # Find posts that the specific author has posted
+        pk = uuid.UUID(pk)
+        posts = Post.objects.filter(author = pk) # Find posts that the specific author has posted
         # posts = Post.objects.all()
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
@@ -139,13 +140,14 @@ class GetFeedPosts(APIView):
         for friend in friends:
             posts = posts | Post.objects.filter(author = friend.friend).exclude(unlisted = True) # Add posts from each friend
 
-        # print("Friends", friends)
-        # print("Posts", posts)
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
 
 class PostViews(APIView):
+    '''
+    API for creating Posts as well as deleting Posts
+    '''
     #permission_classes = (permissions.AllowAny,)
     #authentication_classes = ()    
 
@@ -158,14 +160,6 @@ class PostViews(APIView):
                 tags=['Post'],)
 
     def post(self, request): # Create a post
-        # print(request.data['post_id'])
-        # author = AppAuthor.objects.get(user_id = request.user.user_id)
-        # print(author.display_name)
-        # authorSerializer = AuthorSerializer(author)
-        # print(authorSerializer)
-        # print(request)
-        # print(request.data)
-        print(request.data['image_file'])
 
         picture = request.data['image_file']
         
@@ -175,7 +169,6 @@ class PostViews(APIView):
         
         new_request_data['origin'] = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + request.data['author']  + "/posts/" + str(new_request_data['post_id'])
 
-        print("TEST", test)
         if (picture != ""):
             image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
             new_request_data['image_file'] = image
@@ -185,11 +178,6 @@ class PostViews(APIView):
             new_request_data['image_file'] = ''
             serializer = PostSerializer(data = new_request_data)
 
-        print(request.data)
-
-        serializer.is_valid()
-        print(serializer)
-        print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
@@ -198,6 +186,9 @@ class PostViews(APIView):
     
 
 class DeletePost(APIView):
+    '''
+    API for deleting posts
+    '''
     @swagger_auto_schema(operation_description="Delete a post for a specific author",
         operation_summary="Delete Author Post",
         responses={201: PostSerializer()},
@@ -215,7 +206,9 @@ class DeletePost(APIView):
         return Response({"Message": "Post Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
 
 class EditPost(APIView): # Have to pass the post_id on the content body from the front-end
-
+    '''
+    API for editting posts
+    '''
     #permission_classes = (permissions.AllowAny,)
     #authentication_classes = ()
 
@@ -232,15 +225,11 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
 
         post = Post.objects.get(post_id = post_id)
         
-        print(request.data)
-        print(request.data['image_file'])
-
         picture = request.data['image_file']
         
         new_request_data = request.data.copy()
 
-        print("TEST", test)
-        if (picture != "null"):
+        if (picture != ""):
             image = ImageFile(io.BytesIO(picture.file.read()), name = picture.name)
             new_request_data['image_file'] = image
             new_request_data['image_url'] = ''
@@ -248,13 +237,6 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
         else:
             new_request_data['image_file'] = ''
             serializer = PostSerializer(post, data = new_request_data)
-
-        serializer.is_valid()
-        print(serializer)
-        print(serializer.errors)
-
-        print(serializer.is_valid())
-        print(serializer.errors)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -293,13 +275,17 @@ class PostComments(APIView):
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
 
-        request.data['post'] = post_id
+        # request.data['post'] = post_id
+
+        new_request_data = request.data.copy()
+
+        new_request_data['post'] = post_id
 
         post_data = Post.objects.get(post_id = post_id)
         
         post_author = post_data.author
 
-        notification_author = AppAuthor.objects.get(user_id = request.data['author'])
+        notification_author = AppAuthor.objects.get(user_id = new_request_data['author'])
 
         if (post_author != str(notification_author.user_id)):
             notification = {'author':post_author, 'notification_author':str(notification_author.user_id), 'notif_origin_author':"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + str(notification_author.user_id),
@@ -311,7 +297,7 @@ class PostComments(APIView):
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
 
-        serializer = CommentSerializer(data = request.data)
+        serializer = CommentSerializer(data = new_request_data)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -336,6 +322,32 @@ class PostComments(APIView):
         return Response({"message": "Comment Model Does Not Exist"}, status=status.HTTP_404_NOT_FOUND)
   
 
+class PostCreateTestLike(APIView):
+    '''
+    API solely made for unit testing purposes and just removes the notification (same as below view)
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+    def post(self, request, pk): # For liking a post
+        post_object_id = uuid.UUID(pk)
+
+        post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
+
+        post_data = Post.objects.get(post_id = post_object_id)
+        
+        post_author = post_data.author
+
+        like_data = {"author":request.data['author'], "post_object":post_object_id}
+
+        serializer = LikeSerializer(data = like_data)
+
+        if (serializer.is_valid(raise_exception=True)):
+            serializer.save()
+            return Response({"message" : "Like & Notification Model Successfully Created"}, status=status.HTTP_201_CREATED)
+        
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+    
 class PostLikeViews(APIView):
     '''
     All likes of a post
@@ -367,15 +379,13 @@ class PostLikeViews(APIView):
     
     def post(self, request, pk): # For liking a post
         post_object_id = uuid.UUID(pk)
-        
-        print(request.data['like_count'])
 
         post = Post.objects.filter(post_id = post_object_id).update(likes_count = request.data['like_count'])
 
         post_data = Post.objects.get(post_id = post_object_id)
         
         post_author = post_data.author
-        
+
         notification_author = AppAuthor.objects.get(user_id = request.data['author']['user']['user_id'])
 
         if (post_author != str(notification_author.user_id)):
@@ -385,18 +395,12 @@ class PostLikeViews(APIView):
            
             notification_serializer = NotificationsSerializer(data = notification)
             
-            notification_serializer.is_valid()
-            print(notification_serializer.errors)
-            
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
 
         like_data = {"author":request.data['author']['user']['user_id'], "post_object":post_object_id}
 
         serializer = LikeSerializer(data = like_data)
-
-        serializer.is_valid()
-        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
