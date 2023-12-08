@@ -46,10 +46,9 @@ export default function Login() {
         localStorage.setItem("access_token", data.token);
         console.log("pushed");
         window.location.reload(false);
-        console.log(res);
+        // console.log(res.data);
       })
       .catch(function (error) {
-        console.log("ERRORRRRRR",error)
         alert("Incorrect username or password");
         console.log(error);
       });
