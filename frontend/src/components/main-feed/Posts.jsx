@@ -476,9 +476,9 @@ export default function Post({
 
           <div className="description-section flex justify-center items-center">
             {content_type === "text/markdown" ?
-              <p><ReactMarkdown>{description}</ReactMarkdown></p>
+              <pre><ReactMarkdown>{description}</ReactMarkdown></pre>
               :
-              <p>{description}</p>
+              <pre>{description}</pre>
             }
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
