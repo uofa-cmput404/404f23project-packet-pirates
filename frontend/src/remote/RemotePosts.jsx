@@ -668,7 +668,7 @@ export default function RemotePost({
             {visibility==="PRIVATE" && !unlisted && <span className="privacy-private">Private</span>}
           </div>
 
-          <div className="description-section flex justify-center items-center">
+          <div className="description-section flex justify-center items-center preserve-newline">
           {contentType === "text/markdown" ?
               <p><ReactMarkdown>{description}</ReactMarkdown></p>
               :
