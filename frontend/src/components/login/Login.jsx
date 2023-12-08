@@ -49,6 +49,7 @@ export default function Login() {
         console.log(res);
       })
       .catch(function (error) {
+        console.log("ERRORRRRRR",error)
         alert("Incorrect username or password");
         console.log(error);
       });
