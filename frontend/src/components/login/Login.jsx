@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Cookies from 'universal-cookie'
+import Cookies from "universal-cookie";
 
 export default function Login() {
   const [user, setUser] = useState("");
@@ -23,28 +23,35 @@ export default function Login() {
   const content = {
     username: user,
     password: pass,
-    Authorization: 'Token ' + localStorage.getItem('access_token')
+    Authorization: "Token " + localStorage.getItem("access_token"),
   };
 
-  const cookies = new Cookies()
+  const cookies = new Cookies();
 
   const getAuthor = async (event) => {
     event.preventDefault();
 
     // check if login was sucessful, then reloads the window
     const res = await axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/login", content, {})
+      .post(
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/login",
+        content,
+        {}
+      )
       .then((res) => res.data)
       .then(function (data) {
         console.log(data);
         console.log(data.token);
-        cookies.set('access_token', data.token, {path: '/'});
-        localStorage.setItem('access_token', data.token)
+        cookies.set("access_token", data.token, { path: "/" });
+        localStorage.setItem("access_token", data.token);
         console.log("pushed");
         window.location.reload(false);
         console.log(res);
       })
-      .catch(console.log);
+      .catch(function (error) {
+        alert("Incorrect username or password");
+        console.log(error);
+      });
   };
 
   return (
