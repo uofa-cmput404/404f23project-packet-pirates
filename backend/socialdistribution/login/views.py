@@ -109,6 +109,8 @@ class AuthorLogin(APIView):
                 'token': token.key,
                 "User": serializer.data},
                              status=status.HTTP_200_OK)
+        
+        return Response ({"Error":"Incorrect username or password"}, status = status.HTTP_400_BAD_REQUEST)
 
 class AuthorLogout(APIView):
     permission_classes = (permissions.IsAuthenticated,)
