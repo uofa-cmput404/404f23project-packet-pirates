@@ -28,7 +28,7 @@ class Post(models.Model):
     
     content_type = models.CharField(max_length=200,choices=content_types, default=content_types[0])
 
-    content = models.CharField(max_length=200, blank=True) # Change to textField later
+    content = models.TextField(max_length=200, blank=True) # Change to textField later
 
     source = models.CharField(max_length=200, blank = True, null= True) # ?
 

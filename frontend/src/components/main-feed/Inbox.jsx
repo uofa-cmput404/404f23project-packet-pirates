@@ -283,7 +283,7 @@ export default function Inbox({ user }) {
 
   return (
     <>
-      <div className="container flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         <div className="inbox text-5xl font-mono mt-5 font-bold underline">
           Inbox
         </div>
