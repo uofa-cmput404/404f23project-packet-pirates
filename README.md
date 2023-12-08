@@ -1,11 +1,12 @@
 CMPUT404-project-socialdistribution
 ===================================
-
+#### Warning
+Running too many instances of the app might cause Heroku to crash. If this happens, please wait a few minutes and try again. If components are missing/not rendering, refresh the page.
 
 ### The Project is also deployed on Heroku at:
-[Frontend](https://cmput404-project-socialdistribution.herokuapp.com/)
+[Frontend](https://packet-pirates-frontend-46271456b73c.herokuapp.com/)
 
-[Backend](https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/swagger)
+[Backend](https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/swagger/)
 
 ### Demo [Video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
