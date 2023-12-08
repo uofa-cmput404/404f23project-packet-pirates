@@ -86,7 +86,7 @@ export default function Post({
         setIsEditable(true);
       }
     } catch {
-      console.log(":^]");
+      console.log("Error editting");
     }
   };
 
@@ -185,7 +185,6 @@ export default function Post({
 
     try {
       const response = await axios.get(followersUrl, PP_auth);
-      console.log(response);
       setShareableAuthors(response.data["items"]);
     } catch (err) {
       // Handle err

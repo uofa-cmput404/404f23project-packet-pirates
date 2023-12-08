@@ -101,7 +101,6 @@ export default function MainPage({ user }) {
     const connectionTest = await axios
       .get(url, PP_auth)
       .then((connectionRes) => {
-        console.log("connectionTestRes", connectionRes.data);
         const followers = [];
 
         for (let i = 0; i < connectionRes.data.items.length; i++) {
@@ -113,11 +112,9 @@ export default function MainPage({ user }) {
           );
         }
 
-        console.log(followers);
         var auth = "";
         const requests = followers.map((url) => {
           if (url.includes("packet-pirates")) {
-            console.log("PIRATE!");
             auth = PP_auth;
           } else if (url.includes("super-coding")) {
             auth = SC_auth;
@@ -162,7 +159,6 @@ export default function MainPage({ user }) {
                 Friends.push(userProfile);
               }
 
-              console.log("FRIENDS", Friends);
               setFriends(<Profile friends={Friends} user={user} />);
             }
           } // end for

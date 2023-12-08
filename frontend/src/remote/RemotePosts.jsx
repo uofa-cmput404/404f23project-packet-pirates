@@ -228,7 +228,6 @@ export default function RemotePost({
         .get(url, auth)
 
         .then((response) => {
-          console.log("ZONGER", response.data);
 
           //Unpack response
           let postComments = [];
@@ -518,7 +517,7 @@ export default function RemotePost({
 
       setIsEditable(true);
     } catch {
-      console.log(":^]");
+      console.log("Error has occured");
     }
   };
 
