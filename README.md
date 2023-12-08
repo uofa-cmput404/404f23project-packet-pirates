@@ -1,9 +1,45 @@
 CMPUT404-project-socialdistribution
 ===================================
 
-CMPUT 404 Project: Social Distribution
 
-[Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
+### The Project is also deployed on Heroku at:
+[Frontend](https://cmput404-project-socialdistribution.herokuapp.com/)
+
+[Backend](https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/swagger)
+
+### Demo [Video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+##### This project was created for the course CMPUT 404 following a set of [requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
+## Setup
+> Install the packages for the Django backend
+
+```shell
+pip install -r requirements.txt
+python manage.py migrate
+```
+
+> Install the packages the Vite+React frontend
+
+```
+npm i
+```
+
+> Run the frontend and backend concurrently
+
+```
+cd frontend
+npm run dev
+```
+
+```
+cd backend
+cd socialdistribution
+python manage.py runserver
+```
+
+
+
+
 
 Contributors / Licensing
 ========================
