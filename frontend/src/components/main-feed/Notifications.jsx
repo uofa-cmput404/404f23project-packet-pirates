@@ -1,20 +1,21 @@
 import axios from "axios";
 
-export default function Notifications({ notifications , user}) {
-  
+export default function Notifications({ notifications, user }) {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
-    }
+      Authorization: "Token " + localStorage.getItem("access_token"),
+    },
   };
 
-  var deleteUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/deletenotifs";
+  var deleteUrl =
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+    user.user.user_id +
+    "/deletenotifs";
   const clearNotifications = async () => {
-    console.log("Clear non follow notifs");
     const deleteNotifs = await axios.delete(deleteUrl, config).then(() => {
-      console.log("Success")
-    })
+      console.log("Success");
+    });
   };
 
   return (
@@ -38,7 +39,7 @@ export default function Notifications({ notifications , user}) {
           {notifications.map((notification, index) => (
             <Notification
               key={index}
-              user = {user}
+              user={user}
               index={index}
               notification={notification}
             />
@@ -55,146 +56,144 @@ export function Notification({ user, index, notification }) {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
-    }
+      Authorization: "Token " + localStorage.getItem("access_token"),
+    },
   };
 
   const requestDeclined = async (event) => {
-
-    console.log("USERERERERE", user)
-
     //Delete notif and request
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/followrequest";
 
     const notifData = {
-      notif_id : notification.notif_id
-    }
+      notif_id: notification.notif_id,
+    };
 
     const requestData = {
-      sender :  notification.notification_author,
-      recipient : user.user.user_id
-    }
+      sender: notification.notification_author,
+      recipient: user.user.user_id,
+    };
 
-    const notifRes = await axios.delete(notificationUrl, {
-      data: {
-        data:notifData
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }})
+    const notifRes = await axios
+      .delete(notificationUrl, {
+        data: {
+          data: notifData,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      })
 
-    // const notifRes = await axios.delete(notificationUrl, {data: {data: notifData}, {config}})
+      .then((notifRes) => {
+        // window.location.reload(false);
+      })
+      .catch((err) => {
+        console.error("Error deleting notification:", err);
+      });
 
-    // const requestRes = await axios.delete(notificationUrl, {data: notifData}, {config})
+    const requestRes = await axios
+      .delete(followrequestUrl, {
+        data: {
+          data: requestData,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      })
 
-    .then((notifRes) => {
-      // window.location.reload(false);
-    })
-    .catch((err) => {
-      console.error("Error deleting notification:", err);
-    })
-
-    const requestRes = await axios.delete(followrequestUrl, {
-      data: {
-        data:requestData
-      }, 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }})
-
-    // const requestRes = await axios.delete(followrequestUrl, {data: requestData, config})
-
-    // const requestRes = await axios.delete(followrequestUrl, {data: requestData}, {config})
-
-    .then((requestRes) => {
-      
-    })
-    .catch((err) => {
-      console.error("Error deleting follow request:", err);
-    })
-
-  }
+      .then((requestRes) => {})
+      .catch((err) => {
+        console.error("Error deleting follow request:", err);
+      });
+  };
 
   const requestAccepted = async (event) => {
-    
     //Remove notif and request, create friend
-    console.log("USERERERERE", user)
 
     //Delete notif and request
     let notificationUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/createnotif";
 
     let followrequestUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/followrequest";
 
     const notifData = {
-      notif_id : notification.notif_id
-    }
+      notif_id: notification.notif_id,
+    };
 
     const requestData = {
-      sender :  notification.notification_author,
-      recipient : user.user.user_id
-    }
+      sender: notification.notification_author,
+      recipient: user.user.user_id,
+    };
 
-    const notifRes = await axios.delete(notificationUrl, {
-      data: {
-        data:notifData
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }})
-    .then((notifRes) => {
-      // window.location.reload(false);
-    })
-    .catch((err) => {
-      console.error("Error deleting notification:", err);
-    })
+    const notifRes = await axios
+      .delete(notificationUrl, {
+        data: {
+          data: notifData,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      })
+      .then((notifRes) => {
+        // window.location.reload(false);
+      })
+      .catch((err) => {
+        console.error("Error deleting notification:", err);
+      });
 
-    const requestRes = await axios.delete(followrequestUrl, {
-      data: { data:requestData
-      },
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": 'Token ' + localStorage.getItem('access_token'),
-      }
-    })
-    .then((requestRes) => {
-      
-    })
-    .catch((err) => {
-      console.error("Error deleting follow request:", err);
-    })
-
+    const requestRes = await axios
+      .delete(followrequestUrl, {
+        data: { data: requestData },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Token " + localStorage.getItem("access_token"),
+        },
+      })
+      .then((requestRes) => {})
+      .catch((err) => {
+        console.error("Error deleting follow request:", err);
+      });
 
     let friendUrl =
-    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/friends";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/friends";
 
     const friendData = {
-      author : user.user.user_id,
-      friend : notification.notification_author,
-      friend_pfp : notification.notif_author_pfp,
-      friend_username : notification.notif_author_username,
-      author_origin : 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/' + user.user.user_id,
-      friend_origin : notification.notification_author_origin
-    }
+      author: user.user.user_id,
+      friend: notification.notification_author,
+      friend_pfp: notification.notif_author_pfp,
+      friend_username: notification.notif_author_username,
+      author_origin:
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+        user.user.user_id,
+      friend_origin: notification.notification_author_origin,
+    };
 
-    const friendRes = await axios.post(friendUrl, friendData, config)
-    .then((friendRes) => {
-      // window.location.reload(false);
-    })
-    .catch((err) => {
-      console.error("Error creating friend:", err);
-    })
-
-  }
-
+    const friendRes = await axios
+      .post(friendUrl, friendData, config)
+      .then((friendRes) => {
+        // window.location.reload(false);
+      })
+      .catch((err) => {
+        console.error("Error creating friend:", err);
+      });
+  };
 
   return (
     <li
@@ -215,14 +214,15 @@ export function Notification({ user, index, notification }) {
           </span>
           {isFollowRequest && (
             <div className="buttons flex flex-row">
-              <button 
-              className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
-              onClick = {requestAccepted}
+              <button
+                className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+                onClick={requestAccepted}
               >
                 ✔️
               </button>
-              <button className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
-              onClick = {requestDeclined}
+              <button
+                className="bg-primary-color text-white rounded-lg px-1 py-1 mx-1"
+                onClick={requestDeclined}
               >
                 ❌
               </button>

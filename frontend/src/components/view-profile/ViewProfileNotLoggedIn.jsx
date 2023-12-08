@@ -26,8 +26,6 @@ export default function ViewProfileNotLogged() {
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
-    console.log("author", author);
-    // console.log("user", user);
 
     const getProfile = async () => {
       try {
@@ -41,21 +39,24 @@ export default function ViewProfileNotLogged() {
 
     const fetchPosts = async () => {
       let postsUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + author + "/feedposts_byusername";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+        author +
+        "/feedposts_byusername";
 
       const postsRes = await axios
         .get(postsUrl)
         .then((postsRes) => {
           //Result of post query
-          // console.log("POSTSRES", postsRes.data.Posts[0]);
-          // console.log("POSTSRES_FULL", postsRes.data.Posts);
-          console.log("POSTSRES", postsRes.status);
           setPosts(
-            postsRes.data.Posts.filter((post) => !post.unlisted && !post.is_private).map((post, index) => {
-              const image_conditions = post.image_url === '' && post.image_file != ''
-              // console.log("TESTING", image_conditions)
-              const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
-              // console.log("IMAGE", image)
+            postsRes.data.Posts.filter(
+              (post) => !post.unlisted && !post.is_private
+            ).map((post, index) => {
+              const image_conditions =
+                post.image_url === "" && post.image_file != "";
+              const image = image_conditions
+                ? "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                  post.image_file
+                : post.image_url;
               return (
                 <Post
                   key={index}
@@ -82,32 +83,18 @@ export default function ViewProfileNotLogged() {
         });
     };
 
-    // getProfile(); // Call the getProfile function
     fetchPosts(); // Call the fetchPosts function
-    console.log("posts", posts);
   }, [author]);
 
   return (
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-row justify-center m-7">
-          {/* <div
-            className="profile h-fit mx-auto"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            <Profile friends={friends} username={user.user.username} />
-          </div> */}
           <div className="feed flex flex-col ml-5 w-full mx-auto">
             <div className="feed_content mt-5">
               <ul>{posts}</ul>
             </div>
           </div>
-          {/* <div
-            className="notifications h-fit mx-auto ml-5"
-            style={{ position: "sticky", top: "20px" }}
-          >
-            <Notifications notifications={notifications} />
-          </div> */}
         </div>
       </div>
     </>

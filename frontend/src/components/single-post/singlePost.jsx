@@ -16,7 +16,7 @@ export default function SinglePost({ user }) {
   const navigate = useNavigate();
 
   const config = {
-    headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+    headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
 
   const SC_auth = {
@@ -46,105 +46,83 @@ export default function SinglePost({ user }) {
       password: "Pirate",
     },
   };
-  
+
   useEffect(() => {
-
     const getConnections = async () => {
-    // let connectionsUrl =
-    //   "http://127.0.0.1:8000/author/" + user.user.user_id + "/truefriends";
+      var url =
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+        user.user.user_id +
+        "/followers";
+      const connectionTest = await axios
+        .get(url, PP_auth)
+        .then((connectionRes) => {
+          console.log("connectionTestRes", connectionRes.data);
+          const followers = [];
 
-    // const connectionsRes = await axios
-    //   .get(connectionsUrl, config)
-    //   .then((connectionsRes) => {
-    //     console.log("CONNECTSRES", connectionsRes.data.Friends);
-    //     setFriends(
-    //       <Profile friends={connectionsRes.data.Friends} user={user} />
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error getting friends:", error);
-    //   });
-
-    var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
-    const connectionTest = await axios
-    .get(url, PP_auth)
-    .then((connectionRes) => {
-      console.log('connectionTestRes', connectionRes.data);
-      const followers = [];
-      
-      for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
-        // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
-        followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
-      }
-
-      console.log(followers)
-      var auth = ''
-      const requests = followers.map((url) => {
-        
-        if (url.includes("packet-pirates")) {
-          console.log("PIRATE!");
-          auth = PP_auth;
-        } else if (url.includes("super-coding")) {
-          auth = SC_auth;
-        } else if (url.includes("web-weavers")) {
-          auth = WW_auth;
-          url = url + "/";
-        } else if (url.includes("node-net")) {
-          auth = NN_auth;
-        }
-
-        return axios
-          .get(url, auth)
-          .then((response) => response)
-          .catch((error) => console.error("Error", error))
-      }
-    );
-
-      Promise.all(requests).then((responses) => {
-        console.log("RESPONSES", responses)
-        console.log(responses.length)
-        const Friends = []
-        
-        if (responses.length == 0) {
-          setFriends(
-            <Profile friends={Friends} user={user} />
-          );
-        } else {
-        
-          for (let i = 0; i < responses.length; i++) {
-
-            if (responses[i].data['is_follower']) { // For Web Weavers
-              if (responses[i].data['is_follower'] == true) {
-                let userProfile = {
-                  friend_username: connectionRes.data.items[i].displayName,
-                  friend_pfp: connectionRes.data.items[i].profileImage
-                }
-                  console.log("friend_username", connectionRes.data.items[i].displayName)
-                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-                Friends.push(userProfile)
-              }
-            }
-
-            if (responses[i].data == true) {
-              let userProfile = {
-                friend_username: connectionRes.data.items[i].displayName,
-                friend_pfp: connectionRes.data.items[i].profileImage
-              }
-                console.log("friend_username", connectionRes.data.items[i].displayName)
-                console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-              Friends.push(userProfile)
-            }  
-
-            console.log("FRIENDS", Friends)
-            setFriends(
-              <Profile friends={Friends} user={user} />
+          for (let i = 0; i < connectionRes.data.items.length; i++) {
+            // Make foreign id the user thats logged in (packet pirates)
+            // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+            followers.push(
+              connectionRes.data.items[i]["url"] +
+                "/followers/" +
+                user.user.user_id
             );
           }
-        } // end for
-      }); // end Promise
 
-    }); // end Then
-}; // end async
+          console.log(followers);
+          var auth = "";
+          const requests = followers.map((url) => {
+            if (url.includes("packet-pirates")) {
+              console.log("PIRATE!");
+              auth = PP_auth;
+            } else if (url.includes("super-coding")) {
+              auth = SC_auth;
+            } else if (url.includes("web-weavers")) {
+              auth = WW_auth;
+              url = url + "/";
+            } else if (url.includes("node-net")) {
+              auth = NN_auth;
+            }
+
+            return axios
+              .get(url, auth)
+              .then((response) => response)
+              .catch((error) => console.error("Error", error));
+          });
+
+          Promise.all(requests).then((responses) => {
+            const Friends = [];
+
+            if (responses.length == 0) {
+              setFriends(<Profile friends={Friends} user={user} />);
+            } else {
+              for (let i = 0; i < responses.length; i++) {
+                if (responses[i].data["is_follower"]) {
+                  // For Web Weavers
+                  if (responses[i].data["is_follower"] == true) {
+                    let userProfile = {
+                      friend_username: connectionRes.data.items[i].displayName,
+                      friend_pfp: connectionRes.data.items[i].profileImage,
+                    };
+                    Friends.push(userProfile);
+                  }
+                }
+
+                if (responses[i].data == true) {
+                  let userProfile = {
+                    friend_username: connectionRes.data.items[i].displayName,
+                    friend_pfp: connectionRes.data.items[i].profileImage,
+                  };
+
+                  Friends.push(userProfile);
+                }
+
+                setFriends(<Profile friends={Friends} user={user} />);
+              }
+            } // end for
+          }); // end Promise
+        }); // end Then
+    }; // end async
 
     const getNotifications = async () => {
       let notificationsUrl =
@@ -157,7 +135,10 @@ export default function SinglePost({ user }) {
         .then((notifsRes) => {
           console.log("NOTIFSRES", notifsRes.data.Notifications);
           setNotifications(
-            <Notifications notifications={notifsRes.data.Notifications} user = {user} />
+            <Notifications
+              notifications={notifsRes.data.Notifications}
+              user={user}
+            />
           );
         })
         .catch((error) => {
@@ -167,31 +148,35 @@ export default function SinglePost({ user }) {
 
     const fetchPost = async () => {
       let postUrl =
-        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + postID + "/viewpost";
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+        postID +
+        "/viewpost";
 
       const postRes = await axios
         .get(postUrl, config)
         .then((postRes) => {
-            console.log("post data", postRes.data.post);
-            console.log("postRes", postRes);
+          let singlePost = postRes.data.post;
+          const image_conditions =
+            singlePost.image_url === "" && singlePost.image_file != "";
+          const image = image_conditions
+            ? "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+              singlePost.image_file
+            : singlePost.image_url;
 
-            let singlePost = postRes.data.post;
-            const image_conditions = singlePost.image_url === '' && singlePost.image_file != ''
-            const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + singlePost.image_file : singlePost.image_url
-
-            setPost(
-                <Post
-                user={user}
-                post_author={singlePost.author}
-                title={singlePost.title}
-                description={singlePost.content}
-                img={image}
-                img_url={singlePost.image_url}
-                likes={singlePost.likes_count}
-                id={singlePost.post_id}
-                is_private={singlePost.is_private}
-                unlisted={singlePost.unlisted}/>
-            );
+          setPost(
+            <Post
+              user={user}
+              post_author={singlePost.author}
+              title={singlePost.title}
+              description={singlePost.content}
+              img={image}
+              img_url={singlePost.image_url}
+              likes={singlePost.likes_count}
+              id={singlePost.post_id}
+              is_private={singlePost.is_private}
+              unlisted={singlePost.unlisted}
+            />
+          );
         })
         .catch((error) => {
           console.error("Error getting posts:", error);
@@ -224,7 +209,6 @@ export default function SinglePost({ user }) {
     <>
       <div className="flex justify-center items-center w-screen">
         <div className="main w-full max-w-[70rem] flex flex-col justify-center items-center m-7">
-
           <div>
             <div className="flex flex-row w-full mx-auto">
               <div
@@ -256,7 +240,9 @@ export default function SinglePost({ user }) {
                   </button>
 
                   <button
-                    onClick={() => {navigate("/")}}
+                    onClick={() => {
+                      navigate("/");
+                    }}
                     className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
                   >
                     <span>Home</span>

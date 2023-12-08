@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
-import EditPost from "../components/main-feed/EditPost"
+import EditPost from "../components/main-feed/EditPost";
 import Popup from "reactjs-popup";
 import {
   Avatar,
@@ -13,7 +13,6 @@ import {
   Box,
   unstable_useId,
 } from "@mui/material";
-
 
 export default function RemotePost({
   user,
@@ -92,7 +91,6 @@ export default function RemotePost({
   }
 
   const handleLikeLocal = async () => {
-
     const newLikeState = !hasLiked;
 
     // Calculate the new like count based on the like state
@@ -102,16 +100,15 @@ export default function RemotePost({
     setLikeCount(newLikeCount);
     setHasLiked(newLikeState);
 
-    const post_uuid = post_id.split('/')[6]
-
-    console.log(post_id)
-    console.log(post_uuid)
+    const post_uuid = post_id.split("/")[6];
 
     try {
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+            post_uuid +
+            "/postlikes",
           {
             post_object_id: post_uuid,
             author: user,
@@ -125,7 +122,9 @@ export default function RemotePost({
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_uuid + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+            post_uuid +
+            "/postlikes",
           {
             data: {
               post_object_id: post_uuid,
@@ -147,13 +146,10 @@ export default function RemotePost({
       setLikeCount(likeCount); // Reset like count
       setHasLiked(!hasLiked); // Toggle like state back
     }
-
   };
 
   const handleLikeRemote = async () => {
-
     if (!hasLiked) {
-
       const newLikeState = !hasLiked;
 
       // Calculate the new like count based on the like state
@@ -179,54 +175,45 @@ export default function RemotePost({
         auth = SC_auth;
       } else if (boxUrl.includes("web-weavers")) {
         auth = WW_auth;
-        boxUrl = boxUrl + "/"
+        boxUrl = boxUrl + "/";
       } else if (boxUrl.includes("node-net")) {
         auth = NN_auth;
       }
 
       //Get author, send comment to inbox
       try {
-
         await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
-          
           //NOT SURE YET
           let likeData = {
-            context : "",
+            context: "",
             type: "Like",
             author: authorResponse.data,
-            summary : user.user.username + ' likes your post',
+            summary: user.user.username + " likes your post",
             object: post_id,
           };
 
           if (boxUrl.includes("web-weavers")) {
             likeData = {
-              context : "",
+              context: "",
               type: "Like",
               author: authorResponse.data.id,
-              summary : user.user.username + ' likes your post',
+              summary: user.user.username + " likes your post",
               object: post_id,
-            }
+            };
           }
-  
-          await axios.post(boxUrl, likeData, auth)
-          .then(() => {
-            console.log('Like sent to inbox')
-          })
 
+          await axios.post(boxUrl, likeData, auth).then(() => {
+            console.log("Like sent to inbox");
+          });
         });
-
       } catch (error) {
-
         console.log(error);
 
         // Revert changes
         setLikeCount(likeCount); // Reset like count
         setHasLiked(!hasLiked); // Toggle like state back
-
       }
-
     }
-
   };
 
   //Unimplemented
@@ -235,19 +222,6 @@ export default function RemotePost({
   const fetchCommentData = async () => {
     //Comments url
     let url = post_id + "/comments";
-
-    //Corresponding authorization
-    // let auth = "";
-    // if (url.includes("packet-pirates")) {
-    //   auth = PP_auth;
-    // } else if (url.includes("super-coding")) {
-    //   auth = SC_auth;
-    // } else if (url.includes("web-weavers")) {
-    //   auth = WW_auth;
-    //   url = url + "/";
-    // }  else if (url.includes("node-net")) {
-      // auth = NN_auth;
-    // }
 
     try {
       axios
@@ -327,7 +301,7 @@ export default function RemotePost({
     } else if (boxUrl.includes("super-coding")) {
       auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
-      boxUrl = boxUrl + "/"
+      boxUrl = boxUrl + "/";
       auth = WW_auth;
     } else if (boxUrl.includes("node-net")) {
       auth = NN_auth;
@@ -345,35 +319,31 @@ export default function RemotePost({
           published: ":)",
           id: post_id,
         };
-        
-        if (boxUrl.includes("web-weavers")) { // They need to handle comments differently
-            commentData = {
+
+        if (boxUrl.includes("web-weavers")) {
+          // They need to handle comments differently
+          commentData = {
+            type: "comment",
+            author: authorResponse.data.id,
+            comment: commentText,
+            contentType: "text/plain",
+            id: post_id,
+          };
+          var commentUrl = post_id + "/comments/";
+
+          await axios.post(commentUrl, commentData, auth).then((response) => {
+            var commentData2 = {
+              id: response.data.id,
               type: "comment",
-              author: authorResponse.data.id,
-              comment: commentText,
-              contentType: "text/plain",
-              id: post_id,
             };
-            var commentUrl = post_id + "/comments/"
 
-            await axios.post(commentUrl, commentData, auth).then((response) => {
-              console.log("RESPONSE", response.data.id)
-
-              var commentData2 = {
-                id: response.data.id,
-                type: "comment"
-              }
-
-              axios.post(boxUrl, commentData2, auth).then(() => {
-                fetchCommentData();
-                console.log("Successfully sent comment to inbox");
-              });
-            })
-
+            axios.post(boxUrl, commentData2, auth).then(() => {
+              fetchCommentData();
+            });
+          });
         } else {
           await axios.post(boxUrl, commentData, auth).then(() => {
             fetchCommentData();
-            console.log("Successfully sent comment to inbox");
           });
         }
       });
@@ -389,15 +359,13 @@ export default function RemotePost({
 
   //Copy to clipboard
   const handleCopyLink = () => {
-    console.log(post_id);
     // post_id is the endpoint to get the post
     var id = post_id;
     var id = post_id.split("/").pop();
     // the id of the post, used as the last part of url
-    console.log(id);
 
-    var post_link = "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
-    console.log(post_link);
+    var post_link =
+      "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
 
     navigator.clipboard
       .writeText(post_link) // Copy link to clipboard
@@ -425,7 +393,6 @@ export default function RemotePost({
 
     try {
       const response = await axios.get(followersUrl, PP_auth);
-      console.log(response);
       setShareableAuthors(response.data["items"]);
     } catch (err) {
       // Handle err
@@ -442,7 +409,6 @@ export default function RemotePost({
   async function handleShareToClick(author) {
     //Inbox url
     let boxUrl = author.id + "/inbox";
-    console.log("BOX URL", boxUrl);
     //Author url (Sending post)
     let authUrl =
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
@@ -458,7 +424,7 @@ export default function RemotePost({
     } else if (boxUrl.includes("node-net")) {
       auth = NN_auth;
     }
-    
+
     try {
       await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
@@ -480,17 +446,10 @@ export default function RemotePost({
           sent_by: authorResponse.data,
         };
 
-        console.log("TEsting sending post", postData);
-
         //Corresponding authorization
 
-
-        console.log("BOX URL", boxUrl);
-        console.log("AUTH FOR POSTING", auth);
         await axios.post(boxUrl, postData, auth).then(() => {
-          console.log("POSTED");
           setSharingModalOpen(false);
-          console.log("Successfully sent post to inbox");
         });
       });
     } catch (error) {
@@ -499,28 +458,24 @@ export default function RemotePost({
   }
 
   const handleView = () => {
-    console.log(post_id);
     // post_id is the endpoint to get the post
     var id = post_id;
     var id = post_id.split("/").pop();
     // the id of the post, used as the last part of url
-    console.log(id);
-
     navigate("/post/" + id, { state: { api: post_id } });
     window.location.reload(false);
   };
 
-  async function checkLikeStatus () {
-    
+  async function checkLikeStatus() {
     //Likes url
-    let likUrl = post_id + '/likes'
+    let likUrl = post_id + "/likes";
 
     //Corresponding authorization
-    let auth = ''
-    if (post_id.includes('packet-pirates')) {
-      auth = PP_auth
+    let auth = "";
+    if (post_id.includes("packet-pirates")) {
+      auth = PP_auth;
     } else if (post_id.includes("super-coding")) {
-      auth = SC_auth
+      auth = SC_auth;
     } else if (post_id.includes("web-weavers")) {
       auth = WW_auth;
       likUrl = likUrl + "/";
@@ -528,73 +483,49 @@ export default function RemotePost({
       auth = NN_auth;
     }
 
-    await axios.get(likUrl, auth)
-    .then((likeResponse) => {
-
-      let likesList = []
+    await axios.get(likUrl, auth).then((likeResponse) => {
+      let likesList = [];
 
       if (post_id.includes("web-weavers")) {
-
-        likesList = likeResponse['data']['items']
-
+        likesList = likeResponse["data"]["items"];
       } else {
-
-        likesList = likeResponse['data']
-
+        likesList = likeResponse["data"];
       }
 
-      for (let like in likesList){
-        console.log(':(', likesList[like])
-
-        if (likesList[like]['author']['id'].split('/')[4] === user.user.user_id){
-
+      for (let like in likesList) {
+        if (
+          likesList[like]["author"]["id"].split("/")[4] === user.user.user_id
+        ) {
           setHasLiked(true);
-
         }
-
       }
-
-    })
-
-  };
-
+    });
+  }
 
   const handleEditAccess = () => {
-    
-    console.log(window.location.href)
-
     //Check if user is viewing own profile
 
-    let profPath = 'user/' + user.user.username
+    let profPath = "user/" + user.user.username;
 
     try {
+      if (!window.location.href.includes(profPath)) {
+        return;
+      }
 
-      if (!window.location.href.includes(profPath)) { return }
-
-      if (!(user.user.user_id == post_author['id'].split('/')[4])) { return }
+      if (!(user.user.user_id == post_author["id"].split("/")[4])) {
+        return;
+      }
 
       setIsEditable(true);
-
     } catch {
-
       console.log(":^]");
-
     }
   };
 
   useEffect(() => {
-    console.log("user", user);
-    console.log("title", title);
-    console.log("description", description);
-    console.log("content", content);
-    console.log("img", img);
-    console.log("likes", likes);
-    console.log("author", post_author);
-    console.log("contentType", contentType);
     fetchCommentData();
     checkLikeStatus();
     handleEditAccess();
-
   }, []);
   return (
     <>
@@ -641,8 +572,8 @@ export default function RemotePost({
                           titl={title}
                           description={description}
                           img={img}
-                          img_url = ''
-                          id={post_id.split('/')[6]}
+                          img_url=""
+                          id={post_id.split("/")[6]}
                           visibility={visibility}
                           unlisted={unlisted}
                         />
@@ -663,21 +594,31 @@ export default function RemotePost({
 
           <div className="privacy-status">
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {visibility==="PUBLIC" && !unlisted && <span className="privacy-private">Public</span>}
-            {visibility==="FRIENDS" && !unlisted && <span className="privacy-private">Friend</span>}
-            {visibility==="PRIVATE" && !unlisted && <span className="privacy-private">Private</span>}
+            {visibility === "PUBLIC" && !unlisted && (
+              <span className="privacy-private">Public</span>
+            )}
+            {visibility === "FRIENDS" && !unlisted && (
+              <span className="privacy-private">Friend</span>
+            )}
+            {visibility === "PRIVATE" && !unlisted && (
+              <span className="privacy-private">Private</span>
+            )}
           </div>
 
           <div className="description-section flex justify-center items-center preserve-newline">
-          {contentType === "text/markdown" ?
-              <p><ReactMarkdown>{description}</ReactMarkdown></p>
-              :
+            {contentType === "text/markdown" ? (
+              <p>
+                <ReactMarkdown>{description}</ReactMarkdown>
+              </p>
+            ) : (
               <p>{description}</p>
-            }
+            )}
           </div>
 
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
-            {img !== '' && <img src={img} alt="" className="w-full h-full object-cover" />}
+            {img !== "" && (
+              <img src={img} alt="" className="w-full h-full object-cover" />
+            )}
           </div>
 
           <div className="likes">
@@ -685,8 +626,12 @@ export default function RemotePost({
           </div>
 
           <div className="engagement-section flex flex-row justify-between m-5">
-          <button
-              onClick={post_id.includes("packet-pirates") ? handleLikeLocal : handleLikeRemote}
+            <button
+              onClick={
+                post_id.includes("packet-pirates")
+                  ? handleLikeLocal
+                  : handleLikeRemote
+              }
               className={`border border-[#395B64] ${
                 hasLiked ? "liked-button" : "not-liked-button"
               } w-fit pl-3 pr-3 text-white rounded-full`}
@@ -729,14 +674,16 @@ export default function RemotePost({
               >
                 Send Post
               </button>
-              {post_id.includes('packet-pirates') ? (
-              <button
-                className="share-option-button copy-link"
-                onClick={handleCopyLink}
-              >
-                Copy Link
-              </button>
-              ): true}
+              {post_id.includes("packet-pirates") ? (
+                <button
+                  className="share-option-button copy-link"
+                  onClick={handleCopyLink}
+                >
+                  Copy Link
+                </button>
+              ) : (
+                true
+              )}
             </div>
           )}
 
@@ -766,18 +713,20 @@ export default function RemotePost({
               <span>Likes: {likeCount}</span>
             </div> */}
             {post_id.includes("packet-pirates") ? (
-            <button
-              onClick={handleView}
-              className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-lm-custom-black rounded-full view-button"
-            >
-              View
-              <img
-                src="/view-button.png"
-                alt="View"
-                className="view-button-img"
-              />
-            </button>
-            ): true}
+              <button
+                onClick={handleView}
+                className="border border-[#395B64] bg-[#395B64] w-fit pl-3 pr-3 text-lm-custom-black rounded-full view-button"
+              >
+                View
+                <img
+                  src="/view-button.png"
+                  alt="View"
+                  className="view-button-img"
+                />
+              </button>
+            ) : (
+              true
+            )}
           </div>
 
           <div className="comment-section flex flex-col divide-y justify-start">

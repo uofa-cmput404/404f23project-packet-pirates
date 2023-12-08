@@ -3,15 +3,16 @@ import { useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 
-export default function EditPost({ user,
-    titl,
-    description,
-    img,
-    img_url,
-    id,
-    visibility,
-    unlisted, }) {
-
+export default function EditPost({
+  user,
+  titl,
+  description,
+  img,
+  img_url,
+  id,
+  visibility,
+  unlisted,
+}) {
   const [text, setText] = useState(description);
   const [title, setTitle] = useState(titl);
 
@@ -22,11 +23,13 @@ export default function EditPost({ user,
 
   const visibilityOptions = [
     { value: "Public", label: "Public" },
-    { value: "Friends", label: "Friends"},
+    { value: "Friends", label: "Friends" },
     { value: "Private", label: "Private" },
     { value: "Unlisted", label: "Unlisted" },
   ];
-  const [postVisibility, setPostVisibility] = useState(visibilityOptions[0].value);
+  const [postVisibility, setPostVisibility] = useState(
+    visibilityOptions[0].value
+  );
 
   const [isUnlisted, setIsUnlisted] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -40,33 +43,29 @@ export default function EditPost({ user,
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
-    console.log("Sent title is:", event.target.value);
   };
 
   const handleTextChange = (event) => {
     setText(event.target.value);
-    console.log("Sent text is:", event.target.value);
   };
 
   const [imageUrl, setImageUrl] = useState(img || img_url || "");
   const handleImageUrlTextChange = (event) => {
     setImageUrl(event.target.value);
-    console.log("Sent Image URL is:", event.target.value);
-  }
+  };
 
   const handleImageUploadEdit = (event) => {
     setImageFile(event.target.files[0]);
 
     const file = new FileReader();
     file.onloadend = () => {
-        setImageBase64(file.result);
+      setImageBase64(file.result);
     };
     file.readAsDataURL(event.target.files[0]);
-};
+  };
 
   const handleContentTypeChange = (option) => {
     setContentType(option.value);
-    console.log("Sent content type is:", option.value);
   };
 
   const handleVisibilityChange = (value) => {
@@ -84,65 +83,68 @@ export default function EditPost({ user,
       setIsFriends(true);
       setIsPrivate(false);
       setIsUnlisted(false);
-    } else if (value['value'] === "Public") {
+    } else if (value["value"] === "Public") {
       setIsFriends(false);
       setIsPrivate(false);
       setIsUnlisted(false);
     }
-
-    console.log("Sent visibility is:", value);
   };
 
   const config = {
     headers: {
       "Content-Type": "application/json",
-      'Authorization': 'Token ' + localStorage.getItem('access_token')
-    }
+      Authorization: "Token " + localStorage.getItem("access_token"),
+    },
   };
 
   const handlePostDelete = (event) => {
     event.preventDefault();
 
     axios
-      .delete( "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + id + "/postViews", config)
+      .delete(
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+          id +
+          "/postViews",
+        config
+      )
       .then((response) => {
-        console.log(response.data);
         window.location.reload(false);
       })
       .catch((error) => {
         console.log("Error Response: ", error.response);
         console.log("Error Data: ", error.response.data);
       });
-  }
+  };
 
   const handleEditing = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('author', user.user.user_id);
-    formData.append('title', title);
-    formData.append('content_type', contentType);
-    formData.append('content', text);
-    formData.append('source', user.user.user_id)
-    formData.append('origin', user.user.user_id)
-    formData.append('unlisted', isUnlisted)
-    formData.append('is_private', isPrivate)
-    formData.append('image_file', imageFile)
-    formData.append('image_url', imageUrl)
-
-    console.log("Data", formData);
-    console.log(isUnlisted)
+    formData.append("author", user.user.user_id);
+    formData.append("title", title);
+    formData.append("content_type", contentType);
+    formData.append("content", text);
+    formData.append("source", user.user.user_id);
+    formData.append("origin", user.user.user_id);
+    formData.append("unlisted", isUnlisted);
+    formData.append("is_private", isPrivate);
+    formData.append("image_file", imageFile);
+    formData.append("image_url", imageUrl);
 
     axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/editpost", formData, 
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': 'Token ' + localStorage.getItem('access_token')
+      .post(
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+          id +
+          "/editpost",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Token " + localStorage.getItem("access_token"),
+          },
         }
-      })
+      )
       .then((response) => {
-        window.location.reload(false)
-        console.log(response.data);
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("Error Response: ", error.response);
@@ -185,7 +187,7 @@ export default function EditPost({ user,
               }}
             ></textarea>
 
-             {/* Post Body Input */}
+            {/* Post Body Input */}
             <input
               id="content"
               name="content"
@@ -197,32 +199,31 @@ export default function EditPost({ user,
           </form>
         </div>
         <div className="edit-imgPreviewBox flex flex-row justify-between items-center max-w-[300px]">
-            {/* show the image in a preview box */}
-            <div className="edit-imgPreview">
-                {imageBase64 && (
-                    <div className="edit-imgContainer">
-                        <img src={imageBase64} alt="Image Preview" />
-                    </div>
-                )}
-            </div>
+          {/* show the image in a preview box */}
+          <div className="edit-imgPreview">
+            {imageBase64 && (
+              <div className="edit-imgContainer">
+                <img src={imageBase64} alt="Image Preview" />
+              </div>
+            )}
+          </div>
         </div>
         <div className="edit-menu">
           {/* upload photo, public, plaintext, post */}
           <ul className="flex flex-row justify-between items-center">
             <li>
-            <label htmlFor="select-image-edit">
-              <div 
-                  className='rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in'>
+              <label htmlFor="select-image-edit">
+                <div className="rounded-lg text-white bg-primary-dark w-full mx-0 my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in">
                   Upload Image
-              </div>
-            </label>
-            <input
+                </div>
+              </label>
+              <input
                 type="file"
                 accept="image/*"
                 id="select-image-edit"
                 style={{ display: "none" }}
                 onChange={handleImageUploadEdit}
-            />
+              />
             </li>
             <li>
               <div className="chooseVisibility">
@@ -252,10 +253,10 @@ export default function EditPost({ user,
             </li>
           </ul>
           <button
-          className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-red-700"
-          onClick={handlePostDelete}
+            className="mr-4 border-gray-700 border rounded-full p-2 text-white bg-red-700"
+            onClick={handlePostDelete}
           >
-          Delete
+            Delete
           </button>
         </div>
       </div>

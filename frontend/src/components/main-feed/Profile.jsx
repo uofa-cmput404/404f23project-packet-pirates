@@ -2,11 +2,6 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Profile({ friends, user }) {
   const navigate = useNavigate();
-  console.log("friends", friends);
-  // console.log("username", username);
-  // function handleFriendClick = () => {
-  //   navigate("/viewprofile/" + friend.friend_username);
-  // };
   function handleFriendClick(friend) {
     navigate("/user/" + friend.friend_username);
   }
@@ -20,7 +15,10 @@ export default function Profile({ friends, user }) {
         <div className="header flex flex-col justify-center items-center">
           <div className="image-container w-24 h-24 rounded-full overflow-hidden bg-black">
             <img
-              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
+              src={
+                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                user.user.profile_picture
+              }
               alt="profile"
               className="w-full h-full object-cover"
             />
@@ -45,11 +43,7 @@ export default function Profile({ friends, user }) {
             {friends.slice(0, 6).map((friend, index) => (
               <li key={index}>
                 {/* idk? what should this behavior be? change this later on i guess */}
-                <button
-                  className="flex flex-row list-image-none justify-center items-center mt-3"
-                  // onClick={() => handleFriendClick(friend)}
-                  // onClick={() => navigate("/user/" + friend.friend_username)}
-                >
+                <button className="flex flex-row list-image-none justify-center items-center mt-3">
                   <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
                     <img
                       src={friend.friend_pfp}

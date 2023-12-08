@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown";
 import Cookies from "universal-cookie";
 
 import {
@@ -104,7 +104,9 @@ export default function Post({
       if (newLikeState) {
         // If liking, make a POST request to add a like
         await axios.post(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+            id +
+            "/postlikes",
           {
             post_object_id: id,
             author: user,
@@ -118,7 +120,9 @@ export default function Post({
       } else {
         // If unliking, make a DELETE request to remove the like
         await axios.delete(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+            id +
+            "/postlikes",
           {
             data: {
               post_object_id: id,
@@ -147,7 +151,9 @@ export default function Post({
     const checkLikeStatus = async () => {
       try {
         const response = await axios.get(
-          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes",
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+            id +
+            "/postlikes",
           config
         );
         const likedByCurrentUser = response.data["Post Likes"].some(
@@ -194,37 +200,32 @@ export default function Post({
   async function handleShareToClick(author) {
     //Inbox url
     let boxUrl = author.id + "/inbox";
-    console.log("BOX URL", boxUrl);
     //Author url (Sending post)
     let authUrl =
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
       user.user.user_id;
 
-    let postUrl = 
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + 
-      post_author + '/posts/' + id
+    let postUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      post_author +
+      "/posts/" +
+      id;
 
-    let auth = ''
-    if (boxUrl.includes('packet-pirates')) {
-      auth = PP_auth
+    let auth = "";
+    if (boxUrl.includes("packet-pirates")) {
+      auth = PP_auth;
     } else if (boxUrl.includes("super-coding")) {
-      auth = SC_auth
+      auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
       auth = WW_auth;
       boxUrl = boxUrl + "/";
     } else if (boxUrl.includes("node-net")) {
       auth = NN_auth;
     }
-    
+
     try {
-
       await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
-
         await axios.get(postUrl, PP_auth).then(async (postResponse) => {
-
-          console.log(postResponse)
-          console.log(authorResponse)
-        
           //NOT SURE YET
           let postData = {
             type: "post",
@@ -244,22 +245,13 @@ export default function Post({
             sent_by: authorResponse.data,
           };
 
-          console.log("TEsting sending post", postData);
-
           await axios.post(boxUrl, postData, auth).then(() => {
-
             setSharingModalOpen(false);
-            console.log("Successfully sent post to inbox");
-
           });
-
-        })
-
+        });
       });
     } catch (error) {
-
       console.log(error);
-
     }
   }
 
@@ -288,11 +280,14 @@ export default function Post({
   const handleCommentSubmit = async () => {
     setIsCommenting(false); // Hide comment input field
 
-    console.log("USER!!!", user);
-
-    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments";
+    let commentsUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      id +
+      "/postcomments";
     let authorUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/simpleauthor";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      user.user.user_id +
+      "/simpleauthor";
 
     const authorRes = await axios
       .get(authorUrl, config)
@@ -304,7 +299,8 @@ export default function Post({
               text: commentText,
               author: user.user.user_id,
               author_picture:
-                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + authorRes.data.Author.profile_picture,
+                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                authorRes.data.Author.profile_picture,
               author_username: authorRes.data.Author.username,
             },
             config,
@@ -323,12 +319,13 @@ export default function Post({
   };
 
   const getPostLikes = async () => {
-    let likesUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postlikes";
+    let likesUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      id +
+      "/postlikes";
 
     const likesRes = await axios.get(likesUrl, config).then((likesRes) => {
-      console.log("LIKE RES DATA", likesRes.data);
       likesRes.data["Post Likes"].map((like) => {
-        console.log("INDIVIDUAL LIKE", like);
         let singleLikeUrl =
           window.location.origin + `/author/${id}` + "/postlikes";
         let nextLike = {
@@ -348,14 +345,15 @@ export default function Post({
   };
 
   const getComments = async () => {
-    let commentsUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + id + "/postcomments";
+    let commentsUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      id +
+      "/postcomments";
 
     const commentsRes = await axios
       .get(commentsUrl, config)
       .then((commentsRes) => {
-        //console.log("COMMENT RES DATA", commentsRes.data);
         commentsRes.data.Comments.map((comment) => {
-          console.log("INDIVIDUAL COMMENT", comment);
           let singleCommentUrl =
             window.location.origin +
             `/posts/${id}` +
@@ -415,13 +413,14 @@ export default function Post({
 
   const getPostAuthor = async () => {
     let authorUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_author + "/simpleauthor";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      post_author +
+      "/simpleauthor";
 
     const authorRes = await axios
       .get(authorUrl, config)
       .then((authorRes) => {
         //Result of author query
-        console.log("authorRes hehehe", authorRes.data.Comments);
         setPostAuthor(authorRes.data.Author);
       })
       .catch((error) => {
@@ -447,7 +446,10 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + postAuthor.profile_picture}
+                src={
+                  "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                  postAuthor.profile_picture
+                }
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -466,8 +468,12 @@ export default function Post({
           </div>
 
           <div className="privacy-status">
-            {is_private && !is_friends && <span className="privacy-private">Private</span>}
-            {!is_private && is_friends && <span classname="pribacy-friends">Friend</span>}
+            {is_private && !is_friends && (
+              <span className="privacy-private">Private</span>
+            )}
+            {!is_private && is_friends && (
+              <span classname="pribacy-friends">Friend</span>
+            )}
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
             {!is_private && !unlisted && !is_friends && (
               <span className="privacy-public">Public</span>
@@ -475,14 +481,18 @@ export default function Post({
           </div>
 
           <div className="description-section flex justify-center items-center preserve-newline">
-            {content_type === "text/markdown" ?
-              <p><ReactMarkdown>{description}</ReactMarkdown></p>
-              :
+            {content_type === "text/markdown" ? (
+              <p>
+                <ReactMarkdown>{description}</ReactMarkdown>
+              </p>
+            ) : (
               <p>{description}</p>
-            }
+            )}
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
-            {!img.includes('null') && <img src={img} alt="" className="w-full h-full object-cover" />}
+            {!img.includes("null") && (
+              <img src={img} alt="" className="w-full h-full object-cover" />
+            )}
           </div>
 
           <div className="flex flex-row justify-between mt-2">

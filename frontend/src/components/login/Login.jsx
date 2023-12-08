@@ -12,12 +12,10 @@ export default function Login() {
 
   const handleUserChange = (event) => {
     setUser(event.target.value);
-    console.log("user value is:", event.target.value);
   };
 
   const handlePassChange = (event) => {
     setPass(event.target.value);
-    console.log("pass value is:", event.target.value);
   };
 
   const content = {
@@ -40,17 +38,12 @@ export default function Login() {
       )
       .then((res) => res.data)
       .then(function (data) {
-        console.log(data);
-        console.log(data.token);
         cookies.set("access_token", data.token, { path: "/" });
         localStorage.setItem("access_token", data.token);
-        console.log("pushed");
         window.location.reload(false);
-        // console.log(res.data);
       })
       .catch(function (error) {
         alert("Incorrect username or password");
-        console.log(error);
       });
   };
 
@@ -66,15 +59,6 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-
-              {/* <a
-                href="#"
-                className="flex items-center justify-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-400"
-              >
-                <FontAwesomeIcon icon={faGithub} />
-                <span>Sign in with Github</span>
-              </a> */}
-
               <form className="space-y-4 md:space-y-6" action="#">
                 <div>
                   <label
@@ -111,31 +95,7 @@ export default function Login() {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    {/* <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        aria-describedby="remember"
-                        type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                        required=""
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="remember"
-                        className="text-gray-500 dark:text-gray-300"
-                      >
-                        Remember me
-                      </label>
-                    </div> */}
-                  </div>
-                  {/* <a
-                    href="#"
-                    className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                  >
-                    Forgot password?
-                  </a> */}
+                  <div className="flex items-start"></div>
                 </div>
                 <button
                   onClick={getAuthor}

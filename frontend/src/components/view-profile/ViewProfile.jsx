@@ -80,11 +80,10 @@ export default function ViewProfile({ user }) {
       password: "Pirate",
     },
   };
-  
+
   var auth = "";
   var host = new URL(location.state["api"]).hostname;
-  var ownProfile = user.user.user_id === location.state['api'].split('/')[4];
-
+  var ownProfile = user.user.user_id === location.state["api"].split("/")[4];
 
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
@@ -94,22 +93,19 @@ export default function ViewProfile({ user }) {
 
     fetchPostData(); // Call the fetchPosts function
     console.log("posts", posts);
-  // }, []);
-}, []);
+    // }, []);
+  }, []);
 
   useEffect(() => {
-
     getNotifications();
     getConnections();
-
-  }, [notifications])
+  }, [notifications]);
   // }, [])
- 
+
   useEffect(() => {
     getAuthorInfo();
     checkFriendship();
-  }, [author, is_pending, areFriends, isFollowing, showFollowPopup])
-
+  }, [author, is_pending, areFriends, isFollowing, showFollowPopup]);
 
   async function getNotifications() {
     let notificationsUrl =
@@ -131,25 +127,32 @@ export default function ViewProfile({ user }) {
       .catch((error) => {
         console.error("Error getting notifications:", error);
       });
-  };
+  }
 
   async function getConnections() {
-      var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
-      const connectionTest = await axios
+    var url =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      user.user.user_id +
+      "/followers";
+    const connectionTest = await axios
       .get(url, PP_auth)
       .then((connectionRes) => {
-        console.log('connectionTestRes', connectionRes.data);
+        console.log("connectionTestRes", connectionRes.data);
         const followers = [];
-        
-        for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
+
+        for (let i = 0; i < connectionRes.data.items.length; i++) {
+          // Make foreign id the user thats logged in (packet pirates)
           // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
-          followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+          followers.push(
+            connectionRes.data.items[i]["url"] +
+              "/followers/" +
+              user.user.user_id
+          );
         }
 
-        console.log(followers)
-        var auth = ''
+        console.log(followers);
+        var auth = "";
         const requests = followers.map((url) => {
-          
           if (url.includes("packet-pirates")) {
             console.log("PIRATE!");
             auth = PP_auth;
@@ -165,70 +168,73 @@ export default function ViewProfile({ user }) {
           return axios
             .get(url, auth)
             .then((response) => response)
-            .catch((error) => console.error("Error", error))
-        }
-      );
+            .catch((error) => console.error("Error", error));
+        });
 
-      Promise.all(requests).then((responses) => {
-        console.log("RESPONSES", responses)
-        console.log(responses.length)
-        const Friends = []
-        
-        if (responses.length == 0) {
-          setFriends(
-            <Profile friends={Friends} user={user} />
-          );
-        } else {
-        
-          for (let i = 0; i < responses.length; i++) {
+        Promise.all(requests).then((responses) => {
+          console.log("RESPONSES", responses);
+          console.log(responses.length);
+          const Friends = [];
 
-            if (responses[i].data['is_follower']) { // For Web Weavers
-              if (responses[i].data['is_follower'] == true) {
+          if (responses.length == 0) {
+            setFriends(<Profile friends={Friends} user={user} />);
+          } else {
+            for (let i = 0; i < responses.length; i++) {
+              if (responses[i].data["is_follower"]) {
+                // For Web Weavers
+                if (responses[i].data["is_follower"] == true) {
+                  let userProfile = {
+                    friend_username: connectionRes.data.items[i].displayName,
+                    friend_pfp: connectionRes.data.items[i].profileImage,
+                  };
+                  console.log(
+                    "friend_username",
+                    connectionRes.data.items[i].displayName
+                  );
+                  console.log(
+                    "friend_pfp",
+                    connectionRes.data.items[i].profileImage
+                  );
+                  Friends.push(userProfile);
+                }
+              }
+
+              if (responses[i].data == true) {
                 let userProfile = {
                   friend_username: connectionRes.data.items[i].displayName,
-                  friend_pfp: connectionRes.data.items[i].profileImage
-                }
-                  console.log("friend_username", connectionRes.data.items[i].displayName)
-                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-                Friends.push(userProfile)
+                  friend_pfp: connectionRes.data.items[i].profileImage,
+                };
+                console.log(
+                  "friend_username",
+                  connectionRes.data.items[i].displayName
+                );
+                console.log(
+                  "friend_pfp",
+                  connectionRes.data.items[i].profileImage
+                );
+                Friends.push(userProfile);
               }
+
+              console.log("FRIENDS", Friends);
+              setFriends(<Profile friends={Friends} user={user} />);
             }
-
-            if (responses[i].data == true) {
-              let userProfile = {
-                friend_username: connectionRes.data.items[i].displayName,
-                friend_pfp: connectionRes.data.items[i].profileImage
-              }
-                console.log("friend_username", connectionRes.data.items[i].displayName)
-                console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-              Friends.push(userProfile)
-            }  
-
-            console.log("FRIENDS", Friends)
-            setFriends(
-              <Profile friends={Friends} user={user} />
-            );
-          }
-        } // end for
-      }); // end Promise
-
-    }); // end Then
-  }; // end async
-
+          } // end for
+        }); // end Promise
+      }); // end Then
+  } // end async
 
   async function fetchPostData() {
-
     let url = location.state["api"] + "/posts";
     let host = new URL(location.state["api"]).hostname;
 
-    const postUrls = []
+    const postUrls = [];
 
     //Corresponding authorization
-    let auth = ''
-    if (url.includes('packet-pirates')) {
-      auth = PP_auth
+    let auth = "";
+    if (url.includes("packet-pirates")) {
+      auth = PP_auth;
     } else if (url.includes("super-coding")) {
-      auth = SC_auth
+      auth = SC_auth;
     } else if (url.includes("web-weavers")) {
       auth = WW_auth;
       url = url + "/";
@@ -237,35 +243,32 @@ export default function ViewProfile({ user }) {
     }
 
     try {
-
-      await axios.get(url, auth)
-      .then(posts => {
+      await axios.get(url, auth).then((posts) => {
         //Get profile images and likes
-        const imageUrls = []
-        const likeUrls = []
+        const imageUrls = [];
+        const likeUrls = [];
 
-        let allPosts = []
-        if (url.includes("web-weavers")) { 
-          allPosts = posts['data']['items'] 
-        } else { 
-          allPosts = posts['data'] 
+        let allPosts = [];
+        if (url.includes("web-weavers")) {
+          allPosts = posts["data"]["items"];
+        } else {
+          allPosts = posts["data"];
         }
 
         //Create array of url-auth pairs again :(
         for (let res in allPosts) {
-
           //Post url
-          let imUrl = allPosts[res]['id'] + '/image'
+          let imUrl = allPosts[res]["id"] + "/image";
 
           //Likes url
-          let likUrl = allPosts[res]['id'] + '/likes'
+          let likUrl = allPosts[res]["id"] + "/likes";
 
           //Corresponding authorization
-          let auth = ''
-          if (imUrl.includes('packet-pirates')) {
-            auth = PP_auth
+          let auth = "";
+          if (imUrl.includes("packet-pirates")) {
+            auth = PP_auth;
           } else if (imUrl.includes("super-coding")) {
-            auth = SC_auth
+            auth = SC_auth;
           } else if (imUrl.includes("web-weavers")) {
             auth = WW_auth;
             imUrl = imUrl + "/";
@@ -274,64 +277,55 @@ export default function ViewProfile({ user }) {
             auth = NN_auth;
           }
 
-          imageUrls.push([imUrl, auth])
-          likeUrls.push([likUrl, auth])
-
+          imageUrls.push([imUrl, auth]);
+          likeUrls.push([likUrl, auth]);
         }
 
         //Send request for each url-auth
         const imgRequests = imageUrls.map(([url, auth]) =>
-          axios.get(url, auth)
-          .then(response => response)
-          .catch (error => console.error('Error', error))
+          axios
+            .get(url, auth)
+            .then((response) => response)
+            .catch((error) => console.error("Error", error))
         );
 
-        const likRequests = likeUrls.map(([url, auth]) => 
-          axios.get(url, auth)
-          .then(response => response)
-          .catch (error => console.error('Error', error))
+        const likRequests = likeUrls.map(([url, auth]) =>
+          axios
+            .get(url, auth)
+            .then((response) => response)
+            .catch((error) => console.error("Error", error))
         );
 
-        Promise.all(imgRequests)
-        .then(images => {
-
-          Promise.all(likRequests)
-          .then(likes => {
-          
+        Promise.all(imgRequests).then((images) => {
+          Promise.all(likRequests).then((likes) => {
             if (author === user.user.username) {
-
               setPosts(() => [
                 allPosts.map((res, index) => {
-    
-                  let image = ''
-                  let num_likes = 0
-    
-                  if (res.id.includes("packet-pirates")){
-    
-                    image = images[index]['data']
-                    num_likes = likes[index]['data']['length']
-    
-                  } else if (res.id.includes("super-coding")){
-    
-                    image = images[index]['data']['image']
-                    num_likes = likes[index]['data']['length']
-    
+                  let image = "";
+                  let num_likes = 0;
+
+                  if (res.id.includes("packet-pirates")) {
+                    image = images[index]["data"];
+                    num_likes = likes[index]["data"]["length"];
+                  } else if (res.id.includes("super-coding")) {
+                    image = images[index]["data"]["image"];
+                    num_likes = likes[index]["data"]["length"];
                   } else if (res.id.includes("web-weavers")) {
-                    
                     // Change this to the post data here
                     if (allPosts[index]) {
-                      image = "data:" + posts[index]['data'].contentType + "," + posts[index]['data'].content
+                      image =
+                        "data:" +
+                        posts[index]["data"].contentType +
+                        "," +
+                        posts[index]["data"].content;
                     } else {
-                      image = ""
+                      image = "";
                     }
-    
-                    num_likes = likes[index]['data']['items']['length']
-    
+
+                    num_likes = likes[index]["data"]["items"]["length"];
                   } else if (res.data.id.includes("node-net")) {
-    
                     image = "https://picsum.photos/200/300";
-                    num_likes = likes[index]['data']['length']
-    
+                    num_likes = likes[index]["data"]["length"];
                   }
 
                   return (
@@ -343,121 +337,126 @@ export default function ViewProfile({ user }) {
                       description={res.description}
                       content={res.content}
                       img={image}
-                      likes={num_likes}  
-                      post_id = {res.id}
-                      categories = {res.categories}
-                      contentType = {res.contentType}
-                      count = {res.count}
-                      origin = {res.origin}
-                      published = {res.published}
-                      source = {res.source}
-                      unlisted = {res.unlisted}
-                      visibility = {res.visibility}
+                      likes={num_likes}
+                      post_id={res.id}
+                      categories={res.categories}
+                      contentType={res.contentType}
+                      count={res.count}
+                      origin={res.origin}
+                      published={res.published}
+                      source={res.source}
+                      unlisted={res.unlisted}
+                      visibility={res.visibility}
                     />
                   );
                 }),
               ]);
             } else {
-
               setPosts(() => [
                 allPosts
-                .filter((post) => !post.unlisted && (post.visibility.toUpperCase() == "PUBLIC"))
-                .map((res, index) => {
-    
-                  let image = ''
-                  let num_likes = 0
-                  index = allPosts.indexOf(res)
-    
-                  if (res.id.includes("packet-pirates")){
-    
-                    image = images[index]['data']
-                    num_likes = likes[index]['data']['length']
-    
-                  } else if (res.id.includes("super-coding")){
-                    image = images[index]['data']['image']
-                    num_likes = likes[index]['data']['length']
-    
-                  } else if (res.id.includes("web-weavers")) {
-                    
-                    // Change this to the post data here
-                    if (allPosts[index]) {
-                      image = "data:" + posts['data']['items'][index].contentType + "," + posts['data']['items'][index].content
-                    } else {
-                      image = ""
+                  .filter(
+                    (post) =>
+                      !post.unlisted &&
+                      post.visibility.toUpperCase() == "PUBLIC"
+                  )
+                  .map((res, index) => {
+                    let image = "";
+                    let num_likes = 0;
+                    index = allPosts.indexOf(res);
+
+                    if (res.id.includes("packet-pirates")) {
+                      image = images[index]["data"];
+                      num_likes = likes[index]["data"]["length"];
+                    } else if (res.id.includes("super-coding")) {
+                      image = images[index]["data"]["image"];
+                      num_likes = likes[index]["data"]["length"];
+                    } else if (res.id.includes("web-weavers")) {
+                      // Change this to the post data here
+                      if (allPosts[index]) {
+                        image =
+                          "data:" +
+                          posts["data"]["items"][index].contentType +
+                          "," +
+                          posts["data"]["items"][index].content;
+                      } else {
+                        image = "";
+                      }
+
+                      num_likes = likes[index]["data"]["items"]["length"];
+                    } else if (res.data.id.includes("node-net")) {
+                      image = "https://picsum.photos/200/300";
+                      num_likes = likes[index]["data"]["length"];
                     }
-    
-                    num_likes = likes[index]['data']['items']['length']
-    
-                  } else if (res.data.id.includes("node-net")) {
-    
-                    image = "https://picsum.photos/200/300";
-                    num_likes = likes[index]['data']['length']
-    
-                  }
 
-                  return (
-                    <RemotePost
-                      key={index}
-                      user={user}
-                      post_author={res.author}
-                      title={res.title}
-                      description={res.description}
-                      content={res.content}
-                      img={image}
-                      likes={num_likes}  
-                      post_id = {res.id}
-                      categories = {res.categories}
-                      contentType = {res.contentType}
-                      count = {res.count}
-                      origin = {res.origin}
-                      published = {res.published}
-                      source = {res.source}
-                      unlisted = {res.unlisted}
-                      visibility = {res.visibility}
-                    />
-                  );
-                }),
+                    return (
+                      <RemotePost
+                        key={index}
+                        user={user}
+                        post_author={res.author}
+                        title={res.title}
+                        description={res.description}
+                        content={res.content}
+                        img={image}
+                        likes={num_likes}
+                        post_id={res.id}
+                        categories={res.categories}
+                        contentType={res.contentType}
+                        count={res.count}
+                        origin={res.origin}
+                        published={res.published}
+                        source={res.source}
+                        unlisted={res.unlisted}
+                        visibility={res.visibility}
+                      />
+                    );
+                  }),
               ]);
-
             }
-          })
-        })
-      })
-
+          });
+        });
+      });
     } catch (error) {
-
       console.error("Error getting posts:", error);
-        setPosts(
-          <div className="flex justify-center items-center">
-            This user has no posts
-          </div>
-        ); // end catch error
-
+      setPosts(
+        <div className="flex justify-center items-center">
+          This user has no posts
+        </div>
+      ); // end catch error
     }
-  };
+  }
 
   async function checkFriendship() {
     // Check if Sasuke is a friend of Packet, if so, we want to let packet be able to remove them as a follower
-    const followersUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" 
-                            + user.user.user_id  + "/followers/" + location.state['api'].split('/')[4];
-    
+    const followersUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      user.user.user_id +
+      "/followers/" +
+      location.state["api"].split("/")[4];
+
     // Check if Sasuke follow request to Packet still exists, if it does, disable the remove follower button.
-    const followReqUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" 
-                            + user.user.user_id + "/followrequest/" + location.state['api'].split('/')[4] + "/ispending"
-    
+    const followReqUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/followrequest/" +
+      location.state["api"].split("/")[4] +
+      "/ispending";
+
     // We can check if packet pirates is a friend of Sasuke
-    var followingUrl = location.state['api'] + "/followers/" + user.user.user_id 
-    
-    const urls = []
+    var followingUrl =
+      location.state["api"] + "/followers/" + user.user.user_id;
+
+    const urls = [];
 
     try {
-      const response = await axios.get(followersUrl, PP_auth).then(async (data) => {
-        setAreFriends(data['data']);
-        console.log("FFF", data['data'])
-        console.log("FRIENDS?", areFriends)
-        // console.log(response.data)
-      });
-      
+      const response = await axios
+        .get(followersUrl, PP_auth)
+        .then(async (data) => {
+          setAreFriends(data["data"]);
+          console.log("FFF", data["data"]);
+          console.log("FRIENDS?", areFriends);
+          // console.log(response.data)
+        });
+
       // const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
       //   set_is_pending(data['data'])
       //   console.log("PENDING?", is_pending)
@@ -475,148 +474,126 @@ export default function ViewProfile({ user }) {
         auth = NN_auth;
       }
 
-      const followingResponse = await axios.get(followingUrl, auth).then (async (data) => {
-        if (host.includes("packet-pirates")) {
-          setIsFollowing(data['data'])
-          console.log("DATA RESPONSE", isFollowing)
-        } else {
-          setIsFollowing(data['data']['is_follower'])
-          console.log("DATA RESPONSE", isFollowing)
-        }
-      })
+      const followingResponse = await axios
+        .get(followingUrl, auth)
+        .then(async (data) => {
+          if (host.includes("packet-pirates")) {
+            setIsFollowing(data["data"]);
+            console.log("DATA RESPONSE", isFollowing);
+          } else {
+            setIsFollowing(data["data"]["is_follower"]);
+            console.log("DATA RESPONSE", isFollowing);
+          }
+        });
 
-      console.log("RESPONSES", is_pending, areFriends, isFollowing)
+      console.log("RESPONSES", is_pending, areFriends, isFollowing);
     } catch (error) {
       console.error("Error checking friendship:", error);
     }
-  } 
-    const getAuthorInfo = async () => {
-      let authUrl = location.state["api"];
+  }
+  const getAuthorInfo = async () => {
+    let authUrl = location.state["api"];
 
-      if (host.includes("packet-pirates")) {
-        console.log("PIRATE!");
-        auth = PP_auth;
-      } else if (host.includes("super-coding")) {
-        auth = SC_auth;
-      } else if (host.includes("web-weavers")) {
-        auth = WW_auth;
-        authUrl = authUrl + "/";
-      } else if (host.includes("node-net")) {
-        auth = NN_auth;
-      }
-
-      const authRes = await axios
-        .get(authUrl, auth)
-        .then((authRes) => {
-          console.log("DATA", authRes.data);
-          console.log(authRes.data.profileImage);
-          // setImgUrl(authRes.data.profileImage);
-          imgUrl = authRes.data.profileImage;
-          console.log("IMGURL", imgUrl);
-          setAuthorInfo((authorInfo) => authRes.data);
-          // console.log("AUTHORINFO", authorInfo);
-          setProfileHeader(
-            <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
-              {/* User's Profile Picture */}
-              <img
-                src={authRes.data.profileImage}
-                alt={`${user.user.username}'s Profile`}
-                className="w-12 h-12 rounded-full object-cover mb-4"
-              />
-
-              {/* User's Name */}
-              <h2 className="text-xl font-semibold mb-2">
-                {author + "'s profile"}
-              </h2>
-
-              <div className="flex space-x-4">
-                {!ownProfile && isFollowing !== null && (
-                  <>
-                    {!isFollowing && (
-                      <button
-                        className="bg-blue-500 text-white px-2 py-2 rounded-md w-24"
-                        onClick={handleFollow}
-                      >
-                        Follow
-                      </button>
-                    )}
-
-                    {showFollowPopup && (
-                      <div className="follow-popup">
-                        Follow request sent!
-                      </div>
-                    )}
-
-                    {isFollowing && (
-                      <button
-                        className="bg-gray-500 text-white px-2 py-2 rounded-md cursor-not-allowed w-24"
-                        onClick={handleFollow}
-                        disabled
-                      >
-                        Following
-                      </button>
-                    )}
-
-                    {areFriends && (
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
-                        onClick={handleRemove}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-
-  //   const handleLogout = async (event) => {
-  //     event.preventDefault();
-
-  //     try {
-  //       await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
-  //       window.location.href = "/";
-  //       console.log("logged out");
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  // };
-
-  const handleFollow = async (event) => {
-    // console.log("handleFollow function called");
-    // console.log("FOLLOWING");
-    // console.log(author);
-    // console.log("this is the user" + user.user);
-    // console.log(user.user.username);
-    // console.log(imgUrl);
-    event.preventDefault();
-    // var apiString = location.state['api'];
-    var profile_author_id = location.state['api'].split('/')[4]
-    console.log("POSTING", location.state['api'], profile_author_id);
-
-    var auth_github = ''
-
-    if (user.user.github) {
-      auth_github = user.user.github
-    } else {
-      auth_github = ''
+    if (host.includes("packet-pirates")) {
+      console.log("PIRATE!");
+      auth = PP_auth;
+    } else if (host.includes("super-coding")) {
+      auth = SC_auth;
+    } else if (host.includes("web-weavers")) {
+      auth = WW_auth;
+      authUrl = authUrl + "/";
+    } else if (host.includes("node-net")) {
+      auth = NN_auth;
     }
 
-    var responseData = ''
-    if (host.includes("web-weavers")) {
-        responseData = {
-          type: "Follow",
-          summary: user.user.username + " wants to follow " + author,
-          actor: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id,
-          object: location.state["api"]
-          }
+    const authRes = await axios
+      .get(authUrl, auth)
+      .then((authRes) => {
+        imgUrl = authRes.data.profileImage;
+        setAuthorInfo((authorInfo) => authRes.data);
+        setProfileHeader(
+          <div className="top-box bg-white p-4 mb-4 text-center rounded-md flex flex-col items-center top-0 border border-gray-300 shadow-md">
+            {/* User's Profile Picture */}
+            <img
+              src={authRes.data.profileImage}
+              alt={`${user.user.username}'s Profile`}
+              className="w-12 h-12 rounded-full object-cover mb-4"
+            />
 
+            {/* User's Name */}
+            <h2 className="text-xl font-semibold mb-2">
+              {author + "'s profile"}
+            </h2>
+
+            <div className="flex space-x-4">
+              {!ownProfile && isFollowing !== null && (
+                <>
+                  {!isFollowing && (
+                    <button
+                      className="bg-blue-500 text-white px-2 py-2 rounded-md w-24"
+                      onClick={handleFollow}
+                    >
+                      Follow
+                    </button>
+                  )}
+
+                  {showFollowPopup && (
+                    <div className="follow-popup">Follow request sent!</div>
+                  )}
+
+                  {isFollowing && (
+                    <button
+                      className="bg-gray-500 text-white px-2 py-2 rounded-md cursor-not-allowed w-24"
+                      onClick={handleFollow}
+                      disabled
+                    >
+                      Following
+                    </button>
+                  )}
+
+                  {areFriends && (
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded-md w-24"
+                      onClick={handleRemove}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleFollow = async (event) => {
+    event.preventDefault();
+    // var apiString = location.state['api'];
+    var profile_author_id = location.state["api"].split("/")[4];
+    console.log("POSTING", location.state["api"], profile_author_id);
+
+    var auth_github = "";
+
+    if (user.user.github) {
+      auth_github = user.user.github;
+    } else {
+      auth_github = "";
+    }
+
+    var responseData = "";
+    if (host.includes("web-weavers")) {
+      responseData = {
+        type: "Follow",
+        summary: user.user.username + " wants to follow " + author,
+        actor:
+          "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+          user.user.user_id,
+        object: location.state["api"],
+      };
     } else {
       responseData = {
         type: "Follow",
@@ -652,14 +629,13 @@ export default function ViewProfile({ user }) {
 
     // Show follow request popup
     setShowFollowPopup(true);
-    console.log("After setShowFollowPopup", showFollowPopup);
 
     // Set a timer to hide the popup after 3 seconds
     const timer = setTimeout(() => {
       setShowFollowPopup(false);
     }, 3000);
 
-    var url = location.state["api"] + "/inbox"
+    var url = location.state["api"] + "/inbox";
     if (host.includes("packet-pirates")) {
       console.log("PIRATE!");
       auth = PP_auth;
@@ -667,34 +643,23 @@ export default function ViewProfile({ user }) {
       auth = SC_auth;
     } else if (host.includes("web-weavers")) {
       auth = WW_auth;
-      url = url + '/';
+      url = url + "/";
     } else if (host.includes("node-net")) {
       auth = NN_auth;
     }
-    
+
     console.log("RESPONSE DATA", responseData);
     axios.post(url, responseData, auth);
   };
 
-  // const handleUnfollow = async (event) => {
-  //   event.preventDefault();
-  
-  //   let unfollowUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
-
-  //   try {
-  //     const res = await axios.delete(unfollowUrl).then((res) => {
-  //       console.log(res.data);
-  //       setAreFriends(false);
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   const handleRemove = async (event) => {
     event.preventDefault();
-  
-    let removeUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/unfriend/" + location.state['api'].split('/')[4];
+
+    let removeUrl =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" +
+      user.user.user_id +
+      "/unfriend/" +
+      location.state["api"].split("/")[4];
 
     try {
       const res = await axios.delete(removeUrl).then((res) => {
@@ -705,7 +670,6 @@ export default function ViewProfile({ user }) {
       console.log(err);
     }
   };
-
 
   return (
     <>
@@ -744,7 +708,9 @@ export default function ViewProfile({ user }) {
                   </button>
 
                   <button
-                    onClick={() => {navigate("/")}}
+                    onClick={() => {
+                      navigate("/");
+                    }}
                     className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
                   >
                     <span>Home</span>
