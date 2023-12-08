@@ -49,7 +49,7 @@ export default function ProfilePage({ user }) {
         'password' : pass,
         'github' : git,
         'profile_picture' : profPic,
-        'display_name' : dispName,
+        'username' : dispName,
     }
 
 
@@ -61,12 +61,12 @@ export default function ProfilePage({ user }) {
         formData.append('github', info['github'])
         console.log(info['profile_picture'])
         formData.append('profile_picture', info['profile_picture'])
-        formData.append('display_name', info['display_name'])
+        formData.append('username', info['username'])
 
         console.log("FORM DATA", formData)
 
         try {
-            const res = await axios.post("http://127.0.0.1:8000/author/" + user.user.user_id + "/editprofile", formData, config);
+            const res = await axios.post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/editprofile", formData, config);
             console.log(res.data);
             window.location.reload(false)
           } catch (error) {
@@ -86,7 +86,7 @@ export default function ProfilePage({ user }) {
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <div className="image-container w-24 h-24 my-6 ml-12 mr-8 rounded-full overflow-hidden bg-black">
                                     <img
-                                        src={dispPic || "http://127.0.0.1:8000" + user.user.profile_picture}
+                                        src={dispPic || "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />
@@ -121,7 +121,7 @@ export default function ProfilePage({ user }) {
                                     onChange={handleGitChange}
                                 />
                             
-                                <label
+                                {/* <label
                                     htmlFor="displayname"
                                     className="block ml-10 row-span-1 col-start-1 col-end-2 text-sm font-medium text-lm-custom-black dark:text-white"
                                 >
@@ -134,7 +134,7 @@ export default function ProfilePage({ user }) {
                                     placeholder={user.user.username}
                                     className="bg-gray-50 border border-gray-300 row-span-1 col-start-2 col-end-3 text-lm-custom-black sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     onChange={handleDisplayNameChange}
-                                />
+                                /> */}
                             
                                 <button 
                                     onClick={()=>{navigate("/")}}

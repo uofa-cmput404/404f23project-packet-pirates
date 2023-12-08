@@ -11,7 +11,7 @@ export default function CreatePost({ user }) {
   const [title, setTitle] = useState("");
 
   // Image variables
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
   const [imageUID, setImageUID] = useState(null);
 
@@ -104,7 +104,7 @@ export default function CreatePost({ user }) {
     console.log("Data", formData);
 
     axios
-      .post("http://127.0.0.1:8000/postViews", formData, {
+      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/postViews", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           //"Content-Type": "application/json",
@@ -113,7 +113,7 @@ export default function CreatePost({ user }) {
       })
       .then((response) => {
         console.log(response.data);
-        // window.location.reload(false);
+        window.location.reload(false);
       })
       .catch((error) => {
         console.log("Error Response: ", error.response);
@@ -130,7 +130,7 @@ export default function CreatePost({ user }) {
         <div className="post-content flex flex-row">
           <div className="image-container w-12 h-12 rounded-full overflow-hidden bg-black">
             <img
-              src={"http://127.0.0.1:8000" + user.user.profile_picture}
+              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
               alt="profile"
               className="w-full h-full object-cover"
             />

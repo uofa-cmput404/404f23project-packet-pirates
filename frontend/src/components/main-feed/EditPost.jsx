@@ -16,7 +16,7 @@ export default function EditPost({ user,
   const [title, setTitle] = useState(titl);
 
   // Image variables
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState("");
   const [imageBase64, setImageBase64] = useState(null);
   const [imageUID, setImageUID] = useState(null);
 
@@ -172,14 +172,18 @@ export default function EditPost({ user,
             />
 
             {/* Post Body Input */}
-            <input
+            <textarea
               id="content"
               name="content"
               type="text"
               placeholder="Edit description..."
               className="border border-black rounded-lg p-2 h- mb-4"
               onChange={handleTextChange}
-            ></input>
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+            ></textarea>
 
              {/* Post Body Input */}
             <input

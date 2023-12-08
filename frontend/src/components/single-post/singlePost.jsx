@@ -5,6 +5,7 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import SearchBar from "../main-feed/Search";
+import { Navigate, useNavigate } from "react-router-dom";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function SinglePost({ user }) {
@@ -12,6 +13,7 @@ export default function SinglePost({ user }) {
   const [post, setPost] = useState(null);
   const [friends, setFriends] = useState(null);
   const [notifications, setNotifications] = useState(null);
+  const navigate = useNavigate();
 
   const config = {
     headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
@@ -206,17 +208,17 @@ export default function SinglePost({ user }) {
     getNotifications();
   }, [postID]);
 
-  const handleLogout = async (event) => {
-    event.preventDefault();
+  // const handleLogout = async (event) => {
+  //   event.preventDefault();
 
-    try {
-      await axios.get("/logout", config);
-      window.location.reload(false);
-      console.log("logged out");
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //   try {
+  //     await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+  //     window.location.href = "/";
+  //     console.log("logged out");
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <>
@@ -237,21 +239,40 @@ export default function SinglePost({ user }) {
                 </div>
               </div>
               <div className="flex-col justify-center mx-4">
-                <div className="search-bar">
+                <div className="search-bar sticky top-[20px] z-10">
                   <SearchBar />
+                </div>
+                <div className="flex sticky top-[83px] mb-5">
+                  <button
+                    onClick={() => navigate("/inbox")}
+                    className="block rounded-lg text-black bg-white w-1/2 mr-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+                  >
+                    <span>Inbox</span>
+                    <img
+                      src="/inbox-button.png"
+                      alt="Inbox"
+                      className="inbox-button-img ml-3 h-7.5 w-10"
+                    />
+                  </button>
+
+                  <button
+                    onClick={() => {navigate("/")}}
+                    className="block rounded-lg text-black bg-white w-1/2 ml-1 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in flex items-center justify-center"
+                  >
+                    <span>Home</span>
+                    <img
+                      src="/home-button.png"
+                      alt="Home"
+                      className="Home-button-img ml-3 h-7.5 w-10"
+                    />
+                  </button>
                 </div>
                 <div
                   className="notifications h-fit mx-auto"
-                  style={{ position: "sticky", top: "20px" }}
+                  style={{ position: "sticky", top: "155px" }}
                 >
                   {notifications}
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="sticky top-[270px] block rounded-lg text-white bg-primary-dark w-3/5 mx-auto my-4 py-2 shadow-md hover:bg-primary-color transition duration-200 ease-in"
-                >
-                  Logout
-                </button>
               </div>
             </div>
           </div>

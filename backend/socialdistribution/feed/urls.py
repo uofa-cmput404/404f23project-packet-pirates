@@ -17,18 +17,8 @@ urlpatterns = [
     path("<str:author>/unfriend/<str:friend>", views.FriendsDelete.as_view(), name = "unfriend"),
     path("authors/<str:author_id>/followers/<str:foreign_author_id>/local", views.FollowersLocal.as_view(), name ="Get Authors Followers Local"),
 
-
-
-    # path("author/<str:pk>/friendrequest")
-    # path('register', views.AuthorRegistration.as_view(), name="register"),
-    # path('login', views.AuthorLogin.as_view(), name = "login"),
-    # path('logout', views.AuthorLogout.as_view(), name = "logout"),
-    # path('author', views.AuthorView.as_view(), name = "author"),
     
     path("author/<str:pk>/inbox/local", views.InboxViews.as_view(), name ='Inbox'),
-    path("author/<str:pk>/inbox/local/posts", views.InboxViewPosts.as_view(), name ='Inbox'),
-    path("author/<str:pk>/inbox/local/comments", views.InboxViewComments.as_view(), name ='Inbox'),
-    path("authors/<str:author_id>/remotefollow", views.FollowObjectRemote.as_view(), name ='Create Follow Fields'),
 
     # REMOTE URLS
     path("authors/<str:author_id>/followers", views.GetAuthorsFollowersRemote.as_view(), name ="Get Authors Followers Remote"),

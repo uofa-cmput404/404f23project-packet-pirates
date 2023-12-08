@@ -26,6 +26,7 @@ export default function Post({
   likes,
   id,
   is_private,
+  is_friends,
   unlisted,
 }) {
   const [comments, setComments] = useState(null);
@@ -414,7 +415,7 @@ export default function Post({
 
   const getPostAuthor = async () => {
     let authorUrl =
-      "http://127.0.0.1:8000/author/" + post_author + "/simpleauthor";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + post_author + "/simpleauthor";
 
     const authorRes = await axios
       .get(authorUrl, config)
@@ -438,7 +439,7 @@ export default function Post({
 
   return (
     <>
-      <li className="list-none mb-5">
+      <li className="list-none mb-5 min-w-[620px] max-w-[620px]">
         <div
           className="post-container flex flex-col w-full h-full bg-white border border-gray-300 p-4 rounded-lg"
           style={{ boxShadow: "8px 8px 0px 0px rgba(0, 0, 0, 0.2)" }}
@@ -446,7 +447,7 @@ export default function Post({
           <div className="user-info-section flex flex-row">
             <div className="image-container w-10 h-10 rounded-full overflow-hidden bg-black">
               <img
-                src={"http://127.0.0.1:8000" + postAuthor.profile_picture}
+                src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + postAuthor.profile_picture}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
@@ -465,14 +466,15 @@ export default function Post({
           </div>
 
           <div className="privacy-status">
-            {is_private && <span className="privacy-private">Private</span>}
+            {is_private && !is_friends && <span className="privacy-private">Private</span>}
+            {!is_private && is_friends && <span classname="pribacy-friends">Friend</span>}
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {!is_private && !unlisted && (
+            {!is_private && !unlisted && !is_friends && (
               <span className="privacy-public">Public</span>
             )}
           </div>
 
-          <div className="description-section flex justify-center items-center">
+          <div className="description-section flex justify-center items-center preserve-newline">
             {content_type === "text/markdown" ?
               <p><ReactMarkdown>{description}</ReactMarkdown></p>
               :
@@ -480,7 +482,7 @@ export default function Post({
             }
           </div>
           <div className="img-section w-full h-full rounded-lg overflow-hidden">
-            <img src={img} alt="" className="w-full h-full object-cover" />
+            {!img.includes('null') && <img src={img} alt="" className="w-full h-full object-cover" />}
           </div>
 
           <div className="flex flex-row justify-between mt-2">

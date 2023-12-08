@@ -172,7 +172,7 @@ export default function RemotePost({
         user.user.user_id;
 
       //Corresponding authorization
-      let auth = "";
+      var auth = "";
       if (boxUrl.includes("packet-pirates")) {
         auth = PP_auth;
       } else if (boxUrl.includes("super-coding")) {
@@ -263,9 +263,9 @@ export default function RemotePost({
             postComments = response.data;
           } else if (url.includes("super-coding")) {
             postComments = response.data.comments;
+          } else if (url.includes("web-weavers")) {
+            postComments = response.data.items;
           }
-          // } else if (url.includes("web-weavers")) {
-
           // } else if (url.includes("node-net")) {
 
           // }
@@ -327,6 +327,7 @@ export default function RemotePost({
     } else if (boxUrl.includes("super-coding")) {
       auth = SC_auth;
     } else if (boxUrl.includes("web-weavers")) {
+      boxUrl = boxUrl + "/"
       auth = WW_auth;
     } else if (boxUrl.includes("node-net")) {
       auth = NN_auth;
@@ -336,7 +337,7 @@ export default function RemotePost({
     try {
       await axios.get(authUrl, PP_auth).then(async (authorResponse) => {
         //NOT SURE YET
-        let commentData = {
+        var commentData = {
           type: "comment",
           author: authorResponse.data,
           comment: commentText,
@@ -344,11 +345,37 @@ export default function RemotePost({
           published: ":)",
           id: post_id,
         };
+        
+        if (boxUrl.includes("web-weavers")) { // They need to handle comments differently
+            commentData = {
+              type: "comment",
+              author: authorResponse.data.id,
+              comment: commentText,
+              contentType: "text/plain",
+              id: post_id,
+            };
+            var commentUrl = post_id + "/comments/"
 
-        await axios.post(boxUrl, commentData, auth).then(() => {
-          fetchCommentData();
-          console.log("Successfully sent comment to inbox");
-        });
+            await axios.post(commentUrl, commentData, auth).then((response) => {
+              console.log("RESPONSE", response.data.id)
+
+              var commentData2 = {
+                id: response.data.id,
+                type: "comment"
+              }
+
+              axios.post(boxUrl, commentData2, auth).then(() => {
+                fetchCommentData();
+                console.log("Successfully sent comment to inbox");
+              });
+            })
+
+        } else {
+          await axios.post(boxUrl, commentData, auth).then(() => {
+            fetchCommentData();
+            console.log("Successfully sent comment to inbox");
+          });
+        }
       });
     } catch (error) {
       console.log(error);
@@ -369,24 +396,7 @@ export default function RemotePost({
     // the id of the post, used as the last part of url
     console.log(id);
 
-    let postData = {
-      type: "post",
-      title: title,
-      id: post_id,
-      source: source,
-      origin: origin,
-      description: description,
-      contentType: contentType,
-      content: content,
-      author: post_author,
-      categories: categories,
-      comments: "",
-      published: published,
-      visibility: visibility,
-      unlisted: unlisted,
-    };
-
-    var post_link = "http://127.0.0.1:3000/post/" + id;
+    var post_link = "https://packet-pirates-frontend-46271456b73c.herokuapp.com/post/" + id;
     console.log(post_link);
 
     navigator.clipboard
@@ -588,7 +598,7 @@ export default function RemotePost({
   }, []);
   return (
     <>
-      <li className="list-none mb-5">
+      <li className="list-none mb-5 min-w-[620px] max-w-[620px]">
         <div
           className="post-container flex flex-col w-full h-full bg-white border border-gray-300 p-4 rounded-lg"
           style={{ boxShadow: "8px 8px 0px 0px rgba(0, 0, 0, 0.2)" }}
@@ -651,15 +661,14 @@ export default function RemotePost({
             </div>
           </div>
 
-          {/* <div className="privacy-status">
-            {is_private && <span className="privacy-private">Private</span>}
+          <div className="privacy-status">
             {unlisted && <span className="privacy-unlisted">Unlisted</span>}
-            {!is_private && !unlisted && (
-              <span className="privacy-public">Public</span>
-            )}
-          </div> */}
+            {visibility==="PUBLIC" && !unlisted && <span className="privacy-private">Public</span>}
+            {visibility==="FRIENDS" && !unlisted && <span className="privacy-private">Friend</span>}
+            {visibility==="PRIVATE" && !unlisted && <span className="privacy-private">Private</span>}
+          </div>
 
-          <div className="description-section flex justify-center items-center">
+          <div className="description-section flex justify-center items-center preserve-newline">
           {contentType === "text/markdown" ?
               <p><ReactMarkdown>{description}</ReactMarkdown></p>
               :

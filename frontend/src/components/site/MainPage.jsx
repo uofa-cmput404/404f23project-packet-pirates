@@ -50,7 +50,7 @@ export default function MainPage({ user }) {
 
   const getPosts = async () => {
     let postsUrl =
-      "http://127.0.0.1:8000/author/" + user.user.user_id + "/feedposts";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/feedposts";
 
     const postsRes = await axios
       .get(postsUrl, config)
@@ -59,8 +59,11 @@ export default function MainPage({ user }) {
         setPosts(
           postsRes.data.Posts.filter((post) => !post.is_private).map((post, index) => {
               const image_conditions = post.image_url === '' && post.image_file != ''
-              const image = image_conditions ? 'http://127.0.0.1:8000' + post.image_file : post.image_url
-
+              // console.log("TESTING", image_conditions)
+              const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
+              // console.log("IMAGE", image)
+              // console.log("Private", post.is_private)
+              console.log("VISIBILITYYY", post)
               return (
                 <Post
                   key={index}
@@ -74,6 +77,7 @@ export default function MainPage({ user }) {
                   likes={post.likes_count}
                   id={post.post_id}
                   is_private={post.is_private}
+                  is_friends = {post.is_friends}
                   unlisted={post.unlisted}
                 />
               );
@@ -172,7 +176,7 @@ export default function MainPage({ user }) {
 
   const getNotifications = async () => {
     let notificationsUrl =
-      "http://127.0.0.1:8000/author/" +
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
       user.user.user_id +
       "/authornotifications";
 
@@ -212,8 +216,8 @@ export default function MainPage({ user }) {
     event.preventDefault();
 
     try {
-      await axios.get("http://127.0.0.1:8000/logout", config);
-      window.location.reload(false);
+      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+      window.location.href = "/";
       console.log("logged out");
     } catch (err) {
       console.log(err);

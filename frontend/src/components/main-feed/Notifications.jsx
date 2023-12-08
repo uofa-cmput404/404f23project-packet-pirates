@@ -9,7 +9,7 @@ export default function Notifications({ notifications , user}) {
     }
   };
 
-  var deleteUrl = "http://127.0.0.1:8000/" + user.user.user_id + "/deletenotifs";
+  var deleteUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/deletenotifs";
   const clearNotifications = async () => {
     console.log("Clear non follow notifs");
     const deleteNotifs = await axios.delete(deleteUrl, config).then(() => {
@@ -65,10 +65,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -93,7 +93,7 @@ export function Notification({ user, index, notification }) {
     // const requestRes = await axios.delete(notificationUrl, {data: notifData}, {config})
 
     .then((notifRes) => {
-      window.location.reload(false);
+      // window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error deleting notification:", err);
@@ -128,10 +128,10 @@ export function Notification({ user, index, notification }) {
 
     //Delete notif and request
     let notificationUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/createnotif";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/createnotif";
 
     let followrequestUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/followrequest";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/followrequest";
 
     const notifData = {
       notif_id : notification.notif_id
@@ -174,7 +174,7 @@ export function Notification({ user, index, notification }) {
 
 
     let friendUrl =
-    "http://127.0.0.1:8000/" + user.user.user_id + "/friends";
+    "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/" + user.user.user_id + "/friends";
 
     const friendData = {
       author : user.user.user_id,
@@ -187,7 +187,7 @@ export function Notification({ user, index, notification }) {
 
     const friendRes = await axios.post(friendUrl, friendData, config)
     .then((friendRes) => {
-      window.location.reload(false);
+      // window.location.reload(false);
     })
     .catch((err) => {
       console.error("Error creating friend:", err);

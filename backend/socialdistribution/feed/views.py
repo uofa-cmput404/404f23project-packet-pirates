@@ -57,7 +57,6 @@ class GetAllNotifications(APIView):
     def get(self, request, pk):
         pk = uuid.UUID(pk)
         notifications = Notifications.objects.filter(author = pk)
-        print(notifications)
         serializer = NotificationsSerializer(notifications, many = True)
         return Response({"Notifications": serializer.data}, status=status.HTTP_200_OK)
 
@@ -65,9 +64,6 @@ class GetAllNotifications(APIView):
 class GetUsers(APIView):
     """Returns a list of users, given query"""
     # no authentication needed
-    # permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = (SessionAuthentication,)
-    
     # no permission needed
     permission_classes = (permissions.AllowAny,)
     authentication_classes = () 
@@ -82,7 +78,6 @@ class GetUsers(APIView):
         # external_data = requests.get("https://super-coding-team-89a5aa34a95f.herokuapp.com/authors/", auth=basic).json()
         external_data = requests.get(c.SUPER_ENDPOINT+"authors/", auth=basic).json()
         external_data2 = requests.get(c.WW_ENDPOINT+"authors/", auth=basic2).json()
-        # external_data3 = requests.get(c.SCRIPTED_ENDPOINT+"authors/", auth=basic3).json()
 
         filtered_external_data = [
             {
@@ -104,33 +99,19 @@ class GetUsers(APIView):
             if query.lower() in author.get('displayName', '').lower()
         ]
 
-        # filtered_external_data3 = [
-        #     {
-        #         "id": author["id"],
-        #         "displayName": author["displayName"],
-        #         "profileImage": author["profileImage"]
-        #     }
-        #     for author in external_data3.get("items", [])
-        #     if query.lower() in author.get('displayName', '').lower()
-        # ]
-
         users = AppAuthor.objects.filter(username__icontains=query)
         serializer = AuthorSerializerRemote(users, many=True)
         Users = {
             "Users": serializer.data + filtered_external_data + filtered_external_data2
         }
-        print(Users)
+
 
         return Response(Users, status=status.HTTP_200_OK)
     
-    # def get(self, request):
-    #     query = request.GET.get('q')
-    #     users = AppAuthor.objects.filter(username__icontains = query)
-    #     serializer = AuthorSerializer(users, many = True)
-    #     return Response({"Users": serializer.data}, status=status.HTTP_200_OK)
-    
 class GetAllUsers(APIView):
-    """Returns ALL users"""
+    '''
+    Returns a list of all users
+    '''
     permission_classes = (permissions.AllowAny,)
     authentication_classes = () 
     
@@ -158,7 +139,6 @@ class GetAllAuthorFriends(APIView):
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         
-        # friends = Friends.author.objects.get(author_id = request.user.user_id)
 
 class GetAuthorFollowing(APIView):
     '''
@@ -174,13 +154,15 @@ class GetAuthorFollowing(APIView):
                     tags=['Feed'],)
     
     def get(self, request, pk):
-          
-        friends = Friends.objects.filter(friend_id = pk)
-        serializer = FriendsSerializer(friends, many=True)
 
-        return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
+        pk = str(uuid.UUID(pk))
+
+        friends = Friends.objects.filter(friend = pk)
+
+        serializer = FriendsSerializer(friends, many=True)
         
-        # friends = Friends.author.objects.get(author_id = request.user.user_id)
+        return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
+
 
 class GetAuthorFollowers(APIView):
     '''
@@ -201,8 +183,7 @@ class GetAuthorFollowers(APIView):
         serializer = FriendsSerializer(friends, many=True)
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
-        
-        # friends = Friends.author.objects.get(author_id = request.user.user_id)
+
 
 class GetTrueFriends(APIView):
     '''
@@ -240,10 +221,11 @@ class GetTrueFriends(APIView):
 
         return Response({"Friends": serializer.data}, status=status.HTTP_200_OK)
         
-        # friends = Friends.author.objects.get(author_id = request.user.user_id)
 
 class FollowRequestPending(APIView):
-
+    '''
+    API to check if there is a pending follow request
+    '''
     @swagger_auto_schema(operation_description="Check if a follow request is pending",
         operation_summary="Check if a follow request is pending",
         responses={200: FollowerRequestSerializer()},
@@ -263,7 +245,7 @@ class FollowRequestPending(APIView):
 class FollowRequestViews(APIView):
     '''
     Follow Request Object Views
-    Post, Delete
+    Get, Post, Delete
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -275,7 +257,7 @@ class FollowRequestViews(APIView):
         tags=['Feed'],)
     
     def get (self, request, pk):
-        print("Request", request.data)
+
         follow_req_obj = FollowerRequest.objects.filter(sender = uuid.UUID(request.data['data']['sender'])).filter(recipient = uuid.UUID(request.data['data']['recipient']))
         
         if (follow_req_obj):
@@ -294,9 +276,6 @@ class FollowRequestViews(APIView):
                                   # Or request can have both.
 
         serializer = FollowerRequestSerializer(data = request.data)
-        
-        print(serializer.is_valid())
-        print(serializer.errors)
 
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
@@ -310,8 +289,6 @@ class FollowRequestViews(APIView):
             tags=['Feed'],)
         
     def delete(self, request, pk):
-        print("FR DATA", request.data)
-        print("Sender", request.data['data']['sender'], "Recipicient", request.data['data']['recipient'])
         follow_request_obj = FollowerRequest.objects.filter(sender = request.data['data']['sender']).filter(recipient = request.data['data']['recipient'])
 
         if (follow_request_obj):
@@ -323,7 +300,8 @@ class FollowRequestViews(APIView):
 class FriendsViews(APIView):
 
     '''
-    Creates a Friend Object
+    Friend Object Views
+    Get, Post
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -358,7 +336,9 @@ class FriendsViews(APIView):
 
 
 class FriendsDelete(APIView):
-
+    '''
+    API for deleting a friend object
+    '''
     @swagger_auto_schema(operation_description="Deletes a friend object",
         operation_summary="Deletes a friend object",
         responses={200: FriendsSerializer()},
@@ -376,13 +356,29 @@ class FriendsDelete(APIView):
 
         
     
-
 class NotificationViews(APIView):
     '''
-    Creates a notification object
+    Notification Views
+    Get, Post, Delete
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+
+    @swagger_auto_schema(operation_description= "Get an authors notifications",
+        operation_summary="Get an authors notifications",
+        responses={200: NotificationsSerializer()},
+        tags=['Notifications'],)
+
+    def get(self, request, pk):
+        pk = uuid.UUID(pk)
+        notifications = Notifications.objects.filter(author = pk)
+
+        serializer = NotificationsSerializer(notifications, many = True)
+        
+        if (notifications):
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        
+        return Response (serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(operation_description="Creates a notification object",
         operation_summary="Creates a notification object",
@@ -396,9 +392,7 @@ class NotificationViews(APIView):
 
         author = AppAuthor.objects.get(username = request.data['author'])
         request.data['author'] = str(author.user_id)
-
-        serializer.is_valid()
-        print(serializer.errors)
+        
         if (serializer.is_valid(raise_exception=True)):
             serializer.save()
             return Response({'message': 'Notification Object Successfully Created'}, status=status.HTTP_201_CREATED)
@@ -412,7 +406,6 @@ class NotificationViews(APIView):
         tags=['Notifications'],)
     
     def delete(self, request, pk):
-        print("Notify DATA", request.data)
 
         notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
@@ -424,189 +417,35 @@ class NotificationViews(APIView):
 
 
 class DeleteAllNotifications(APIView):
+    '''
+    API to delete all notifications of an author at once except follow requests
+    '''
     @swagger_auto_schema(operation_description="Delete all notification objects",
         operation_summary="Delete all notification objects",
         responses={200: NotificationsSerializer()},
         tags=['Notifications'],)
     
     def delete(self, request, pk):
-        print("Notify DATA", request.data)
+
         pk = uuid.UUID(pk)
         notification_objects = Notifications.objects.filter(author = pk).filter(is_follow_notification = False)
-        # notification_object = Notifications.objects.get(notif_id = request.data['data']['notif_id'])
 
         if (notification_objects):
             for notification in notification_objects:
-                # print(notification)
+
                 notification.delete()
             return Response({"Message": "Notification Object Successfully Deleted"}, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_200_OK)
 
-class InboxViewPosts(APIView):
-    '''
-    Inbox Post Views
-    Get, Post
-    '''
-
-    @swagger_auto_schema(operation_description="Get an authors inbox posts",
-        operation_summary="Get an authors inbox posts",
-        responses={200: PostSerializer()},
-        tags=['Feed'],)    
-    def get(self, request, pk):
-        '''
-        Return the inbox posts of an author
-        '''
-        pk = uuid.UUID(pk)
-
-        inbox = Inbox.objects.get(author = pk)
-
-        serializer = InboxPostsSerializer(inbox)
-        
-        # print(serializer.data)
-        
-        # extract only the 'API' field from each post
-        api_fields = []
-        
-        for post_id, post_data in serializer.data.items():
-            api_fields.append(post_data.get('API', ''))
-            
-        posts = []
-        
-        for x in api_fields:
-            if c.SUPER_ENDPOINT in x:
-                try:
-                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
-                    r = requests.get(x, auth=basic)
-            
-                    t = r.json().copy()
-
-                    # Uncomment this when they change their image endpoint
-                    # t['image_url'] = x + "/image"
-                    # image_req = requests.get(t['image_url'], auth=basic)
-                    # t['image_url'] = image_req.json()
-
-                    t['image_url'] = 'https://picsum.photos/200'
-
-                    posts.append(t)
-                except Exception as e:
-                    print(e)
-
-            elif c.PP_ENDPOINT in x:
-                try:
-                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
-                    r = requests.get(x, auth=basic)
-                    t = r.json().copy()
-
-                    t['image_url'] = x + "/image"
-
-                    image_req = requests.get(t['image_url'], auth=basic)
-
-                    t['image_url'] = image_req.json()
-
-                    posts.append(t)
-                except Exception as e:
-                    print(e)
-            else:
-                try:
-                    r = requests.get(x)
-
-                    t = r.json().copy()
-
-                    t['image_url'] = x + "/image"
-
-                    image_req = requests.get(t['image_url'], auth=basic)
-
-                    t['image_url'] = image_req.json()
-
-                    posts.append(t)
-                except Exception as e:
-                    print(e)
-    
-        return Response(posts, status=status.HTTP_200_OK)
-        # return Response(api_fields, status=status.HTTP_200_OK)
-            
-class InboxViewComments(APIView):
-    '''
-    Inbox Post Views
-    Get, Post
-    '''
-
-    @swagger_auto_schema(operation_description="Get an authors inbox comments",
-        operation_summary="Get an authors inbox comments",
-        responses={200: PostSerializer()},
-        tags=['Feed'],)    
-    
-    def get(self, request, pk):
-        '''
-        Return the inbox posts of an author
-        '''
-        pk = uuid.UUID(pk)
-
-        inbox = Inbox.objects.get(author = pk)
-
-        serializer = InboxCommentsSerializer(inbox)
-        
-        # print(serializer.data)
-        
-        # extract only the 'API' field from each post
-        api_fields = []
-        print(serializer.data.items())
-        for comment_id, comment_data in serializer.data.items():
-            api_fields.append(comment_data.get('API', ''))
-        
-        print(api_fields)
-        comments = []
-        
-        for x in api_fields:
-            if c.SUPER_ENDPOINT in x:
-                try:
-                    basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
-                    r = requests.get(x, auth=basic)
-
-
-                    # Uncomment this when they change their image endpoint
-                    # t['image_url'] = x + "/image"
-                    # image_req = requests.get(t['image_url'], auth=basic)
-                    # t['image_url'] = image_req.json()
-
-                    comments.append(r.json())
-                except Exception as e:
-                    print(e)
-            elif c.PP_ENDPOINT in x:
-                try:
-                    basic = HTTPBasicAuth(c.PP_USER, c.PP_PASS)
-                    r = requests.get(x, auth=basic)
-                    
-                    print(r)
-
-                    comments.append(r.json())
-                except Exception as e:
-                    print(e)
-            else:
-                try:
-                    r = requests.get(x)
-
-                    t = r.json().copy()
-
-                    t['image_url'] = x + "/image"
-
-                    image_req = requests.get(t['image_url'], auth=basic)
-
-                    t['image_url'] = image_req.json()
-
-                    comments.append(t)
-                except Exception as e:
-                    print(e)
-    
-        return Response(comments, status=status.HTTP_200_OK)
-        # return Response(api_fields, status=status.HTTP_200_OK)
 
 class InboxViews(APIView):
     '''
-    Inbox Notification Views
+    Inbox Views for local purposes
     Get, Post
     '''
+    permission_classes = (permissions.AllowAny, )
+    authentication_classes = ()
 
     @swagger_auto_schema(operation_description="Get an authors inbox",
         operation_summary="Get an authors inbox",
@@ -636,43 +475,22 @@ class InboxViews(APIView):
         Update the inbox of an author
         '''
 
-        # author_id = uuid.UUID(author_id)
-
         inbox = Inbox.objects.get(author = pk)
 
-        # inbox = Inbox.objects.get(author = request.data['author'])
-        print("Inbox", inbox.author.user_id)
-        print("REQUEST\n", request.data)
-
-        # author = request.data['author']
-
-        # post_comments = request.data.get('post_comments')
-
-        # post_likes = request.data.get('post_likes')
-
-        # follow_requests = request.data.get('follow_requests')
-
         if (request.data['type'].lower() == 'post'):
-            print("YES")
         
             key = str(uuid.uuid4())
-            request.data['API'] = request.data['id']
-            print(key)
             if(inbox.posts == None):
                 inbox.posts = {key: request.data}
-                print("New object", inbox.posts)
             else:
                 inbox.posts[key] = request.data
-                print("APPENDED", inbox.posts)
 
         if (request.data['type'].lower() == 'comment'):
             # Need to create comment object and notification
             post_id = request.data['id'].split('/')[6]
             comment_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
-            print(request.data['author']['displayName'])
-            print(request.data['author']['profileImage'])
-            print(request.data['comment'])
+
             comment_id = uuid.uuid4()
 
             new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
@@ -682,7 +500,7 @@ class InboxViews(APIView):
 
             if (comment_serializer.is_valid(raise_exception=True)):
                 comment_serializer.save()
-                print("Comment Valid")
+
 
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                             'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -692,9 +510,7 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
 
-        
         if (request.data['type'].lower() == 'like'):
             # Need to create like object and notification
             post_id = request.data['object'].split('/')[6]
@@ -710,7 +526,7 @@ class InboxViews(APIView):
                 like_serializer.save()
                 new_like_count = like_post.likes_count + 1
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
-                print("Like Valid")
+
 
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -720,8 +536,6 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
-
 
         if (request.data['type'].lower() == 'follow'):
             # Need to create follow object and notification
@@ -734,7 +548,7 @@ class InboxViews(APIView):
 
             if (follow_serializer.is_valid(raise_exception=True)):
                 follow_serializer.save()
-                print("Follow Valid")
+
             
             notification = {'author': str(uuid.UUID(pk)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
@@ -744,7 +558,7 @@ class InboxViews(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
+
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                         'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
@@ -772,7 +586,7 @@ class InboxViews(APIView):
         serializer = InboxSerializer(inbox, data = new_inbox)
 
         if (serializer.is_valid(raise_exception = True)):
-            # print("valid")
+
             serializer.save()
             return Response ({"Message":"Inbox successfully deleted"}, status = status.HTTP_200_OK)
         
@@ -832,6 +646,7 @@ class GetAuthorsFollowersRemote(APIView):
 
         friend_list = []
         friend_origin_list = []
+
         for friend in friends:
 
             friend_list.append(uuid.UUID(friend.friend))
@@ -840,7 +655,6 @@ class GetAuthorsFollowersRemote(APIView):
         authors = AppAuthor.objects.filter(user_id__in = friend_list)
 
         external_data = []
-        print(friend_origin_list)
         for origin in friend_origin_list:
             if ("super-coding" in origin):
                 basic = HTTPBasicAuth(c.SUPER_USER, c.SUPER_PASS)
@@ -855,17 +669,8 @@ class GetAuthorsFollowersRemote(APIView):
 
         serializer = AuthorSerializerRemote(authors, many = True)
 
-        # serializer = FriendsSerializer(friends, many=True)
-        print(serializer.data)
-
-        # data = [item['author'] for item in serializer.data]
-
-        if (authors):
-            return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
+        return Response({"type": "followers", "items": serializer.data + external_data}, status=status.HTTP_200_OK)
         
-        return Response({"items":serializer.data}, status=status.HTTP_200_OK)
-
-
 
 class FollowersRemote(APIView):
     '''
@@ -897,14 +702,10 @@ class FollowersRemote(APIView):
         return Response (True, status = status.HTTP_200_OK)
 
 
-class FollowObjectRemote(APIView):
-
-    def get(self, request, author_id):
-        pass
 
 class InboxViewsRemote(APIView):
     '''
-    Inbox Post Remote
+    Inbox Views for remote purposes
     '''
 
     permission_classes = (permissions.IsAuthenticated, )
@@ -920,43 +721,22 @@ class InboxViewsRemote(APIView):
         Update the inbox of an author
         '''
 
-        # author_id = uuid.UUID(author_id)
-
         inbox = Inbox.objects.get(author = author_id)
 
-        # inbox = Inbox.objects.get(author = request.data['author'])
-        print("Inbox", inbox.author.user_id)
-        print("REQUEST\n", request.data)
-
-        # author = request.data['author']
-
-        # post_comments = request.data.get('post_comments')
-
-        # post_likes = request.data.get('post_likes')
-
-        # follow_requests = request.data.get('follow_requests')
-
         if (request.data['type'].lower() == 'post'):
-            print("YES")
         
             key = str(uuid.uuid4())
             request.data['API'] = request.data['id']
-            print(key)
             if(inbox.posts == None):
                 inbox.posts = {key: request.data}
-                print("New object", inbox.posts)
             else:
                 inbox.posts[key] = request.data
-                print("APPENDED", inbox.posts)
 
         if (request.data['type'].lower() == 'comment'):
             # Need to create comment object and notification
             post_id = request.data['id'].split('/')[6]
             comment_post = Post.objects.get(post_id = post_id)
             author = request.data['author']['id'].split('/')[4]
-            print(request.data['author']['displayName'])
-            print(request.data['author']['profileImage'])
-            print(request.data['comment'])
             comment_id = uuid.uuid4()
 
             new_comment = {"comment_id":comment_id, "post": comment_post.post_id, "author": author, "author_picture": request.data['author']['profileImage'], 
@@ -966,7 +746,6 @@ class InboxViewsRemote(APIView):
 
             if (comment_serializer.is_valid(raise_exception=True)):
                 comment_serializer.save()
-                print("Comment Valid")
 
             if (str(uuid.UUID(author_id)) != author): # To prevent self notifications
                 notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
@@ -977,7 +756,6 @@ class InboxViewsRemote(APIView):
 
                 if (notification_serializer.is_valid(raise_exception=True)):
                     notification_serializer.save()
-                    print("Notif Valid")
 
         
         if (request.data['type'].lower() == 'like'):
@@ -995,7 +773,6 @@ class InboxViewsRemote(APIView):
                 like_serializer.save()
                 new_like_count = like_post.likes_count + 1
                 Post.objects.filter(post_id = post_id).update(likes_count = new_like_count)
-                print("Like Valid")
 
             notification = {'author': str(uuid.UUID(author_id)), 'notification_author': author, 'notification_author_origin': request.data['author']['id'],
                 'notif_author_pfp': request.data['author']['profileImage'],'notif_author_username':request.data['author']['displayName'], 
@@ -1005,7 +782,6 @@ class InboxViewsRemote(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
 
 
         if (request.data['type'].lower() == 'follow'):
@@ -1019,7 +795,6 @@ class InboxViewsRemote(APIView):
 
             if (follow_serializer.is_valid(raise_exception=True)):
                 follow_serializer.save()
-                print("Follow Valid")
 
             notification = {'author': str(uuid.UUID(author_id)), 'notification_author': sender, 'notification_author_origin': request.data['actor']['id'],
                 'notif_author_pfp': request.data['actor']['profileImage'],'notif_author_username':request.data['actor']['displayName'], 
@@ -1029,7 +804,6 @@ class InboxViewsRemote(APIView):
 
             if (notification_serializer.is_valid(raise_exception=True)):
                 notification_serializer.save()
-                print("Notif Valid")
         
         new_inbox = {'author':inbox.author.user_id, 'posts': inbox.posts, 
                         'post_comments':inbox.post_comments, 'post_likes':inbox.post_likes, "follow_requests":inbox.follow_requests}
