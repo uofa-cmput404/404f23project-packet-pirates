@@ -105,7 +105,7 @@ export default function Login() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
-                    <div className="flex items-center h-5">
+                    {/* <div className="flex items-center h-5">
                       <input
                         id="remember"
                         aria-describedby="remember"
@@ -121,14 +121,14 @@ export default function Login() {
                       >
                         Remember me
                       </label>
-                    </div>
+                    </div> */}
                   </div>
-                  <a
+                  {/* <a
                     href="#"
                     className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Forgot password?
-                  </a>
+                  </a> */}
                 </div>
                 <button
                   onClick={getAuthor}

@@ -249,8 +249,14 @@ export default function Inbox({ user }) {
       });
   };
 
-  const handleClear = (event) => {
-    console.log("Cleared");
+  const handleClear = async () => {
+    
+    var deleteUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/inbox/local";
+
+    const deleteNotifs = await axios.delete(deleteUrl, config).then(() => {
+        console.log("Cleared");
+        window.location.reload(false)
+    })
   };
 
   // const testApi = () => {
