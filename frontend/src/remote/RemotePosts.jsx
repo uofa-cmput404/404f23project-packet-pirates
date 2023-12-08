@@ -446,16 +446,10 @@ export default function RemotePost({
           sent_by: authorResponse.data,
         };
 
-        console.log("TEsting sending post", postData);
-
         //Corresponding authorization
 
-        console.log("BOX URL", boxUrl);
-        console.log("AUTH FOR POSTING", auth);
         await axios.post(boxUrl, postData, auth).then(() => {
-          console.log("POSTED");
           setSharingModalOpen(false);
-          console.log("Successfully sent post to inbox");
         });
       });
     } catch (error) {
@@ -464,13 +458,10 @@ export default function RemotePost({
   }
 
   const handleView = () => {
-    console.log(post_id);
     // post_id is the endpoint to get the post
     var id = post_id;
     var id = post_id.split("/").pop();
     // the id of the post, used as the last part of url
-    console.log(id);
-
     navigate("/post/" + id, { state: { api: post_id } });
     window.location.reload(false);
   };
@@ -502,8 +493,6 @@ export default function RemotePost({
       }
 
       for (let like in likesList) {
-        console.log(":(", likesList[like]);
-
         if (
           likesList[like]["author"]["id"].split("/")[4] === user.user.user_id
         ) {
@@ -514,8 +503,6 @@ export default function RemotePost({
   }
 
   const handleEditAccess = () => {
-    console.log(window.location.href);
-
     //Check if user is viewing own profile
 
     let profPath = "user/" + user.user.username;
@@ -536,14 +523,6 @@ export default function RemotePost({
   };
 
   useEffect(() => {
-    console.log("user", user);
-    console.log("title", title);
-    console.log("description", description);
-    console.log("content", content);
-    console.log("img", img);
-    console.log("likes", likes);
-    console.log("author", post_author);
-    console.log("contentType", contentType);
     fetchCommentData();
     checkLikeStatus();
     handleEditAccess();
