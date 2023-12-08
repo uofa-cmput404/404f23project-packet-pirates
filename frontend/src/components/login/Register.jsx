@@ -100,7 +100,7 @@ export default function Register() {
         console.log("Error Response: ", error.response.data);
         console.log("Error Data: ", error.response.data);
         alert(
-          "Error signing up, make sure password is at least 8 characters, and a unique username"
+          "Error signing up, make sure password is at least 8 characters, and/or username may already be taken"
         );
       })
       .finally(() => {
