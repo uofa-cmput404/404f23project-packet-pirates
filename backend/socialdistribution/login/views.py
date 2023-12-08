@@ -18,7 +18,6 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from .validate import *
 from .serializer import *
 
-
 from feed.serializer import InboxSerializer
 
 from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
@@ -40,6 +39,9 @@ from drf_yasg import openapi
 
 
 class AuthorRegistration(APIView):
+    '''
+    For registering an author
+    '''
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 
@@ -80,6 +82,9 @@ class AuthorRegistration(APIView):
         return Response(status = status.HTTP_400_BAD_REQUEST)
 
 class AuthorLogin(APIView):
+    '''
+    For logging in an author
+    '''
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (TokenAuthentication,)
     
@@ -130,6 +135,9 @@ class AuthorLogout(APIView):
 
 
 class AuthorView(APIView):
+    '''
+    For retrieving every authors information
+    '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     # authentication_classes = (SessionAuthentication,)
@@ -148,7 +156,7 @@ class AuthorView(APIView):
 
 class GetSingleAuthor(APIView):
     '''
-    Get one single author
+    Get one single author 
     '''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -166,6 +174,9 @@ class GetSingleAuthor(APIView):
         return Response({"Author": serializer.data}, status=status.HTTP_200_OK)
 
 class GetSimpleAuthor(APIView):
+    '''
+    API that returns a single author but only their username and profile picture
+    '''
     # given author id, gets author username and profile picture
     permission_classes = (permissions.AllowAny,)
     # no authentication needed

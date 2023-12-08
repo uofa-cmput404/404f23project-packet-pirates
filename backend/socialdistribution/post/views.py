@@ -33,7 +33,10 @@ from drf_yasg.utils import swagger_auto_schema
 
 from drf_yasg import openapi
 
-class ViewPostByID(APIView): # FOR TESTING PURPOSES DELETE LATER
+class ViewPostByID(APIView):
+    '''
+    Get the post with the given post_id
+    '''
 
     def get(self, request, pk):
         post = Post.objects.get(post_id = pk)
@@ -62,15 +65,6 @@ class GetAuthorsPosts(APIView):
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
     
-    
-class test(APIView):
-    # no permission needed
-    permission_classes = (permissions.AllowAny,)
-    # no authentication needed
-    authentication_classes = ()
-    
-    def get(self, request):
-        return Response(status=status.HTTP_200_OK)    
 
 class GetUsers(APIView):
     """Returns a list of users, given query"""
@@ -105,19 +99,6 @@ class GetFeedPostsByUsername(APIView):
         serializer = PostSerializer(posts, many = True)
         return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
 
-    # def get(self, request, pk):
-    #     author = AppAuthor.objects.get(username = pk)
-    #     posts = Post.objects.filter(author_id = author.user_id) # Find posts that the specific author has posted
-
-    #     friends = Friends.objects.filter(author = author.user_id) # Friends of author
-
-    #     for friend in friends:
-
-    #         posts = posts | Post.objects.filter(author_id = friend.author_id) # Add posts from each friend
-
-    #     serializer = PostSerializer(posts, many = True)
-    #     return Response({"Posts": serializer.data}, status=status.HTTP_200_OK)
-
 class GetFeedPosts(APIView):
     '''
     Get posts that should show up in a author's feed
@@ -125,7 +106,6 @@ class GetFeedPosts(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
         
-
     @swagger_auto_schema(operation_description="Get posts that should show up in a author's feed",
                 operation_summary="Get posts",
                 responses={200: PostSerializer()},
@@ -148,9 +128,6 @@ class PostViews(APIView):
     '''
     API for creating Posts as well as deleting Posts
     '''
-    #permission_classes = (permissions.AllowAny,)
-    #authentication_classes = ()    
-
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
@@ -209,9 +186,6 @@ class EditPost(APIView): # Have to pass the post_id on the content body from the
     '''
     API for editting posts
     '''
-    #permission_classes = (permissions.AllowAny,)
-    #authentication_classes = ()
-
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     
@@ -249,9 +223,6 @@ class PostComments(APIView):
     '''
     All comments of a post
     '''
-    # permission_classes = (permissions.AllowAny,)
-    # authentication_classes = ()
-
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     
@@ -274,8 +245,6 @@ class PostComments(APIView):
     
     def post(self, request, pk):
         post_id = uuid.UUID(pk)
-
-        # request.data['post'] = post_id
 
         new_request_data = request.data.copy()
 
@@ -352,8 +321,7 @@ class PostLikeViews(APIView):
     '''
     All likes of a post
     '''
-    # permission_classes = (permissions.AllowAny,)
-    
+ 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
 
@@ -433,7 +401,6 @@ class LikedRemote(APIView):
     All likes of a given author
     URL: ://service/authors/{AUTHOR_ID}/liked
     '''
-    # permission_classes = (permissions.AllowAny,)
     
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
@@ -463,8 +430,7 @@ class GetLikesOnPostRemote(APIView):
     Get likes on AUTHOR_ID's post POST_ID
     URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/likes
     '''
-    # permission_classes = (permissions.AllowAny,)
-    
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
@@ -497,7 +463,6 @@ class CommentsRemote(APIView):
     Get comments on AUTHOR_ID's post POST_ID
     URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/comments
     '''
-    # permission_classes = (permissions.AllowAny,)
     
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
@@ -532,8 +497,7 @@ class PostCommentRemote(APIView):
     Get a comment on AUTHOR_ID's post POST_ID
     URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}/comments/{COMMENT_ID}
     '''
-    # permission_classes = (permissions.AllowAny,)
-    
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
@@ -564,7 +528,6 @@ class PostRemote(APIView):
     Get the public post whose id is POST_ID
     URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}
     '''
-    # permission_classes = (permissions.AllowAny,)
 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
@@ -595,8 +558,6 @@ class AuthorPostsRemote(APIView):
     Get the public posts created by author (paginated)
     URL ://service/authors/{AUTHOR_ID}/posts/
     '''
-    # permission_classes = (permissions.AllowAny,)
-
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (BasicAuthentication,)
 
@@ -610,11 +571,6 @@ class AuthorPostsRemote(APIView):
         auth_id = uuid.UUID(author)
 
         posts = Post.objects.filter(author = auth_id)
-
-        #posts = Post.objects.filter(author = auth_id).order_by('date_time')
-
-        #Extract num from query 
-        # page = Paginator(posts, num)
 
         serializer = PostSerializerRemote(posts, many = True)
 

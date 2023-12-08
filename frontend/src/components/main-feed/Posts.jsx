@@ -474,7 +474,7 @@ export default function Post({
             )}
           </div>
 
-          <div className="description-section flex justify-center items-center">
+          <div className="description-section flex justify-center items-center preserve-newline">
             {content_type === "text/markdown" ?
               <p><ReactMarkdown>{description}</ReactMarkdown></p>
               :
