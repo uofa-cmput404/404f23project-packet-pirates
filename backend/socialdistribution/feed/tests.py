@@ -2,9 +2,11 @@ from django.test import TestCase
 from login.models import AppAuthor
 from post.models import *
 from feed.models import *
+from post.serializer import *
 from django.contrib import auth
 from django.contrib.auth.models import User, Permission
 from rest_framework.authtoken.models import Token
+import json
 # Create your tests here.
 
 
@@ -43,7 +45,13 @@ class FeedTests(TestCase):
         friend1 = Friends.objects.create(author=self.author1.user_id, friend= self.author3.user_id, friend_pfp = None, friend_username = self.author3.username)
         friend2 = Friends.objects.create(author=self.author2.user_id, friend= self.author3.user_id, friend_pfp = None, friend_username = self.author3.username)
 
-        
+
+        inbox = Inbox.objects.create(author = self.author1)
+
+        textPost = Post.objects.create(author = self.author1.user_id, title = 'testPost1', is_private = False, url = None, likes_count = 2,
+                                    content_type = 'text/plain', content = 'test', 
+                                    source = None, origin = None, image_file = None, image_url = None, unlisted = False)
+
     # True Friend Exists
     def testTrueFriendsExist(self):
         
@@ -117,3 +125,22 @@ class FeedTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(len(response.data['Notifications']), 1)
+    
+    # Test if posting to the inbox works
+    def testInbox(self):
+        self.client.login(username='CMPUT404', password='cmput404')
+
+        headers = {'HTTP_AUTHORIZATION': f'Token {self.token.key}'}
+        
+        post = Post.objects.get(title = 'testPost1')
+
+        serializer = PostSerializerRemote(post)
+        
+        response = self.client.post('https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/' + str(self.author1.user_id) + '/inbox/local', serializer.data,
+                                   **headers)
+
+        self.assertEqual(response.status_code, 200)
+        
+        inbox = Inbox.objects.get(author = self.author1)
+        self.assertEqual(len(inbox.posts), 1)
+

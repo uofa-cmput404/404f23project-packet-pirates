@@ -654,20 +654,9 @@ class InboxViews(APIView):
 
         inbox = Inbox.objects.get(author = pk)
 
-        # inbox = Inbox.objects.get(author = request.data['author'])
-
-        # author = request.data['author']
-
-        # post_comments = request.data.get('post_comments')
-
-        # post_likes = request.data.get('post_likes')
-
-        # follow_requests = request.data.get('follow_requests')
-
         if (request.data['type'].lower() == 'post'):
         
             key = str(uuid.uuid4())
-            request.data['API'] = request.data['id']
             if(inbox.posts == None):
                 inbox.posts = {key: request.data}
             else:
