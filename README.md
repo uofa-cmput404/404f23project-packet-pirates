@@ -10,7 +10,7 @@ SOME PICTURES USED IN POSTS ARE FROM (https://picsum.photos/200), WHICH IS A RAN
 
 [Backend](https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/swagger/)
 
-### Demo [Video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+### Demo [Video](https://youtu.be/kM2JGPhEKxI)
 
 ##### This project was created for the course CMPUT 404 following a set of [requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
 ## Setup
