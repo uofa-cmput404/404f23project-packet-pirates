@@ -1,8 +1,9 @@
 import axios from "axios";
 export default function Site() {
   const getAuthor = async () => {
-    const res = await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/");
-    console.log(res.data);
+    const res = await axios.get(
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/"
+    );
   };
 
   return (

@@ -29,7 +29,8 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 
-axios.defaults.baseURL = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
+axios.defaults.baseURL =
+  "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
 
 const client = axios.create({
   baseURL: "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com",
@@ -52,25 +53,21 @@ function App() {
 
   useEffect(() => {
     var token = cookies.get("access_token");
-    console.log(token);
 
     const config = {
       headers: { Authorization: "token " + token },
     };
-    console.log(config);
 
     // Use Axios to check if the user has the session ID and is logged in, and if so, set the state to logged in
     axios
       .get("/author", config)
       .then((response) => {
-        console.log("Response from /author:", response);
         setIsLoggedIn(true);
         setAuthorInfo(response.data);
-        localStorage.setItem('author', JSON.stringify(response.data))
+        localStorage.setItem("author", JSON.stringify(response.data));
         if (response.data.session_id) {
           // User is logged in
           setIsLoggedIn(true);
-          // console.log("User is logged in");
         }
       })
       .catch((error) => {
@@ -88,14 +85,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route
           path="/user/:author"
-          element={
-            isLoggedIn ? (
-              <ViewProfile user={authorInfo} />
-            ) : (
-              // <ViewProfileNotLogged />
-              <Landing />
-            )
-          }
+          element={isLoggedIn ? <ViewProfile user={authorInfo} /> : <Landing />}
         />
         <Route
           path="/inbox"

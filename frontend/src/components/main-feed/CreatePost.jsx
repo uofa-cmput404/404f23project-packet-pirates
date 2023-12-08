@@ -17,7 +17,7 @@ export default function CreatePost({ user }) {
 
   const visibilityOptions = [
     { value: "Public", label: "Public" },
-    { value: "Friends", label: "Friends"},
+    { value: "Friends", label: "Friends" },
     { value: "Private", label: "Private" },
     { value: "Unlisted", label: "Unlisted" },
   ];
@@ -35,18 +35,15 @@ export default function CreatePost({ user }) {
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
-    console.log("Sent title is:", event.target.value);
   };
 
   const handleTextChange = (event) => {
     setText(event.target.value);
-    console.log("Sent text is:", event.target.value);
   };
 
   const [imageUrl, setImageUrl] = useState("");
   const handleImageUrlTextChange = (event) => {
     setImageUrl(event.target.value);
-    console.log("Sent Image URL is:", event.target.value);
   };
 
   const handleImageUpload = (event) => {
@@ -61,7 +58,6 @@ export default function CreatePost({ user }) {
 
   const handleContentTypeChange = (option) => {
     setContentType(option.value);
-    console.log("Sent content type is:", option.value);
   };
 
   const handleVisibilityChange = (value) => {
@@ -80,8 +76,6 @@ export default function CreatePost({ user }) {
       setIsPrivate(false);
       setIsUnlisted(false);
     }
-
-    console.log("Sent visibility is:", value);
   };
 
   const handlePosting = (e) => {
@@ -101,22 +95,22 @@ export default function CreatePost({ user }) {
     formData.append("visibility", visibility);
     formData.append("url", "");
 
-    console.log("Data", formData);
-
     axios
-      .post("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/postViews", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          //"Content-Type": "application/json",
-          Authorization: "Token " + localStorage.getItem("access_token"),
-        },
-      })
+      .post(
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/postViews",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            //"Content-Type": "application/json",
+            Authorization: "Token " + localStorage.getItem("access_token"),
+          },
+        }
+      )
       .then((response) => {
-        console.log(response.data);
         window.location.reload(false);
       })
       .catch((error) => {
-        console.log("Error Response: ", error.response);
         console.log("Error Data: ", error.response.data);
       });
   };
@@ -130,7 +124,10 @@ export default function CreatePost({ user }) {
         <div className="post-content flex flex-row">
           <div className="image-container w-12 h-12 rounded-full overflow-hidden bg-black">
             <img
-              src={"https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" + user.user.profile_picture}
+              src={
+                "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                user.user.profile_picture
+              }
               alt="profile"
               className="w-full h-full object-cover"
             />

@@ -16,28 +16,23 @@ export default function Register() {
 
   const handleUserChange = (event) => {
     setUser(event.target.value);
-    console.log("user value is:", event.target.value);
   };
 
   const handlePassChange = (event) => {
     setPass(event.target.value);
-    console.log("user value is:", event.target.value);
   };
 
   const handleGitChange = (event) => {
     setGit(event.target.value);
-    console.log("user value is:", event.target.value);
   };
 
   const handleProfPicChange = (event) => {
     setProfPic(event.target.files[0]);
     setDispPic(URL.createObjectURL(event.target.files[0]));
-    console.log("user value is:", event.target.files);
   };
 
   const handleDisplayNameChange = (event) => {
     setdispName(event.target.value);
-    console.log("user value is:", event.target.value);
   };
 
   const info = {
@@ -57,19 +52,16 @@ export default function Register() {
 
   const SignUp = async (event) => {
     event.preventDefault();
-    console.log(info);
 
     const res = await axios.post(
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/register",
       info
     );
-    console.log(res.data);
 
     const res2 = await axios.post(
       "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/login",
       loginTest
     );
-    console.log(res2.data);
   };
 
   const handleSubmit = (e) => {
@@ -82,7 +74,6 @@ export default function Register() {
     formData.append("display_name", dispName);
     formData.append("profile_picture", profPic);
 
-    console.log("FORM DATA: ", formData);
     axios
       .post(
         "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/register",
@@ -93,12 +84,8 @@ export default function Register() {
           },
         }
       )
-      .then((response) => {
-        console.log(response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
-        console.log("Error Response: ", error.response.data);
-        console.log("Error Data: ", error.response.data);
         alert(
           "Error signing up, make sure password is at least 8 characters, and/or username may already be taken"
         );
@@ -116,8 +103,6 @@ export default function Register() {
             <h3 className="text-xl font-semibold text-lm-custom-black mt-6 mb-4">
               Register an Account!
             </h3>
-
-            {/* Inputs */}
             <form className="space-y-4 md:space-y-6" action="#">
               <div>
                 <label

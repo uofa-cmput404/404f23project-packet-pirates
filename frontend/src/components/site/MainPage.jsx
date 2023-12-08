@@ -6,18 +6,18 @@ import Notifications from "../main-feed/Notifications";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import Cookies from 'universal-cookie'
+import Cookies from "universal-cookie";
 import SearchBar from "../main-feed/Search";
 
 export default function MainPage({ user }) {
-  const [posts, setPosts] = useState(null)
+  const [posts, setPosts] = useState(null);
   const cookies = new Cookies();
-  const [friends, setFriends] = useState()
-  const [notifications, setNotifications] = useState()
+  const [friends, setFriends] = useState();
+  const [notifications, setNotifications] = useState();
   const navigate = useNavigate();
-  
+
   const config = {
-    headers: {'Authorization': 'Token ' + localStorage.getItem('access_token')}
+    headers: { Authorization: "Token " + localStorage.getItem("access_token") },
   };
 
   const SC_auth = {
@@ -50,20 +50,22 @@ export default function MainPage({ user }) {
 
   const getPosts = async () => {
     let postsUrl =
-      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" + user.user.user_id + "/feedposts";
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/author/" +
+      user.user.user_id +
+      "/feedposts";
 
     const postsRes = await axios
       .get(postsUrl, config)
       .then((postsRes) => {
-        console.log("POSTS RES DATA POST", postsRes.data.Posts);
         setPosts(
-          postsRes.data.Posts.filter((post) => !post.is_private).map((post, index) => {
-              const image_conditions = post.image_url === '' && post.image_file != ''
-              // console.log("TESTING", image_conditions)
-              const image = image_conditions ? 'https://packet-pirates-backend-d3f5451fdee4.herokuapp.com' + post.image_file : post.image_url
-              // console.log("IMAGE", image)
-              // console.log("Private", post.is_private)
-              console.log("VISIBILITYYY", post)
+          postsRes.data.Posts.filter((post) => !post.is_private).map(
+            (post, index) => {
+              const image_conditions =
+                post.image_url === "" && post.image_file != "";
+              const image = image_conditions
+                ? "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com" +
+                  post.image_file
+                : post.image_url;
               return (
                 <Post
                   key={index}
@@ -77,13 +79,13 @@ export default function MainPage({ user }) {
                   likes={post.likes_count}
                   id={post.post_id}
                   is_private={post.is_private}
-                  is_friends = {post.is_friends}
+                  is_friends={post.is_friends}
                   unlisted={post.unlisted}
                 />
               );
-            })
-          );
-
+            }
+          )
+        );
       })
       .then(() => {})
       .catch((error) => {
@@ -92,23 +94,28 @@ export default function MainPage({ user }) {
   };
 
   const getConnections = async () => {
-
-      var url  = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" + user.user.user_id + "/followers";
-      const connectionTest = await axios
+    var url =
+      "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/authors/" +
+      user.user.user_id +
+      "/followers";
+    const connectionTest = await axios
       .get(url, PP_auth)
       .then((connectionRes) => {
-        console.log('connectionTestRes', connectionRes.data);
+        console.log("connectionTestRes", connectionRes.data);
         const followers = [];
-        
-        for (let i = 0; i < connectionRes.data.items.length; i++) { // Make foreign id the user thats logged in (packet pirates)
-          // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
-          followers.push(connectionRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
+
+        for (let i = 0; i < connectionRes.data.items.length; i++) {
+          // Make foreign id the user thats logged in (packet pirates)
+          followers.push(
+            connectionRes.data.items[i]["url"] +
+              "/followers/" +
+              user.user.user_id
+          );
         }
 
-        console.log(followers)
-        var auth = ''
+        console.log(followers);
+        var auth = "";
         const requests = followers.map((url) => {
-          
           if (url.includes("packet-pirates")) {
             console.log("PIRATE!");
             auth = PP_auth;
@@ -124,53 +131,42 @@ export default function MainPage({ user }) {
           return axios
             .get(url, auth)
             .then((response) => response)
-            .catch((error) => console.error("Error", error))
-        }
-      );
+            .catch((error) => console.error("Error", error));
+        });
 
         Promise.all(requests).then((responses) => {
-          console.log("RESPONSES", responses)
-          console.log(responses.length)
-          const Friends = []
-          
-          if (responses.length == 0) {
-            setFriends(
-              <Profile friends={Friends} user={user} />
-            );
-          } else {
-          
-            for (let i = 0; i < responses.length; i++) {
+          const Friends = [];
 
-              if (responses[i].data['is_follower']) { // For Web Weavers
-                if (responses[i].data['is_follower'] == true) {
+          if (responses.length == 0) {
+            setFriends(<Profile friends={Friends} user={user} />);
+          } else {
+            for (let i = 0; i < responses.length; i++) {
+              if (responses[i].data["is_follower"]) {
+                // For Web Weavers
+                if (responses[i].data["is_follower"] == true) {
                   let userProfile = {
                     friend_username: connectionRes.data.items[i].displayName,
-                    friend_pfp: connectionRes.data.items[i].profileImage
-                  }
-                    console.log("friend_username", connectionRes.data.items[i].displayName)
-                    console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-                  Friends.push(userProfile)
+                    friend_pfp: connectionRes.data.items[i].profileImage,
+                  };
+
+                  Friends.push(userProfile);
                 }
               }
 
               if (responses[i].data == true) {
                 let userProfile = {
                   friend_username: connectionRes.data.items[i].displayName,
-                  friend_pfp: connectionRes.data.items[i].profileImage
-                }
-                  console.log("friend_username", connectionRes.data.items[i].displayName)
-                  console.log("friend_pfp", connectionRes.data.items[i].profileImage)
-                Friends.push(userProfile)
-              }  
+                  friend_pfp: connectionRes.data.items[i].profileImage,
+                };
 
-              console.log("FRIENDS", Friends)
-              setFriends(
-                <Profile friends={Friends} user={user} />
-              );
+                Friends.push(userProfile);
+              }
+
+              console.log("FRIENDS", Friends);
+              setFriends(<Profile friends={Friends} user={user} />);
             }
           } // end for
         }); // end Promise
-
       }); // end Then
   }; // end async
 
@@ -183,9 +179,11 @@ export default function MainPage({ user }) {
     const notifsRes = await axios
       .get(notificationsUrl, config)
       .then((notifsRes) => {
-        console.log("NOTIFSRES", notifsRes.data.Notifications);
         setNotifications(
-          <Notifications notifications={notifsRes.data.Notifications} user = {user}/>
+          <Notifications
+            notifications={notifsRes.data.Notifications}
+            user={user}
+          />
         );
       })
       .catch((error) => {
@@ -194,31 +192,32 @@ export default function MainPage({ user }) {
   };
 
   useEffect(() => {
-    var token = cookies.get('access_token')
-    console.log(token)
+    var token = cookies.get("access_token");
 
     const config = {
-      headers: {Authorization: 'Token ' + localStorage.getItem('access_token')}
+      headers: {
+        Authorization: "Token " + localStorage.getItem("access_token"),
+      },
     };
-    console.log(config)
 
     //Get data on homepage load
-    console.log("user", user);
 
     getPosts();
     getConnections();
     getNotifications();
-  // }, [notifications, friends]);
-}, [posts]);
+    // }, [notifications, friends]);
+  }, [posts]);
   // }, []);
 
   const handleLogout = async (event) => {
     event.preventDefault();
 
     try {
-      await axios.get("https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout", config);
+      await axios.get(
+        "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com/logout",
+        config
+      );
       window.location.href = "/";
-      console.log("logged out");
     } catch (err) {
       console.log(err);
     }
