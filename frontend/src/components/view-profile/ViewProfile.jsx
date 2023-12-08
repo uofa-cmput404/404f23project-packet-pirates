@@ -10,10 +10,7 @@ import RemotePost from "../../remote/RemotePosts";
 
 // make use of this prob https://reactrouter.com/en/main/hooks/use-params
 export default function ViewProfile({ user }) {
-  useEffect(() => {
-    console.log("user", user);
-    console.log("user.user", user.user);
-  }, []);
+
   const { author } = useParams();
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState(null);
@@ -37,9 +34,6 @@ export default function ViewProfile({ user }) {
   var imgUrl = "";
 
   let location = useLocation();
-  console.log("location", location);
-  console.log("location host", location.state["api"]);
-  console.log("HOSTNAME:", new URL(location.state["api"]).hostname);
 
   const fake_user = {
     profile_picture: "https://i.imgur.com/7bIhcuD.png",
@@ -88,11 +82,8 @@ export default function ViewProfile({ user }) {
   useEffect(() => {
     const getUrl = "https://packet-pirates-backend-d3f5451fdee4.herokuapp.com";
     setIsLoading(true);
-    console.log("author", author);
-    console.log("user", user);
 
     fetchPostData(); // Call the fetchPosts function
-    console.log("posts", posts);
     // }, []);
   }, []);
 
@@ -116,7 +107,6 @@ export default function ViewProfile({ user }) {
     const notifsRes = await axios
       .get(notificationsUrl, config)
       .then((notifsRes) => {
-        console.log("NOTIFSRES", notifsRes.data.Notifications);
         setNotifications(
           <Notifications
             notifications={notifsRes.data.Notifications}
@@ -137,12 +127,10 @@ export default function ViewProfile({ user }) {
     const connectionTest = await axios
       .get(url, PP_auth)
       .then((connectionRes) => {
-        console.log("connectionTestRes", connectionRes.data);
         const followers = [];
 
         for (let i = 0; i < connectionRes.data.items.length; i++) {
           // Make foreign id the user thats logged in (packet pirates)
-          // console.log("FOLOWER TESTTTT",  connectionTestRes.data.items[i]['url'] + "/followers/" + user.user.user_id)
           followers.push(
             connectionRes.data.items[i]["url"] +
               "/followers/" +
@@ -150,11 +138,9 @@ export default function ViewProfile({ user }) {
           );
         }
 
-        console.log(followers);
         var auth = "";
         const requests = followers.map((url) => {
           if (url.includes("packet-pirates")) {
-            console.log("PIRATE!");
             auth = PP_auth;
           } else if (url.includes("super-coding")) {
             auth = SC_auth;
@@ -172,8 +158,6 @@ export default function ViewProfile({ user }) {
         });
 
         Promise.all(requests).then((responses) => {
-          console.log("RESPONSES", responses);
-          console.log(responses.length);
           const Friends = [];
 
           if (responses.length == 0) {
@@ -187,14 +171,7 @@ export default function ViewProfile({ user }) {
                     friend_username: connectionRes.data.items[i].displayName,
                     friend_pfp: connectionRes.data.items[i].profileImage,
                   };
-                  console.log(
-                    "friend_username",
-                    connectionRes.data.items[i].displayName
-                  );
-                  console.log(
-                    "friend_pfp",
-                    connectionRes.data.items[i].profileImage
-                  );
+
                   Friends.push(userProfile);
                 }
               }
@@ -204,18 +181,11 @@ export default function ViewProfile({ user }) {
                   friend_username: connectionRes.data.items[i].displayName,
                   friend_pfp: connectionRes.data.items[i].profileImage,
                 };
-                console.log(
-                  "friend_username",
-                  connectionRes.data.items[i].displayName
-                );
-                console.log(
-                  "friend_pfp",
-                  connectionRes.data.items[i].profileImage
-                );
+
                 Friends.push(userProfile);
               }
 
-              console.log("FRIENDS", Friends);
+
               setFriends(<Profile friends={Friends} user={user} />);
             }
           } // end for
@@ -452,18 +422,10 @@ export default function ViewProfile({ user }) {
         .get(followersUrl, PP_auth)
         .then(async (data) => {
           setAreFriends(data["data"]);
-          console.log("FFF", data["data"]);
-          console.log("FRIENDS?", areFriends);
-          // console.log(response.data)
         });
 
-      // const followReqResponse = await axios.get(followReqUrl, PP_auth).then(async (data) => {
-      //   set_is_pending(data['data'])
-      //   console.log("PENDING?", is_pending)
-      // });
 
       if (host.includes("packet-pirates")) {
-        console.log("PIRATE!");
         auth = PP_auth;
       } else if (host.includes("super-coding")) {
         auth = SC_auth;
@@ -479,14 +441,11 @@ export default function ViewProfile({ user }) {
         .then(async (data) => {
           if (host.includes("packet-pirates")) {
             setIsFollowing(data["data"]);
-            console.log("DATA RESPONSE", isFollowing);
           } else {
             setIsFollowing(data["data"]["is_follower"]);
-            console.log("DATA RESPONSE", isFollowing);
           }
         });
 
-      console.log("RESPONSES", is_pending, areFriends, isFollowing);
     } catch (error) {
       console.error("Error checking friendship:", error);
     }
@@ -495,7 +454,6 @@ export default function ViewProfile({ user }) {
     let authUrl = location.state["api"];
 
     if (host.includes("packet-pirates")) {
-      console.log("PIRATE!");
       auth = PP_auth;
     } else if (host.includes("super-coding")) {
       auth = SC_auth;
@@ -574,7 +532,6 @@ export default function ViewProfile({ user }) {
     event.preventDefault();
     // var apiString = location.state['api'];
     var profile_author_id = location.state["api"].split("/")[4];
-    console.log("POSTING", location.state["api"], profile_author_id);
 
     var auth_github = "";
 
@@ -637,7 +594,6 @@ export default function ViewProfile({ user }) {
 
     var url = location.state["api"] + "/inbox";
     if (host.includes("packet-pirates")) {
-      console.log("PIRATE!");
       auth = PP_auth;
     } else if (host.includes("super-coding")) {
       auth = SC_auth;
@@ -648,7 +604,6 @@ export default function ViewProfile({ user }) {
       auth = NN_auth;
     }
 
-    console.log("RESPONSE DATA", responseData);
     axios.post(url, responseData, auth);
   };
 
@@ -663,7 +618,6 @@ export default function ViewProfile({ user }) {
 
     try {
       const res = await axios.delete(removeUrl).then((res) => {
-        console.log(res.data);
         setAreFriends(false);
       });
     } catch (err) {
